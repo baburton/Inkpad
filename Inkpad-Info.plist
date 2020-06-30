@@ -66,7 +66,7 @@
 		<string>Icon-Spotlight@2x.png</string>
 	</array>
 	<key>CFBundleIdentifier</key>
-	<string>com.taptrix.inkpad</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -90,6 +90,10 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>1.6</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>dbapi-2</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchImages~ipad</key>
@@ -145,10 +149,6 @@
 				<string>application/x-inkpad</string>
 			</dict>
 		</dict>
-	</array>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>dbapi-2</string>
 	</array>
 </dict>
 </plist>
