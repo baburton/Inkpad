@@ -7,6 +7,7 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2010-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import "WDLayerCell.h"
@@ -27,6 +28,8 @@
 
 - (void) awakeFromNib
 {
+    [super awakeFromNib];
+
     [visibleButton addTarget:self action:@selector(toggleVisibility:) forControlEvents:UIControlEventTouchUpInside];
     [lockButton addTarget:self action:@selector(toggleLocked:) forControlEvents:UIControlEventTouchUpInside];
     

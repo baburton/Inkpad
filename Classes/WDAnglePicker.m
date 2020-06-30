@@ -7,6 +7,7 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2011-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import "WDAnglePicker.h"
@@ -21,6 +22,8 @@ const float kArrowDimension = 6;
 
 - (void) awakeFromNib
 {
+    [super awakeFromNib];
+
     self.exclusiveTouch = YES;
     
     self.layer.shadowOpacity = 0.15f;

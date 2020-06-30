@@ -7,6 +7,7 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2008-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import "WDColorSlider.h"
@@ -99,6 +100,8 @@ static void release(void *info) {
 
 - (void) awakeFromNib
 {
+    [super awakeFromNib];
+
     indicator_ = [WDColorIndicator colorIndicator];
     indicator_.sharpCenter = WDCenterOfRect([self bounds]);
     [self addSubview:indicator_];
