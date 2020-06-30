@@ -7,6 +7,7 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2011-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import <Twitter/Twitter.h>
@@ -1415,9 +1416,9 @@
     [facebookSheet addImage:self.drawing.image];
     [facebookSheet setInitialText:NSLocalizedString(@"Check out my Inkpad drawing!", @"Check out my Inkpad drawing!")];
     
-    dispatch_async(dispatch_get_main_queue(), ^ {
-        [self presentViewController:facebookSheet animated:YES completion:nil];
-    });
+    [self hidePopovers];
+
+    [self presentViewController:facebookSheet animated:YES completion:nil];
 }
 
 - (void) tweetDrawing:(id)sender
@@ -1451,6 +1452,8 @@
 {
     NSString *baseFilename = [self.document.filename stringByDeletingPathExtension];
     NSString *filename = nil;
+    
+    [self hidePopovers];
 
     // Generates export file in requested format
     if ([format isEqualToString:@"PDF"]) {
