@@ -121,7 +121,6 @@
 		6B6A1C95125DC01000253800 /* Default-Portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B6A1C94125DC01000253800 /* Default-Portrait.png */; };
 		6B6A1C9B125DC10800253800 /* Default-Landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B6A1C9A125DC10800253800 /* Default-Landscape.png */; };
 		6B6A9A7A1349BA4000B00667 /* WDUnitsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B6A9A791349BA4000B00667 /* WDUnitsController.m */; };
-		6B6C584415FB23BA00B8D6F3 /* DropboxSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B6C584315FB23BA00B8D6F3 /* DropboxSDK.framework */; };
 		6B6DC1A212403DA000A98FCE /* WDBlockingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B6DC1A112403DA000A98FCE /* WDBlockingView.m */; };
 		6B74182B140617F100A00C76 /* WDProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B74182A140617F100A00C76 /* WDProgressView.m */; };
 		6B74B7DC150E8213000A08D4 /* color_wheel@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B74B7DB150E8213000A08D4 /* color_wheel@2x.png */; };
@@ -511,7 +510,6 @@
 		6B6A1C9A125DC10800253800 /* Default-Landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Landscape.png"; path = "Images/Default-Landscape.png"; sourceTree = "<group>"; };
 		6B6A9A781349BA4000B00667 /* WDUnitsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WDUnitsController.h; sourceTree = "<group>"; };
 		6B6A9A791349BA4000B00667 /* WDUnitsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WDUnitsController.m; sourceTree = "<group>"; };
-		6B6C584315FB23BA00B8D6F3 /* DropboxSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DropboxSDK.framework; sourceTree = "<group>"; };
 		6B6DC1A012403DA000A98FCE /* WDBlockingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WDBlockingView.h; sourceTree = "<group>"; };
 		6B6DC1A112403DA000A98FCE /* WDBlockingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WDBlockingView.m; sourceTree = "<group>"; };
 		6B741829140617F100A00C76 /* WDProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WDProgressView.h; sourceTree = "<group>"; };
@@ -910,7 +908,6 @@
 				6BD7072712AD011F004E07C9 /* UIKit.framework in Frameworks */,
 				6BDDFA6C13E7924600B10774 /* MobileCoreServices.framework in Frameworks */,
 				6B7D2C3515085403001311B0 /* Twitter.framework in Frameworks */,
-				6B6C584415FB23BA00B8D6F3 /* DropboxSDK.framework in Frameworks */,
 				6BC73EF016025A1B0045647B /* Social.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1005,7 +1002,6 @@
 				2983A283142C1B080097A3A8 /* CoreData.framework */,
 				6BD7071812AD011F004E07C9 /* CoreGraphics.framework */,
 				6BD7071912AD011F004E07C9 /* CoreText.framework */,
-				6B6C584315FB23BA00B8D6F3 /* DropboxSDK.framework */,
 				6BD7071A12AD011F004E07C9 /* Foundation.framework */,
 				6BD7071B12AD011F004E07C9 /* MessageUI.framework */,
 				6BDDFA6B13E7924600B10774 /* MobileCoreServices.framework */,
