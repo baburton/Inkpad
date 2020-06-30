@@ -15,6 +15,7 @@
 		02B54D3318D59DFF00DE8A9F /* Stroke.strings in Resources */ = {isa = PBXBuildFile; fileRef = 02B54D2C18D59DFF00DE8A9F /* Stroke.strings */; };
 		05A99D1624AB500500B904C7 /* ObjectiveDropboxOfficial.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05A99D1524AB500500B904C7 /* ObjectiveDropboxOfficial.framework */; };
 		05A99D2024AB745900B904C7 /* Launch.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 05A99D1E24AB745800B904C7 /* Launch.storyboard */; };
+		05A99D2224ABF73600B904C7 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05A99D2124ABF73600B904C7 /* CoreServices.framework */; };
 		1D3623260D0F684500981E51 /* WDAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* WDAppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		29E28F8415115F68007D36DE /* WDEmail.m in Sources */ = {isa = PBXBuildFile; fileRef = 29E28F8315115F68007D36DE /* WDEmail.m */; };
@@ -333,7 +334,6 @@
 		6BD7072712AD011F004E07C9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BD7071F12AD011F004E07C9 /* UIKit.framework */; };
 		6BDBC48B130D1A6F00BC3BCA /* WDEtchedLine.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BDBC48A130D1A6F00BC3BCA /* WDEtchedLine.m */; };
 		6BDD92E413DE744F0005F55D /* hue_shifter_overlay.png in Resources */ = {isa = PBXBuildFile; fileRef = 6BDD92E313DE744F0005F55D /* hue_shifter_overlay.png */; };
-		6BDDFA6C13E7924600B10774 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BDDFA6B13E7924600B10774 /* MobileCoreServices.framework */; };
 		6BE1875418FEE947006FC619 /* ColorBalance.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6BE1874818FEE947006FC619 /* ColorBalance.strings */; };
 		6BE1875518FEE947006FC619 /* HueSaturation.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6BE1874A18FEE947006FC619 /* HueSaturation.strings */; };
 		6BE1875618FEE947006FC619 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6BE1874C18FEE947006FC619 /* Localizable.strings */; };
@@ -364,6 +364,7 @@
 		02B54D2D18D59DFF00DE8A9F /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = Stroke.strings; sourceTree = "<group>"; };
 		05A99D1524AB500500B904C7 /* ObjectiveDropboxOfficial.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ObjectiveDropboxOfficial.framework; path = Carthage/Build/iOS/ObjectiveDropboxOfficial.framework; sourceTree = "<group>"; };
 		05A99D1F24AB745800B904C7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Launch.storyboard; sourceTree = "<group>"; };
+		05A99D2124ABF73600B904C7 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* WDAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WDAppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* WDAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WDAppDelegate.m; sourceTree = "<group>"; };
 		1D6058910D05DD3D006BFB54 /* Inkpad.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inkpad.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -904,12 +905,12 @@
 				6BD7072112AD011F004E07C9 /* CoreText.framework in Frameworks */,
 				05A99D1624AB500500B904C7 /* ObjectiveDropboxOfficial.framework in Frameworks */,
 				6BD7072212AD011F004E07C9 /* Foundation.framework in Frameworks */,
+				05A99D2224ABF73600B904C7 /* CoreServices.framework in Frameworks */,
 				6BD7072312AD011F004E07C9 /* MessageUI.framework in Frameworks */,
 				6BD7072412AD011F004E07C9 /* OpenGLES.framework in Frameworks */,
 				6BD7072512AD011F004E07C9 /* QuartzCore.framework in Frameworks */,
 				6BD7072612AD011F004E07C9 /* Security.framework in Frameworks */,
 				6BD7072712AD011F004E07C9 /* UIKit.framework in Frameworks */,
-				6BDDFA6C13E7924600B10774 /* MobileCoreServices.framework in Frameworks */,
 				6B7D2C3515085403001311B0 /* Twitter.framework in Frameworks */,
 				6BC73EF016025A1B0045647B /* Social.framework in Frameworks */,
 			);
@@ -1000,6 +1001,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				05A99D2124ABF73600B904C7 /* CoreServices.framework */,
 				05A99D1524AB500500B904C7 /* ObjectiveDropboxOfficial.framework */,
 				29E41AC113F9B229000C3305 /* libz.dylib */,
 				6B7D2C3415085403001311B0 /* Twitter.framework */,
