@@ -7,6 +7,7 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2009-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #if !TARGET_OS_IPHONE
@@ -60,7 +61,8 @@ NSString *WDAlignmentKey = @"WDAlignmentKey";
     [coder encodeObject:text_ forKey:WDTextKey];
     [coder encodeObject:fontName_ forKey:WDFontNameKey];
     [coder encodeFloat:fontSize_ forKey:WDFontSizeKey];
-    [coder encodeInt32:alignment_ forKey:WDAlignmentKey];
+    // Cast to int32_t below is okay, since NSTextAlignment constants are tiny.
+    [coder encodeInt32:(int32_t)alignment_ forKey:WDAlignmentKey];
 }
 
 - (id)initWithCoder:(NSCoder *)coder
