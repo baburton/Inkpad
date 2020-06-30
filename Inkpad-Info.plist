@@ -119,6 +119,8 @@
 			<string>{768, 1024}</string>
 		</dict>
 	</array>
+	<key>UILaunchStoryboardName</key>
+	<string>Launch</string>
 	<key>UIMainStoryboardFile~ipad</key>
 	<string>MainStoryboard</string>
 	<key>UIPrerenderedIcon</key>
