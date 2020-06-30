@@ -13,6 +13,7 @@
 		02B54D3118D59DFF00DE8A9F /* OpenClipArt.strings in Resources */ = {isa = PBXBuildFile; fileRef = 02B54D2818D59DFF00DE8A9F /* OpenClipArt.strings */; };
 		02B54D3218D59DFF00DE8A9F /* Shadow.strings in Resources */ = {isa = PBXBuildFile; fileRef = 02B54D2A18D59DFF00DE8A9F /* Shadow.strings */; };
 		02B54D3318D59DFF00DE8A9F /* Stroke.strings in Resources */ = {isa = PBXBuildFile; fileRef = 02B54D2C18D59DFF00DE8A9F /* Stroke.strings */; };
+		05A99D1624AB500500B904C7 /* ObjectiveDropboxOfficial.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05A99D1524AB500500B904C7 /* ObjectiveDropboxOfficial.framework */; };
 		1D3623260D0F684500981E51 /* WDAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* WDAppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		29E28F8415115F68007D36DE /* WDEmail.m in Sources */ = {isa = PBXBuildFile; fileRef = 29E28F8315115F68007D36DE /* WDEmail.m */; };
@@ -362,6 +363,7 @@
 		02B54D2918D59DFF00DE8A9F /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = OpenClipArt.strings; sourceTree = "<group>"; };
 		02B54D2B18D59DFF00DE8A9F /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = Shadow.strings; sourceTree = "<group>"; };
 		02B54D2D18D59DFF00DE8A9F /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = Stroke.strings; sourceTree = "<group>"; };
+		05A99D1524AB500500B904C7 /* ObjectiveDropboxOfficial.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ObjectiveDropboxOfficial.framework; path = Carthage/Build/iOS/ObjectiveDropboxOfficial.framework; sourceTree = "<group>"; };
 		1D3623240D0F684500981E51 /* WDAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WDAppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* WDAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WDAppDelegate.m; sourceTree = "<group>"; };
 		1D6058910D05DD3D006BFB54 /* Inkpad.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inkpad.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -900,6 +902,7 @@
 				29E41AC213F9B229000C3305 /* libz.dylib in Frameworks */,
 				6BD7072012AD011F004E07C9 /* CoreGraphics.framework in Frameworks */,
 				6BD7072112AD011F004E07C9 /* CoreText.framework in Frameworks */,
+				05A99D1624AB500500B904C7 /* ObjectiveDropboxOfficial.framework in Frameworks */,
 				6BD7072212AD011F004E07C9 /* Foundation.framework in Frameworks */,
 				6BD7072312AD011F004E07C9 /* MessageUI.framework in Frameworks */,
 				6BD7072412AD011F004E07C9 /* OpenGLES.framework in Frameworks */,
@@ -997,6 +1000,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				05A99D1524AB500500B904C7 /* ObjectiveDropboxOfficial.framework */,
 				29E41AC113F9B229000C3305 /* libz.dylib */,
 				6B7D2C3415085403001311B0 /* Twitter.framework */,
 				2983A283142C1B080097A3A8 /* CoreData.framework */,
@@ -2079,7 +2083,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "find . -name '*.[m,mm]' | xargs genstrings -o en.lproj";
+			shellScript = "find . -name '*.[m,mm]' | xargs genstrings -o en.lproj\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2725,7 +2729,8 @@
 				DEVELOPMENT_TEAM = 67JTSH67LZ;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)\"",
+					"$(SRCROOT)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -2735,6 +2740,7 @@
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
 				INFOPLIST_FILE = "Inkpad-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.benburton.inkpad;
 				PRODUCT_NAME = Inkpad;
 				PROVISIONING_PROFILE = "";
@@ -2759,7 +2765,8 @@
 				DEVELOPMENT_TEAM = 67JTSH67LZ;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)\"",
+					"$(SRCROOT)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Inkpad_Prefix.pch;
@@ -2767,6 +2774,7 @@
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
 				INFOPLIST_FILE = "Inkpad-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.benburton.inkpad;
 				PRODUCT_NAME = Inkpad;
 				PROVISIONING_PROFILE = "";
@@ -2813,7 +2821,8 @@
 				DEVELOPMENT_TEAM = 67JTSH67LZ;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)\"",
+					"$(SRCROOT)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Inkpad_Prefix.pch;
@@ -2821,6 +2830,7 @@
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
 				INFOPLIST_FILE = "Inkpad-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.benburton.inkpad;
 				PRODUCT_NAME = Inkpad;
 				PROVISIONING_PROFILE = "";
@@ -2869,7 +2879,8 @@
 				DEVELOPMENT_TEAM = 67JTSH67LZ;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)\"",
+					"$(SRCROOT)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Inkpad_Prefix.pch;
@@ -2877,6 +2888,7 @@
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
 				INFOPLIST_FILE = "Inkpad-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.benburton.inkpad;
 				PRODUCT_NAME = Inkpad;
 				PROVISIONING_PROFILE = "";
