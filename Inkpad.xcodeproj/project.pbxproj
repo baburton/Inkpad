@@ -18,9 +18,7 @@
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		29E28F8415115F68007D36DE /* WDEmail.m in Sources */ = {isa = PBXBuildFile; fileRef = 29E28F8315115F68007D36DE /* WDEmail.m */; };
 		29E41AC213F9B229000C3305 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 29E41AC113F9B229000C3305 /* libz.dylib */; };
-		5D1CF74D138C7BAB008979B3 /* DBMetadata+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D1CF74C138C7BAB008979B3 /* DBMetadata+Additions.m */; };
 		5D27FE8F13EC992D00EEEFF7 /* WDSamplesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D27FE8D13EC992D00EEEFF7 /* WDSamplesController.m */; };
-		5D348D891386FDA200BB0047 /* WDImportController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D348D881386FDA200BB0047 /* WDImportController.m */; };
 		5D3C1A76138771900040D261 /* dropbox_icon_directory.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D3C1A74138771900040D261 /* dropbox_icon_directory.png */; };
 		5D3C1A77138771900040D261 /* dropbox_icon_generic.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D3C1A75138771900040D261 /* dropbox_icon_generic.png */; };
 		5D62B27613CE866500E4D41B /* WDBlendModeController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D62B27413CE866500E4D41B /* WDBlendModeController.m */; };
@@ -2144,8 +2142,6 @@
 				6BB7F94513AB1F5A004081B3 /* WDHueShifter.m in Sources */,
 				6B308FB713B56A8A000665C3 /* WDColorAdjustmentController.m in Sources */,
 				6B308FBA13B56B59000665C3 /* WDColorBalanceController.m in Sources */,
-				5D348D891386FDA200BB0047 /* WDImportController.m in Sources */,
-				5D1CF74D138C7BAB008979B3 /* DBMetadata+Additions.m in Sources */,
 				6B23AA5F13BBECD800C9B5F0 /* WDModalTitleBar.m in Sources */,
 				5D62B27613CE866500E4D41B /* WDBlendModeController.m in Sources */,
 				6B0D8CD613E01C4400DDFDC7 /* WDFontManager.m in Sources */,

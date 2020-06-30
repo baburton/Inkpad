@@ -7,12 +7,15 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2010-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import <UIKit/UIKit.h>
-#import <DropboxSDK/DropboxSDK.h>
+#if 0 // bab: no dropbox
+#import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
+#endif
 
-@interface WDAppDelegate : NSObject <UIApplicationDelegate, DBSessionDelegate, UIAlertViewDelegate>
+@interface WDAppDelegate : NSObject <UIApplicationDelegate, UIAlertViewDelegate>
 
 @property (nonatomic, retain) UIWindow *window;
 @property (nonatomic, copy) void (^performAfterDropboxLoginBlock)(void);

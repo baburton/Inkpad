@@ -7,13 +7,16 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2011-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import <UIKit/UIKit.h>
 #import <MessageUI/MFMailComposeViewController.h>
 #import "OCADownloader.h"
 #import "WDHelpController.h"
+#if 0 // bab: no dropbox
 #import "WDImportController.h"
+#endif
 #import "WDSamplesController.h"
 
 @class WDActivityManager;
@@ -31,9 +34,13 @@
 
 @interface WDBrowserController : UICollectionViewController <UIActionSheetDelegate,
                                                              UIPopoverControllerDelegate,
+#if 0 // bab: no dropbox
                                                              DBRestClientDelegate,
+#endif
                                                              MFMailComposeViewControllerDelegate,
+#if 0 // bab: no dropbox
                                                              WDImportControllerDelegate,
+#endif
                                                              WDSamplesControllerDelegate,
                                                              UINavigationControllerDelegate,
                                                              UIImagePickerControllerDelegate,
@@ -52,7 +59,9 @@
     UIPopoverController     *popoverController_;
     WDPageSizeController    *pageSizeController_;
     WDExportController      *exportController_;
+#if 0 // bab: no dropbox
 	WDImportController		*importController_;
+#endif
     UIImagePickerController *pickerController_;
     WDFontLibraryController *fontLibraryController_;
     WDSamplesController     *samplesController_;

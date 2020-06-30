@@ -7,9 +7,12 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2011-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
-#import <DropboxSDK/DropboxSDK.h>
+#if 0 // bab: no dropbox
+#import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
+#endif
 #import "WDAppDelegate.h"
 #import "WDExportController.h"
 

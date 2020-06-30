@@ -7,6 +7,7 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2010-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import "WDAppDelegate.h"
@@ -37,6 +38,7 @@ NSString *WDDropboxWasUnlinkedNotification = @"WDDropboxWasUnlinkedNotification"
     
     NSLog(@"No Dropbox Keys!");
     
+#if 0 // bab: no dropbox
     NSString *consumerKey = @"xxxx";
     NSString *consumerSecret = @"xxxx";
     
@@ -44,6 +46,7 @@ NSString *WDDropboxWasUnlinkedNotification = @"WDDropboxWasUnlinkedNotification"
     
     session.delegate = self; // DBSessionDelegate methods allow you to handle re-authenticating
     [DBSession setSharedSession:session];
+#endif
     
     // Load the fonts at startup. Dispatch this call at the end of the main queue;
     // It will then dispatch the real work on another queue after the app launches.
@@ -89,6 +92,7 @@ NSString *WDDropboxWasUnlinkedNotification = @"WDDropboxWasUnlinkedNotification"
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
+#if 0 // bab: no dropbox
     if ([[DBSession sharedSession] handleOpenURL:url]) {
         if ([[DBSession sharedSession] isLinked]) {
             if (self.performAfterDropboxLoginBlock) {
@@ -98,6 +102,7 @@ NSString *WDDropboxWasUnlinkedNotification = @"WDDropboxWasUnlinkedNotification"
         }
         return YES;
     }
+#endif
     
     [[WDDrawingManager sharedInstance] importDrawingAtURL:url errorBlock:^{
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Broken Drawing",
@@ -178,18 +183,22 @@ NSString *WDDropboxWasUnlinkedNotification = @"WDDropboxWasUnlinkedNotification"
         return;
     }
     
+#if 0 // bab: no dropbox
     if ([[DBSession sharedSession] isLinked]) {
         [[DBSession sharedSession] unlinkAll];
-    } 
+    }
+#endif
     
     [[NSNotificationCenter defaultCenter] postNotificationName:WDDropboxWasUnlinkedNotification object:self];
 }
 
 - (void) unlinkDropbox
 {
+#if 0 // bab: no dropbox
     if (![[DBSession sharedSession] isLinked]) {
         return;
-    } 
+    }
+#endif
     
     NSString *title = NSLocalizedString(@"Unlink Dropbox", @"Unlink Dropbox");
     NSString *message = NSLocalizedString(@"Are you sure you want to unlink your Dropbox account?",
@@ -208,8 +217,10 @@ NSString *WDDropboxWasUnlinkedNotification = @"WDDropboxWasUnlinkedNotification"
     [alertView show];
 }
 
+#if 0 // bab: no dropbox
 - (void)sessionDidReceiveAuthorizationFailure:(DBSession *)session userId:(NSString *)userId
 {
 }
+#endif
 
 @end

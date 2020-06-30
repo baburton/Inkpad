@@ -7,9 +7,12 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2011-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
+#if 0 // bab: no dropbox
 #import <DropboxSDK/DropboxSDK.h>
+#endif
 #import "OCAEntry.h"
 #import "OCAViewController.h"
 #import "NSData+Additions.h"
@@ -765,7 +768,9 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     }
     
     exportController_ = nil;
+#if 0 // bab: no dropbox
     importController_ = nil;
+#endif
     pickerController_ = nil;
     fontLibraryController_ = nil;
     samplesController_ = nil;
@@ -789,7 +794,9 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     }
     
     exportController_ = nil;
+#if 0 // bab: no dropbox
     importController_ = nil;
+#endif
     pickerController_ = nil;
     fontLibraryController_ = nil;
     samplesController_ = nil;
@@ -899,6 +906,7 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
 
 #pragma mark - Dropbox
 
+#if 0 // bab: no dropbox
 - (void) uploadDrawings:(id)sender
 {
     [self dismissPopover];
@@ -1040,6 +1048,7 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
 	
 	[self dismissPopover];
 }
+#endif
 
 #pragma mark -
 
@@ -1079,6 +1088,7 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     return appFolderPath;
 }
 
+#if 0 // bab: no dropbox
 - (void) dropboxUnlinked:(NSNotification *)aNotification
 {
     [self dismissPopoverAnimated:YES];
@@ -1196,6 +1206,7 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
                                               otherButtonTitles:nil];
     [alertView show];
 }
+#endif
 
 #pragma mark - Storyboard / Collection View
 
