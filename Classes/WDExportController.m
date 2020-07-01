@@ -66,11 +66,13 @@ NSString *WDDropboxFormatDefault = @"WDDropboxFormatDefault";
     [self performSelector:@selector(sendAction:) withObject:nil afterDelay:0];
 }
 
+#if 0 // bab: no dropbox
 - (void) unlinkDropbox:(id)sender
 {
     WDAppDelegate *appDelegate = (WDAppDelegate *) [UIApplication sharedApplication].delegate;
     [appDelegate unlinkDropbox];
 }
+#endif
 
 - (void) setMode:(NSUInteger) mode
 {
@@ -84,14 +86,18 @@ NSString *WDDropboxFormatDefault = @"WDDropboxFormatDefault";
         
         self.navigationItem.leftBarButtonItem = nil;
     } else {
-        
         self.title = NSLocalizedString(@"Dropbox", @"Dropbox");
         
+#if 0 // bab: no dropbox
         UIBarButtonItem *rightItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Upload", @"Upload") style:UIBarButtonItemStyleDone target:self action:@selector(doExport:)];
         self.navigationItem.rightBarButtonItem = rightItem;
         
         UIBarButtonItem *leftItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Unlink", @"Unlink") style:UIBarButtonItemStylePlain target:self action:@selector(unlinkDropbox:)];
         self.navigationItem.leftBarButtonItem = leftItem;
+#else
+        self.navigationItem.rightBarButtonItem = nil;
+        self.navigationItem.leftBarButtonItem = nil;
+#endif
     }
 }
 

@@ -20,7 +20,9 @@
 #import "WDGradient.h"
 #import "WDInspectableProperties.h"
 
+#if 0 // bab: no dropbox
 NSString *WDDropboxWasUnlinkedNotification = @"WDDropboxWasUnlinkedNotification";
+#endif
 
 @implementation WDAppDelegate
 

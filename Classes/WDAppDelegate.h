@@ -20,9 +20,12 @@
 @property (nonatomic, retain) UIWindow *window;
 @property (nonatomic, copy) void (^performAfterDropboxLoginBlock)(void);
 
+#if 0 // bab: no dropbox
 - (void) unlinkDropbox;
+#endif
 
 @end
 
+#if 0 // bab: no dropbox
 extern NSString *WDDropboxWasUnlinkedNotification;
-
+#endif

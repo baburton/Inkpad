@@ -69,10 +69,12 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
                                                  name:WDDrawingsDeleted
                                                object:nil];
     
+#if 0 // bab: no dropbox
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(dropboxUnlinked:)
                                                  name:WDDropboxWasUnlinkedNotification
                                                object:nil];
+#endif
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillShow:)
@@ -573,12 +575,14 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
         [items addObject:fixedItem];
     }
     
+#if 0 // bab: no dropbox
     if (!dropboxExportItem_) {
         dropboxExportItem_ = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Dropbox", @"Dropbox")
                                                               style:UIBarButtonItemStylePlain
                                                              target:self
                                                              action:@selector(showDropboxExportPanel:)];
     }
+#endif
     
     if (!deleteItem_) {
         deleteItem_ = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash
@@ -590,7 +594,9 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
                                                                               target:self
                                                                               action:@selector(stopEditing:)];
     
+#if 0 // bab: no dropbox
     [items addObject:dropboxExportItem_];
+#endif
     [items addObject:flexibleItem];
     [items addObject:deleteItem_];
     [items addObject:fixedItem];
@@ -604,9 +610,11 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     if (!toolbarItems_) {
         toolbarItems_ = [[NSMutableArray alloc] init];
         
+#if 0 // bab: no dropbox
         UIBarButtonItem *importItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Import", @"Import")
                                                                        style:UIBarButtonItemStylePlain target:self
                                                                       action:@selector(showDropboxImportPanel:)];
+#endif
         UIBarButtonItem *samplesItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Samples", @"Samples")
                                                                         style:UIBarButtonItemStylePlain
                                                                        target:self
@@ -631,7 +639,9 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
         UIBarButtonItem *flexibleItem = [UIBarButtonItem flexibleItem];
         UIBarButtonItem *fixedItem = [UIBarButtonItem fixedItemWithWidth:10];
         
+#if 0 // bab: no dropbox
         [toolbarItems_ addObject:importItem];
+#endif
         [toolbarItems_ addObject:fixedItem];
         [toolbarItems_ addObject:samplesItem];
         [toolbarItems_ addObject:fixedItem];
