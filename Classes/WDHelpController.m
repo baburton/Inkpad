@@ -72,9 +72,8 @@
 
     UIViewPrintFormatter *viewFormatter = self.view.viewPrintFormatter;
     viewFormatter.startPage = 0;
-    viewFormatter.contentInsets = UIEdgeInsetsMake(36.0, 36.0, 36.0, 36.0);
+    viewFormatter.perPageContentInsets = UIEdgeInsetsMake(36.0, 36.0, 36.0, 36.0);
     pic.printFormatter = viewFormatter;
-    pic.showsPageRange = YES;
     
     [pic presentFromBarButtonItem:sender animated:YES completionHandler:nil];
 }
