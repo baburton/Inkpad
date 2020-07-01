@@ -360,7 +360,7 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     [blockingView_ setShadowCenter:shadowCenter radius:kEditingHighlightRadius];
     blockingView_.alpha = 0;
     
-    [UIView animateWithDuration:[duration doubleValue] animations:^{ blockingView_.alpha = 1; }];
+    [UIView animateWithDuration:[duration doubleValue] animations:^{ self->blockingView_.alpha = 1; }];
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
@@ -406,10 +406,10 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
 - (void) thumbnailDidEndEditing:(WDThumbnailView *)thumbView
 {
     [UIView animateWithDuration:0.2f
-                     animations:^{ blockingView_.alpha = 0; }
+                     animations:^{ self->blockingView_.alpha = 0; }
                      completion:^(BOOL finished) {
-                         [blockingView_ removeFromSuperview];
-                         blockingView_ = nil;
+                         [self->blockingView_ removeFromSuperview];
+                         self->blockingView_ = nil;
                      }];
     
     editingThumbnail_ = nil;

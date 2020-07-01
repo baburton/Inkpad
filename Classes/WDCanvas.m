@@ -7,6 +7,7 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2009-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import "UIView+Additions.h"
@@ -254,13 +255,13 @@ NSString *WDCanvasBeganTrackingTouches = @"WDCanvasBeganTrackingTouches";
             [UIView animateWithDuration:0.2f
                              animations:^{ [self setRulerAlpha:0.0f]; }
                              completion:^(BOOL finished) { 
-                                 [horizontalRuler_ removeFromSuperview];
-                                 [verticalRuler_ removeFromSuperview];
-                                 [cornerView_ removeFromSuperview]; 
-                                 
-                                 horizontalRuler_ = nil;
-                                 verticalRuler_ = nil;
-                                 cornerView_ = nil;
+                                 [self->horizontalRuler_ removeFromSuperview];
+                                 [self->verticalRuler_ removeFromSuperview];
+                                 [self->cornerView_ removeFromSuperview];
+
+                                 self->horizontalRuler_ = nil;
+                                 self->verticalRuler_ = nil;
+                                 self->cornerView_ = nil;
                              }];
         } else {
             [horizontalRuler_ removeFromSuperview];
@@ -299,10 +300,10 @@ NSString *WDCanvasBeganTrackingTouches = @"WDCanvasBeganTrackingTouches";
 - (void) dismissEyedropper
 {
     [UIView animateWithDuration:kDropperAnimationDuration
-                     animations:^{ eyedropper_.alpha = 0.0f; eyedropper_.transform = CGAffineTransformMakeScale(0.1f, 0.1f); }
+                     animations:^{ self->eyedropper_.alpha = 0.0f; self->eyedropper_.transform = CGAffineTransformMakeScale(0.1f, 0.1f); }
                      completion:^(BOOL finished) {
-                         [eyedropper_ removeFromSuperview];
-                         eyedropper_ = nil;
+                         [self->eyedropper_ removeFromSuperview];
+                         self->eyedropper_ = nil;
                      }];
 }
 

@@ -7,6 +7,7 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2011-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import "UIImage+Additions.h"
@@ -362,7 +363,7 @@ NSString *WDDrawingNewFilenameKey = @"WDDrawingNewFilenameKey";
                 NSURL *newUrl = [NSURL fileURLWithPath:path];
                 [doc saveToURL:newUrl forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
                     dispatch_sync(dispatch_get_main_queue(), ^{
-                        [drawingNames_ addObject:drawingName];
+                        [self->drawingNames_ addObject:drawingName];
                         [self saveDrawingOrder_];
                         [[NSNotificationCenter defaultCenter] postNotificationName:WDDrawingAdded object:drawingName];
                         

@@ -7,6 +7,7 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2011-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import "WDCanvas.h"
@@ -33,9 +34,9 @@
 
 - (void) performAdjustment
 {
-    [self.drawingController adjustColor:^(WDColor *color) { return [color colorBalanceRed:redShift_
-                                                                               green:greenShift_
-                                                                                blue:blueShift_]; }
+    [self.drawingController adjustColor:^(WDColor *color) { return [color colorBalanceRed:self->redShift_
+                                                                                    green:self->greenShift_
+                                                                                     blue:self->blueShift_]; }
                              scope:(WDColorAdjustStroke | WDColorAdjustFill | WDColorAdjustShadow)];
 }
 

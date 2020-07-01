@@ -1159,8 +1159,8 @@
 - (void) undoStatusDidChange:(NSNotification *)aNotification
 {
     dispatch_async(dispatch_get_main_queue(), ^{ 
-        undoItem_.enabled = [document_.undoManager canUndo];
-        redoItem_.enabled = [document_.undoManager canRedo];
+        self->undoItem_.enabled = [self->document_.undoManager canUndo];
+        self->redoItem_.enabled = [self->document_.undoManager canRedo];
         
         // stick this at the end of the queue to make sure that
         // the model has time to respond to the notification first

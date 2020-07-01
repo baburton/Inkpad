@@ -87,10 +87,10 @@
         selectedIndicator_.sharpCenter = center;
     } else if (!flag && selectedIndicator_){
         [UIView animateWithDuration:0.1f
-                         animations:^{ selectedIndicator_.alpha = 0; }
+                         animations:^{ self->selectedIndicator_.alpha = 0; }
                          completion:^(BOOL finished){
-                             [selectedIndicator_ removeFromSuperview];
-                             selectedIndicator_ = nil;
+                             [self->selectedIndicator_ removeFromSuperview];
+                             self->selectedIndicator_ = nil;
                          }];
     }
  }

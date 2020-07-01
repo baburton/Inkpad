@@ -7,6 +7,7 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2011-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #if TARGET_OS_IPHONE
@@ -356,7 +357,7 @@ NSString *WDSelectionChangedNotification = @"WDSelectionChangedNotification";
         }
         
         NSArray *unselected = [layer.elements filter:^BOOL(id obj) {
-            return ![selectedObjects_ containsObject:obj];
+            return ![self->selectedObjects_ containsObject:obj];
         }];
         
         [result addObjectsFromArray:unselected];

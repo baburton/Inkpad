@@ -7,6 +7,7 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2010-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import "UIView+Additions.h"
@@ -58,8 +59,8 @@
                                                      CGRectGetMaxY(self.bounds) - ((height / 3) + 1));
     } else if (!flag && selectedIndicator_){
         [UIView animateWithDuration:0.1f
-                         animations:^{ selectedIndicator_.alpha = 0; }
-                         completion:^(BOOL finished){ [selectedIndicator_ removeFromSuperview]; }];
+                         animations:^{ self->selectedIndicator_.alpha = 0; }
+                         completion:^(BOOL finished){ [self->selectedIndicator_ removeFromSuperview]; }];
         selectedIndicator_ = nil;
     }
 }
