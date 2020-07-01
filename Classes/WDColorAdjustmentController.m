@@ -7,6 +7,7 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2011-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import "WDAppDelegate.h"
@@ -147,6 +148,8 @@
 
 - (void)viewDidLoad
 {
+    [super viewDidLoad];
+
     UIView *panView = [[WDTouchEatingView alloc] initWithFrame:CGRectInset(navBar_.frame, 75, 0)];
     panView.backgroundColor = nil;
     panView.opaque = NO;

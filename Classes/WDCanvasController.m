@@ -1215,15 +1215,17 @@
     
     // revert back to selection tool
     [WDToolManager sharedInstance].activeTool = ([WDToolManager sharedInstance].tools)[0];
+    
+    [super viewWillDisappear:animated];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
+    [super viewWillAppear:animated];
+    
     if (canvas_.drawing) {
         return;
     }
-    
-    [super viewWillAppear:animated];
     
     [self setToolbarItems:[self editingItems] animated:YES];
     

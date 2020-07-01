@@ -306,6 +306,8 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
 
 - (void) viewWillAppear:(BOOL)animated
 {
+    [super viewWillAppear:animated];
+
     if (!everLoaded_) {
         if ([[WDDrawingManager sharedInstance] numberOfDrawings] > 0) {
             // scroll to bottom
