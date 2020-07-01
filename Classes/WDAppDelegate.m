@@ -105,14 +105,12 @@ NSString *WDDropboxWasUnlinkedNotification = @"WDDropboxWasUnlinkedNotification"
 #endif
     
     [[WDDrawingManager sharedInstance] importDrawingAtURL:url errorBlock:^{
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Broken Drawing",
-                                                                                      @"Broken Drawing")
-                                                            message:NSLocalizedString(@"Inkpad could not open the requested drawing.",
-                                                                                      @"Inkpad could not open the requested drawing.")
-                                                           delegate:nil
-                                                  cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
-                                                  otherButtonTitles:nil];
-        [alertView show];
+        UIAlertController *alertView = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Broken Drawing", @"Broken Drawing")
+                                                                           message:NSLocalizedString(@"Inkpad could not open the requested drawing.",
+                                                                                                     @"Inkpad could not open the requested drawing.")
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+        [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"OK") style:UIAlertActionStyleCancel handler:nil]];
+        [self.window.rootViewController presentViewController:alertView animated:YES completion:nil];
     } withCompletionHandler:^(WDDocument *document) {
         UINavigationController *navigationController = (UINavigationController *) self.window.rootViewController;
         
@@ -177,47 +175,31 @@ NSString *WDDropboxWasUnlinkedNotification = @"WDDropboxWasUnlinkedNotification"
 #pragma mark -
 #pragma mark Dropbox
 
-- (void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    if (buttonIndex == alertView.cancelButtonIndex) {
-        return;
-    }
-    
 #if 0 // bab: no dropbox
-    if ([[DBSession sharedSession] isLinked]) {
-        [[DBSession sharedSession] unlinkAll];
-    }
-#endif
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:WDDropboxWasUnlinkedNotification object:self];
-}
-
 - (void) unlinkDropbox
 {
-#if 0 // bab: no dropbox
     if (![[DBSession sharedSession] isLinked]) {
         return;
     }
-#endif
     
     NSString *title = NSLocalizedString(@"Unlink Dropbox", @"Unlink Dropbox");
     NSString *message = NSLocalizedString(@"Are you sure you want to unlink your Dropbox account?",
                                           @"Are you sure you want to unlink your Dropbox account?");
     
-    NSString *unlinkButtonTitle = NSLocalizedString(@"Unlink", @"Unlink");
-    NSString *cancelButtonTitle = NSLocalizedString(@"Cancel", @"Cancel");
-    
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:title
-                                                        message:message
-                                                       delegate:self
-                                              cancelButtonTitle:nil
-                                              otherButtonTitles:unlinkButtonTitle, cancelButtonTitle, nil];
-    alertView.cancelButtonIndex = 1;
-    
-    [alertView show];
+    UIAlertController *alertView = [UIAlertController alertControllerWithTitle:title
+                                                                       message:message
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+    [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Unlink", @"Unlink") style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        if ([[DBSession sharedSession] isLinked]) {
+            [[DBSession sharedSession] unlinkAll];
+        }
+            
+        [[NSNotificationCenter defaultCenter] postNotificationName:WDDropboxWasUnlinkedNotification object:self];
+    }]];
+    [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"Cancel") style:UIAlertActionStyleCancel handler:nil]];
+    [self.window.rootViewController presentViewController:alertView animated:YES completion:nil];
 }
 
-#if 0 // bab: no dropbox
 - (void)sessionDidReceiveAuthorizationFailure:(DBSession *)session userId:(NSString *)userId
 {
 }

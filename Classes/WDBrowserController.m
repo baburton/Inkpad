@@ -464,26 +464,14 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
         message = NSLocalizedString(@"Once deleted, these drawings cannot be recovered.", @"Alert text when deleting multiple drawings");
     }
     
-    NSString *deleteButtonTitle = NSLocalizedString(@"Delete", @"Delete");
-    NSString *cancelButtonTitle = NSLocalizedString(@"Cancel", @"Cancel");
-
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:title
-                                                        message:message
-                                                       delegate:self
-                                              cancelButtonTitle:nil
-                                              otherButtonTitles:deleteButtonTitle, cancelButtonTitle, nil];
-    alertView.cancelButtonIndex = 1;
-    
-    [alertView show];
-}
-
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    if (buttonIndex == alertView.cancelButtonIndex) {
-        return;
-    }
-    
-    [[WDDrawingManager sharedInstance] deleteDrawings:selectedDrawings_];
+    UIAlertController *alertView = [UIAlertController alertControllerWithTitle:title
+                                                                       message:message
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+    [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Delete", @"Delete") style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        [[WDDrawingManager sharedInstance] deleteDrawings:self->selectedDrawings_];
+    }]];
+    [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"Cancel") style:UIAlertActionStyleCancel handler:nil]];
+    [self presentViewController:alertView animated:YES completion:nil];
 }
 
 - (void) showDeleteMenu:(id)sender
@@ -1084,24 +1072,22 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
 {
     NSString *format = NSLocalizedString(@"Inkpad could not import “%@”. It may be corrupt or in a format that's not supported.",
                                          @"Inkpad could not import “%@”. It may be corrupt or in a format that's not supported.");
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Import Problem", @"Import Problem")
-                                                        message:[NSString stringWithFormat:format, filename]
-                                                       delegate:nil
-                                              cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
-                                              otherButtonTitles:nil];
-    [alertView show];
+    UIAlertController *alertView = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Import Problem", @"Import Problem")
+                                                                       message:[NSString stringWithFormat:format, filename]
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+    [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"OK") style:UIAlertActionStyleCancel handler:nil]];
+    [self presentViewController:alertView animated:YES completion:nil];
 }
 
 - (void) showImportMemoryWarningMessage:(NSString *)filename
 {
     NSString *format = NSLocalizedString(@"Inkpad could not import “%@”. There is not enough available memory.",
                                          @"Inkpad could not import “%@”. There is not enough available memory.");
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Import Problem", @"Import Problem")
-                                                        message:[NSString stringWithFormat:format, filename]
-                                                       delegate:nil
-                                              cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
-                                              otherButtonTitles:nil];
-    [alertView show];
+    UIAlertController *alertView = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Import Problem", @"Import Problem")
+                                                                       message:[NSString stringWithFormat:format, filename]
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+    [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"OK") style:UIAlertActionStyleCancel handler:nil]];
+    [self presentViewController:alertView animated:YES completion:nil];
 }
 
 #pragma mark -
@@ -1206,12 +1192,11 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     
     NSString *format = NSLocalizedString(@"There was a problem downloading “%@”. Check your network connection and try again.",
                                          @"There was a problem downloading“%@”. Check your network connection and try again.");
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Download Problem", @"Download Problem")
-                                                        message:[NSString stringWithFormat:format, [downloadPath lastPathComponent]]
-                                                       delegate:nil
-                                              cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
-                                              otherButtonTitles:nil];
-    [alertView show];
+    UIAlertController *alertView = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Download Problem", @"Download Problem")
+                                                                       message:[NSString stringWithFormat:format, [downloadPath lastPathComponent]]
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+    [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"OK") style:UIAlertActionStyleCancel handler:nil]];
+    [self presentViewController:alertView animated:YES completion:nil];
 }
 
 - (void)restClient:(DBRestClient*)client uploadFileFailedWithError:(NSError*)error
@@ -1227,12 +1212,11 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     
     NSString *format = NSLocalizedString(@"There was a problem uploading “%@”. Check your network connection and try again.",
                                          @"There was a problem uploading“%@”. Check your network connection and try again.");
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Upload Problem", @"Upload Problem")
-                                                        message:[NSString stringWithFormat:format, [srcPath lastPathComponent]]
-                                                       delegate:nil
-                                              cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
-                                              otherButtonTitles:nil];
-    [alertView show];
+    UIAlertController *alertView = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Upload Problem", @"Upload Problem")
+                                                                       message:[NSString stringWithFormat:format, [srcPath lastPathComponent]]
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+    [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"OK") style:UIAlertActionStyleCancel handler:nil]];
+    [self presentViewController:alertView animated:YES completion:nil];
 }
 #endif
 

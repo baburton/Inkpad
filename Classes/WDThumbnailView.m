@@ -7,6 +7,7 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2008-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import "WDThumbnailView.h"
@@ -145,9 +146,17 @@
     }
     
     if (errorMessage) {
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil message:errorMessage delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        [alertView show];
-        
+        UIAlertController *alertView = [UIAlertController alertControllerWithTitle:nil
+                                                                           message:errorMessage
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+        [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"OK") style:UIAlertActionStyleCancel handler:nil]];
+
+        // Find the enclosing view controller.
+        UIResponder* r = self;
+        while (r && ! [r isKindOfClass:UIViewController.class])
+            r = r.nextResponder;
+        [(UIViewController*)r presentViewController:alertView animated:YES completion:nil];
+
         [self reloadFilenameFields_];
     }
 }

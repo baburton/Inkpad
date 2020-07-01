@@ -9,6 +9,7 @@
 //  Original implementation by Joe Ricioppo
 //
 //  Copyright (c) 2011-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import <UIKit/UIKit.h>
@@ -18,7 +19,7 @@
 @class DBRestClient;
 
 @interface WDImportController : UIViewController <DBRestClientDelegate,
-                UIAlertViewDelegate, UITableViewDataSource, UITableViewDelegate> {
+                UITableViewDataSource, UITableViewDelegate> {
 
 	UIBarButtonItem                     *importButton_;
 	IBOutlet UIActivityIndicatorView    *activityIndicator_;

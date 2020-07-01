@@ -15,7 +15,7 @@
 #import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 #endif
 
-@interface WDAppDelegate : NSObject <UIApplicationDelegate, UIAlertViewDelegate>
+@interface WDAppDelegate : NSObject <UIApplicationDelegate>
 
 @property (nonatomic, retain) UIWindow *window;
 @property (nonatomic, copy) void (^performAfterDropboxLoginBlock)(void);
