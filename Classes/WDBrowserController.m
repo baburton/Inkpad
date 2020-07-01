@@ -180,9 +180,12 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
         pageSizeController_.target = self;
         pageSizeController_.action = @selector(createNewDrawing:);
         
-        popoverController_ = [[UIPopoverController alloc] initWithContentViewController:navController];
-        popoverController_.delegate = self;
-        [popoverController_ presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
+        popoverController_ = navController;
+        popoverController_.modalPresentationStyle = UIModalPresentationPopover;
+        popoverController_.popoverPresentationController.delegate = self;
+        popoverController_.popoverPresentationController.barButtonItem = sender;
+        popoverController_.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
+        [self presentViewController:popoverController_ animated:NO completion:nil];
     }
 }
 
@@ -244,9 +247,12 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     UINavigationController  *navController = [[UINavigationController alloc] initWithRootViewController:openClipArtController_];
     navController.toolbarHidden = NO;
     
-    popoverController_ = [[UIPopoverController alloc] initWithContentViewController:navController];
-    popoverController_.delegate = self;
-    [popoverController_ presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
+    popoverController_ = navController;
+    popoverController_.modalPresentationStyle = UIModalPresentationPopover;
+    popoverController_.popoverPresentationController.delegate = self;
+    popoverController_.popoverPresentationController.barButtonItem = sender;
+    popoverController_.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
+    [self presentViewController:popoverController_ animated:NO completion:nil];
 }
 
 #pragma mark - Camera
@@ -264,10 +270,12 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     pickerController_.sourceType = sourceType;
     pickerController_.delegate = self;
     
-    popoverController_ = [[UIPopoverController alloc] initWithContentViewController:pickerController_];
-    
-    popoverController_.delegate = self;
-    [popoverController_ presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
+    popoverController_ = pickerController_;
+    popoverController_.modalPresentationStyle = UIModalPresentationPopover;
+    popoverController_.popoverPresentationController.delegate = self;
+    popoverController_.popoverPresentationController.barButtonItem = sender;
+    popoverController_.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
+    [self presentViewController:popoverController_ animated:NO completion:nil];
 }
 
 - (void) importFromAlbum:(id)sender
@@ -288,7 +296,7 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
-    [popoverController_ dismissPopoverAnimated:YES];
+    [popoverController_ dismissViewControllerAnimated:YES completion:nil];
     popoverController_ = nil;
 }
 
@@ -666,9 +674,12 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
 
     UINavigationController  *navController = [[UINavigationController alloc] initWithRootViewController:fontLibraryController_];
     
-    popoverController_ = [[UIPopoverController alloc] initWithContentViewController:navController];
-    popoverController_.delegate = self;
-    [popoverController_ presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
+    popoverController_ = navController;
+    popoverController_.modalPresentationStyle = UIModalPresentationPopover;
+    popoverController_.popoverPresentationController.delegate = self;
+    popoverController_.popoverPresentationController.barButtonItem = sender;
+    popoverController_.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
+    [self presentViewController:popoverController_ animated:NO completion:nil];
 }
 
 - (void) samplesController:(WDSamplesController *)controller didSelectURLs:(NSArray *)sampleURLs
@@ -693,9 +704,12 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:samplesController_];
     
-    popoverController_ = [[UIPopoverController alloc] initWithContentViewController:navController];
-    popoverController_.delegate = self;
-    [popoverController_ presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
+    popoverController_ = navController;
+    popoverController_.modalPresentationStyle = UIModalPresentationPopover;
+    popoverController_.popoverPresentationController.delegate = self;
+    popoverController_.popoverPresentationController.barButtonItem = sender;
+    popoverController_.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
+    [self presentViewController:popoverController_ animated:NO completion:nil];
 }
 
 - (void) showActivityPanel:(id)sender
@@ -712,9 +726,12 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:activityController_];
     
-    popoverController_ = [[UIPopoverController alloc] initWithContentViewController:navController];
-    popoverController_.delegate = self;
-    [popoverController_ presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
+    popoverController_ = navController;
+    popoverController_.modalPresentationStyle = UIModalPresentationPopover;
+    popoverController_.popoverPresentationController.delegate = self;
+    popoverController_.popoverPresentationController.barButtonItem = sender;
+    popoverController_.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
+    [self presentViewController:popoverController_ animated:NO completion:nil];
 }
 
 - (void) activityCountChanged:(NSNotification *)aNotification
@@ -763,7 +780,7 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
 - (void) dismissPopoverAnimated:(BOOL)animated
 {
     if (popoverController_) {
-        [popoverController_ dismissPopoverAnimated:animated];
+        [popoverController_ dismissViewControllerAnimated:animated completion:nil];
         popoverController_ = nil;
     }
     
@@ -787,9 +804,11 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     [self dismissPopoverAnimated:NO];
 }
 
-- (void) popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
+- (void)popoverPresentationControllerDidDismissPopover:(UIPopoverPresentationController *)popoverPresentationController
 {
-    if (popoverController == popoverController_) {
+    // In iOS 13 this method is deprecated in favour of presentationControllerDidDismiss:.
+    // However, if the latter method is missing, this method will still be called.
+    if (popoverPresentationController.presentedViewController == popoverController_) {
         popoverController_ = nil;
     }
     
@@ -899,9 +918,12 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     
     UINavigationController  *navController = [[UINavigationController alloc] initWithRootViewController:exportController_];
     
-    popoverController_ = [[UIPopoverController alloc] initWithContentViewController:navController];
-    popoverController_.delegate = self;
-    [popoverController_ presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
+    popoverController_ = navController;
+    popoverController_.modalPresentationStyle = UIModalPresentationPopover;
+    popoverController_.popoverPresentationController.delegate = self;
+    popoverController_.popoverPresentationController.barButtonItem = sender;
+    popoverController_.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
+    [self presentViewController:popoverController_ animated:NO completion:nil];
 }
 
 #pragma mark - Dropbox
@@ -975,9 +997,12 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     
     UINavigationController  *navController = [[UINavigationController alloc] initWithRootViewController:exportController_];
     
-    popoverController_ = [[UIPopoverController alloc] initWithContentViewController:navController];
-    popoverController_.delegate = self;
-    [popoverController_ presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
+    popoverController_ = navController;
+    popoverController_.modalPresentationStyle = UIModalPresentationPopover;
+    popoverController_.popoverPresentationController.delegate = self;
+    popoverController_.popoverPresentationController.barButtonItem = sender;
+    popoverController_.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
+    [self presentViewController:popoverController_ animated:NO completion:nil];
 }
 
 - (void) showDropboxExportPanel:(id)sender
@@ -1007,9 +1032,12 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
 	
 	UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:importController_];
 	
-	popoverController_ = [[UIPopoverController alloc] initWithContentViewController:navController];
-	popoverController_.delegate = self;
-	[popoverController_ presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
+    popoverController_ = navController;
+    popoverController_.modalPresentationStyle = UIModalPresentationPopover;
+    popoverController_.popoverPresentationController.delegate = self;
+    popoverController_.popoverPresentationController.barButtonItem = sender;
+    popoverController_.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
+    [self presentViewController:popoverController_ animated:NO completion:nil];
 }
 
 - (void) showDropboxImportPanel:(id)sender

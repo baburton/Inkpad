@@ -7,6 +7,7 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2011-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import "WDCanvas.h"
@@ -47,7 +48,7 @@
 - (void) dismissSubtoolsAnimated:(BOOL)animated
 {
     if (subtoolsPopover_) {
-        [subtoolsPopover_ dismissPopoverAnimated:animated];
+        [subtoolsPopover_ dismissViewControllerAnimated:animated completion:nil];
         subtoolsPopover_ = nil;
     }
 }
@@ -160,9 +161,11 @@
     }
 }
 
-- (void) popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
+- (void)popoverPresentationControllerDidDismissPopover:(UIPopoverPresentationController *)popoverPresentationController
 {
-    if (popoverController == subtoolsPopover_) {
+    // In iOS 13 this method is deprecated in favour of presentationControllerDidDismiss:.
+    // However, if the latter method is missing, this method will still be called.
+    if (popoverPresentationController.presentedViewController == subtoolsPopover_) {
         subtoolsPopover_ = nil;
     }
 }
@@ -184,13 +187,23 @@
         vc.preferredContentSize = subtools.frame.size;
         vc.view = subtools;
         
-        subtoolsPopover_ = [[UIPopoverController alloc] initWithContentViewController:vc];
-        subtoolsPopover_.delegate = self;
+        subtoolsPopover_ = vc;
+        subtoolsPopover_.modalPresentationStyle = UIModalPresentationPopover;
+        subtoolsPopover_.popoverPresentationController.delegate = self;
+        subtoolsPopover_.popoverPresentationController.sourceView = self;
+        subtoolsPopover_.popoverPresentationController.sourceRect = self.bounds;
+        subtoolsPopover_.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
         
-        WDToolView *parent = (WDToolView *)self.superview;
-        subtoolsPopover_.passthroughViews = @[self.superview, parent.canvas];
+        // Setting passThroughViews seems to prevent the delegate from detecting
+        // when the popover is dismissed.
+        // WDToolView *parent = (WDToolView *)self.superview;
+        // subtoolsPopover_.passthroughViews = @[self.superview, parent.canvas];
         
-        [subtoolsPopover_ presentPopoverFromRect:self.bounds inView:self permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
+        // Find the enclosing view controller.
+        UIResponder* r = self;
+        while (r && ! [r isKindOfClass:UIViewController.class])
+            r = r.nextResponder;
+        [(UIViewController*)r presentViewController:subtoolsPopover_ animated:NO completion:nil];
     }
 }
 

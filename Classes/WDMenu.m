@@ -7,6 +7,7 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2010-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import "WDMenu.h"
@@ -31,7 +32,7 @@
 @synthesize items = items_;
 @synthesize visible = visible_;
 @synthesize origin = origin_;
-@synthesize popover = popover_;
+@synthesize popoverPresentationController = popoverPresentationController_;
 @synthesize delegate = delegate_;
 
 - (id) initWithItems:(NSArray *)items
@@ -147,9 +148,9 @@
 {
     [self setIndexOfSelectedItem:(-1)];
 
-    [popover_ dismissPopoverAnimated:YES];
+    [popoverPresentationController_.presentedViewController dismissViewControllerAnimated:YES completion:nil];
     
-    [delegate_ popoverControllerDidDismissPopover:popover_];
+    [delegate_ popoverPresentationControllerDidDismissPopover:popoverPresentationController_];
 }
 
 @end

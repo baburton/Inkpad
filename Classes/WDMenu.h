@@ -7,6 +7,7 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2010-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import <UIKit/UIKit.h>
@@ -22,7 +23,7 @@
 @property (nonatomic, strong) NSMutableArray *items;
 @property (nonatomic, assign) BOOL visible;
 @property (nonatomic, assign) CGPoint origin;
-@property (nonatomic, weak) UIPopoverController *popover;
+@property (nonatomic, weak) UIPopoverPresentationController *popoverPresentationController;
 @property (nonatomic, weak) id delegate;
 
 - (id) initWithItems:(NSArray *)items;

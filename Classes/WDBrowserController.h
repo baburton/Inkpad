@@ -33,7 +33,7 @@
 @class OCAViewController;
 
 @interface WDBrowserController : UICollectionViewController <UIActionSheetDelegate,
-                                                             UIPopoverControllerDelegate,
+                                                             UIPopoverPresentationControllerDelegate,
 #if 0 // bab: no dropbox
                                                              DBRestClientDelegate,
 #endif
@@ -56,7 +56,7 @@
     
     NSMutableSet            *selectedDrawings_;
     
-    UIPopoverController     *popoverController_;
+    UIViewController        *popoverController_;
     WDPageSizeController    *pageSizeController_;
     WDExportController      *exportController_;
 #if 0 // bab: no dropbox

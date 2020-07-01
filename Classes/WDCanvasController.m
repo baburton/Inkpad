@@ -70,15 +70,20 @@
         [textController performSelector:@selector(selectAll) withObject:nil afterDelay:0];
     }
     
-    popoverController_ = [[UIPopoverController alloc] initWithContentViewController:textController];
-    popoverController_.passthroughViews = @[canvas_];
-    
-	popoverController_.delegate = self;
+    popoverController_ = textController;
     
     CGRect bounds = CGRectIntegral([canvas_ convertRectToView:[text bounds]]);
     
     UIPopoverArrowDirection permittedArrowDir = (UIPopoverArrowDirectionDown | UIPopoverArrowDirectionLeft | UIPopoverArrowDirectionRight);
-    [popoverController_ presentPopoverFromRect:bounds inView:self.view permittedArrowDirections:permittedArrowDir animated:YES];
+    popoverController_.modalPresentationStyle = UIModalPresentationPopover;
+    popoverController_.popoverPresentationController.delegate = self;
+    // Setting passThroughViews seems to prevent the delegate from detecting
+    // when the popover is dismissed.
+    // popoverController_.popoverPresentationController.passthroughViews = @[canvas_];
+    popoverController_.popoverPresentationController.sourceView = self.view;
+    popoverController_.popoverPresentationController.sourceRect = bounds;
+    popoverController_.popoverPresentationController.permittedArrowDirections = permittedArrowDir;
+    [self presentViewController:popoverController_ animated:YES completion:nil];
 }
 
 #pragma mark -
@@ -122,15 +127,15 @@
         return NO;
     }
     
-    if (insideNav && [popoverController_.contentViewController isKindOfClass:[UINavigationController class]]) {
-        NSArray *viewControllers = [(UINavigationController *)popoverController_.contentViewController viewControllers];
+    if (insideNav && [popoverController_ isKindOfClass:[UINavigationController class]]) {
+        NSArray *viewControllers = [(UINavigationController *)popoverController_ viewControllers];
         
         for (UIViewController *viewController in viewControllers) {
             if ([viewController isKindOfClass:controllerClass]) {
                 return YES;
             }
         }
-    } else if ([popoverController_.contentViewController isKindOfClass:controllerClass]) {
+    } else if ([popoverController_ isKindOfClass:controllerClass]) {
         return YES;
     }
     
@@ -193,7 +198,7 @@
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
-    [popoverController_ dismissPopoverAnimated:YES];
+    [popoverController_ dismissViewControllerAnimated:YES completion:nil];
     popoverController_ = nil;
 }
 
@@ -202,7 +207,7 @@
 
 - (void) showActionMenu:(id)sender
 {
-    if (popoverController_ && (popoverController_.contentViewController.view == actionMenu_)) {
+    if (popoverController_ && (popoverController_.view == actionMenu_)) {
         [self hidePopovers];
         return;
     }
@@ -264,14 +269,14 @@
     controller.view = actionMenu_;
     controller.preferredContentSize = actionMenu_.frame.size;
     
-    actionMenu_.popover = [self runPopoverWithController:controller from:sender];
+    actionMenu_.popoverPresentationController = [self runPopoverWithController:controller from:sender];
     
     visibleMenu_ = actionMenu_;
 }
 
 - (void) showObjectMenu:(id)sender
 {
-    if (popoverController_ && (popoverController_.contentViewController.view == objectMenu_)) {
+    if (popoverController_ && (popoverController_.view == objectMenu_)) {
         [self hidePopovers];
         return;
     }
@@ -344,14 +349,14 @@
     controller.view = objectMenu_;
     controller.preferredContentSize = objectMenu_.frame.size;
     
-    objectMenu_.popover = [self runPopoverWithController:controller from:sender];
+    objectMenu_.popoverPresentationController = [self runPopoverWithController:controller from:sender];
     
     visibleMenu_ = objectMenu_;
 }
 
 - (void) showArrangeMenu:(id)sender
 {
-    if (popoverController_ && (popoverController_.contentViewController.view == arrangeMenu_)) {
+    if (popoverController_ && (popoverController_.view == arrangeMenu_)) {
         [self hidePopovers];
         return;
     }
@@ -457,14 +462,14 @@
     controller.view = arrangeMenu_;
     controller.preferredContentSize = arrangeMenu_.frame.size;
     
-    arrangeMenu_.popover = [self runPopoverWithController:controller from:sender];
+    arrangeMenu_.popoverPresentationController = [self runPopoverWithController:controller from:sender];
     
     visibleMenu_ = arrangeMenu_;
 }
 
 - (void) showPathMenu:(id)sender
 {
-    if (popoverController_ && (popoverController_.contentViewController.view == pathMenu_)) {
+    if (popoverController_ && (popoverController_.view == pathMenu_)) {
         [self hidePopovers];
         return;
     }
@@ -553,14 +558,14 @@
     controller.view = pathMenu_;
     controller.preferredContentSize = pathMenu_.frame.size;
     
-    pathMenu_.popover = [self runPopoverWithController:controller from:sender];
+    pathMenu_.popoverPresentationController = [self runPopoverWithController:controller from:sender];
     
     visibleMenu_ = pathMenu_;
 }
 
 - (void) showColorMenu:(id)sender
 {
-    if ((popoverController_ && (popoverController_.contentViewController.view == colorMenu_)) ||
+    if ((popoverController_ && (popoverController_.view == colorMenu_)) ||
         [self shouldDismissPopoverForClassController:[WDHueSaturationController class] insideNavController:YES] ||
         [self shouldDismissPopoverForClassController:[WDColorBalanceController class] insideNavController:YES])
     {
@@ -612,7 +617,7 @@
     controller.view = colorMenu_;
     controller.preferredContentSize = colorMenu_.frame.size;
     
-    colorMenu_.popover = [self runPopoverWithController:controller from:((WDButton *)sender).barButtonItem];
+    colorMenu_.popoverPresentationController = [self runPopoverWithController:controller from:((WDButton *)sender).barButtonItem];
     
     visibleMenu_ = colorMenu_;
 }
@@ -913,24 +918,29 @@
 #pragma mark -
 #pragma mark Popover Management
 
-- (UIPopoverController *) runPopoverWithController:(UIViewController *)controller from:(id)sender
+- (UIPopoverPresentationController *) runPopoverWithController:(UIViewController *)controller from:(id)sender
 {
     [self hidePopovers];
     
-    popoverController_ = [[UIPopoverController alloc] initWithContentViewController:controller];
-	popoverController_.delegate = self;
-    popoverController_.passthroughViews = @[self.navigationController.toolbar,
-                                           self.navigationController.navigationBar,
-                                           self.canvas];
-    [popoverController_ presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-    
-    return popoverController_;
+    popoverController_ = controller;
+    popoverController_.modalPresentationStyle = UIModalPresentationPopover;
+    popoverController_.popoverPresentationController.delegate = self;
+    // Setting passThroughViews seems to prevent the delegate from detecting
+    // when the popover is dismissed.
+    // popoverController_.popoverPresentationController.passthroughViews = @[self.navigationController.toolbar,
+    //                                                                       self.navigationController.navigationBar,
+    //                                                                       self.canvas];
+    popoverController_.popoverPresentationController.barButtonItem = sender;
+    popoverController_.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
+    [self presentViewController:popoverController_ animated:YES completion:nil];
+
+    return popoverController_.popoverPresentationController;
 }
 
 - (void) hidePopovers
 {
     if (popoverController_) {
-        [popoverController_ dismissPopoverAnimated:NO];
+        [popoverController_ dismissViewControllerAnimated:NO completion:nil];
         popoverController_ = nil;
         visibleMenu_ = nil;
     }
@@ -938,9 +948,13 @@
     [[UIPrintInteractionController sharedPrintController] dismissAnimated:NO];
 }
 
-- (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
+- (void)popoverPresentationControllerDidDismissPopover:(UIPopoverPresentationController *)popoverPresentationController
 {
-    if (popoverController == popoverController_) {
+    // In iOS 13 this method is deprecated in favour of presentationControllerDidDismiss:.
+    // However, if the latter method is missing, this method will still be called.
+    // When we do move to the iOS 13 variant, note that this method is also being
+    // called manually from WDMenu.
+    if (popoverPresentationController.presentedViewController == popoverController_) {
         popoverController_ = nil;
         visibleMenu_ = nil;
     }

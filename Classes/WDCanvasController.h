@@ -7,6 +7,7 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2011-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import <UIKit/UIKit.h>
@@ -37,7 +38,7 @@ enum {
 };
 
 @interface WDCanvasController : UIViewController <UINavigationControllerDelegate, UIImagePickerControllerDelegate,
-                                                    UIPopoverControllerDelegate, UIDocumentInteractionControllerDelegate>
+                                                    UIPopoverPresentationControllerDelegate, UIDocumentInteractionControllerDelegate>
 {
     WDDocument          *document_;
     WDCanvas            *canvas_;
@@ -64,7 +65,7 @@ enum {
     WDMenu              *actionMenu_;
     WDMenu              *visibleMenu_; // pointer to currently active menu
     
-    UIPopoverController *popoverController_;
+    UIViewController    *popoverController_;
     
     WDSwatchController  *swatchController_;
     WDStrokeController  *strokeController_;
@@ -88,7 +89,7 @@ enum {
 - (void) hidePopovers;
 
 - (BOOL) shouldDismissPopoverForClassController:(Class)controllerClass insideNavController:(BOOL)insideNav;
-- (UIPopoverController *) runPopoverWithController:(UIViewController *)controller from:(id)sender;
+- (UIPopoverPresentationController *) runPopoverWithController:(UIViewController *)controller from:(id)sender;
 
 - (void) validateMenuItem:(WDMenuItem *)item;
 - (void) validateVisibleMenuItems;
