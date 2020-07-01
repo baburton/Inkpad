@@ -454,6 +454,8 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
 
 - (void) deleteSelectedDrawings
 {
+    [self dismissPopover];
+    
     NSString *format = NSLocalizedString(@"Delete %d Drawings", @"Delete %d Drawings");
     NSString *title = (selectedDrawings_.count) == 1 ? NSLocalizedString(@"Delete Drawing", @"Delete Drawing") :
     [NSString stringWithFormat:format, selectedDrawings_.count];
@@ -474,37 +476,6 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     }]];
     [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"Cancel") style:UIAlertActionStyleCancel handler:nil]];
     [self presentViewController:alertView animated:YES completion:nil];
-}
-
-- (void) showDeleteMenu:(id)sender
-{
-    if (deleteSheet_) {
-        [self dismissPopover];
-        return;
-    }
-    
-    [self dismissPopover];
-    
-    NSString *format = NSLocalizedString(@"Delete %d Drawings", @"Delete %d Drawings");
-    NSString *title = (selectedDrawings_.count) == 1 ?
-        NSLocalizedString(@"Delete Drawing", @"Delete Drawing") :
-        [NSString stringWithFormat:format, selectedDrawings_.count];
-    
-	deleteSheet_ = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@""
-                                 destructiveButtonTitle:title otherButtonTitles:nil];
-
-    [deleteSheet_ showFromBarButtonItem:sender animated:YES];
-}
-     
- - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    if (actionSheet == deleteSheet_) {
-        if (buttonIndex == actionSheet.destructiveButtonIndex) {
-            [self deleteSelectedDrawings];
-        }
-    }
-    
-    deleteSheet_ = nil;
 }
 
 #pragma mark - Editing
@@ -587,7 +558,7 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     if (!deleteItem_) {
         deleteItem_ = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash
                                                                     target:self
-                                                                    action:@selector(showDeleteMenu:)];
+                                                                    action:@selector(deleteSelectedDrawings)];
     }
     
     UIBarButtonItem *doneItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
@@ -790,11 +761,6 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     fontLibraryController_ = nil;
     samplesController_ = nil;
     activityController_ = nil;
-    
-    if (deleteSheet_) {
-        [deleteSheet_ dismissWithClickedButtonIndex:deleteSheet_.cancelButtonIndex animated:NO];
-        deleteSheet_ = nil;
-    }
 }
 
 - (void) dismissPopover

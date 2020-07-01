@@ -32,8 +32,7 @@
 @class WDExportController;
 @class OCAViewController;
 
-@interface WDBrowserController : UICollectionViewController <UIActionSheetDelegate,
-                                                             UIPopoverPresentationControllerDelegate,
+@interface WDBrowserController : UICollectionViewController <UIPopoverPresentationControllerDelegate,
 #if 0 // bab: no dropbox
                                                              DBRestClientDelegate,
 #endif
@@ -52,7 +51,6 @@
     UIActivityIndicatorView *activityIndicator_;
     UIBarButtonItem         *activityItem_;
     UIBarButtonItem         *deleteItem_;
-    UIActionSheet           *deleteSheet_;
     
     NSMutableSet            *selectedDrawings_;
     
