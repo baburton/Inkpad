@@ -980,17 +980,17 @@
     } 
 
     UIBarButtonItem *objectItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Edit", @"Edit")
-                                                 style:UIBarButtonItemStyleBordered
+                                                 style:UIBarButtonItemStylePlain
                                                 target:self
                                                 action:@selector(showObjectMenu:)];
     
     UIBarButtonItem *arrangeItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Arrange", @"Arrange")
-                                                                 style:UIBarButtonItemStyleBordered
+                                                                 style:UIBarButtonItemStylePlain
                                                                 target:self
                                                                 action:@selector(showArrangeMenu:)];
     
     UIBarButtonItem *pathItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Path", @"Path")
-                                                                   style:UIBarButtonItemStyleBordered
+                                                                   style:UIBarButtonItemStylePlain
                                                                   target:self
                                                                   action:@selector(showPathMenu:)];
     
@@ -1033,7 +1033,7 @@
     imageButton.barButtonItem = swatchItem;
     
     layerItem_ = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Layers", @"Layers")
-                                                  style:UIBarButtonItemStyleBordered
+                                                  style:UIBarButtonItemStylePlain
                                                  target:self
                                                  action:@selector(showLayers:)];
     

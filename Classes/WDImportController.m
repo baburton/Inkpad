@@ -9,6 +9,7 @@
 //  Original implementation by Joe Ricioppo
 //
 //  Copyright (c) 2011-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import <DropboxSDK/DropboxSDK.h>
@@ -381,7 +382,7 @@ static NSString * const WDDropboxSubdirectoryMissingNotification = @"WDDropboxSu
 - (NSArray *)toolbarItems
 {
     UIBarButtonItem *flexibleSpaceItem = [UIBarButtonItem flexibleItem];
-    UIBarButtonItem *unlinkButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Unlink Dropbox", @"Unlink Dropbox") style:UIBarButtonItemStyleBordered target:self action:@selector(unlinkDropbox:)];
+    UIBarButtonItem *unlinkButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Unlink Dropbox", @"Unlink Dropbox") style:UIBarButtonItemStylePlain target:self action:@selector(unlinkDropbox:)];
 
     NSArray *toolbarItems = @[flexibleSpaceItem, unlinkButtonItem];
 
