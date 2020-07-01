@@ -1,0 +1,18 @@
+MIGRATIONS:
+
+- OpenGLES -> Metal
+- Dropbox API v1 -> v2 (or just remove entirely and use Files instead)
+
+FEATURES:
+
+- Support dark mode (and remove UIUserInterfaceStyle=Light from Info.plist)
+
+PROBLEMS:
+
+- Menu popovers (WDMenu) visually broken, gets worse on repeat pressings;
+  examples: export menu, long-press tool selection, arrange menu, etc.
+- OpenClipArt downloads seem completely broken
+- Export preview window has greyed-out (but still working) buttons
+- New text is invisible (default colour palette of white-on-white)
+- Delete drawing -> still shows as 1 item selected
+
