@@ -7,6 +7,7 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2010-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import "WDPageSizeController.h"
@@ -205,7 +206,7 @@ static NSString *orientations_[] = { @"Portrait", @"Landscape" };
     
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     [formatter setMaximumFractionDigits:2];
-    [formatter setRoundingMode:kCFNumberFormatterRoundCeiling];
+    [formatter setRoundingMode:NSNumberFormatterRoundCeiling];
     [formatter setUsesGroupingSeparator:NO];
     
     if (config[@"Custom"]) {

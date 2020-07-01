@@ -7,6 +7,7 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2014 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import "OCAViewController.h"
@@ -250,7 +251,7 @@
 {
     NSArray *tokens = [searchBar.text componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
     NSString *searchTerm = [tokens componentsJoinedByString:@"+"];
-    searchTerm = [searchTerm stringByAddingPercentEscapesUsingEncoding:NSStringEncodingConversionAllowLossy];
+    searchTerm = [searchTerm stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
 
     self.queryString = searchTerm;
     self.moreToLoad = YES;
