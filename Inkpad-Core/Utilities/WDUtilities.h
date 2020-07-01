@@ -7,6 +7,7 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2008-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #if TARGET_OS_IPHONE
@@ -43,7 +44,7 @@ void WDContextDrawImageToFill(CGContextRef ctx, CGRect bounds, CGImageRef imageR
 //
 
 // random value in the range [0.0, 1.0]
-float WDRandomFloat();
+float WDRandomFloat(void);
 
 // remap [0.0, 1.0] to a sine curve
 float WDSineCurve(float input);
@@ -106,7 +107,7 @@ typedef struct {
     CGPoint     corners[4];
 } WDQuad;
 
-WDQuad WDQuadNull();
+WDQuad WDQuadNull(void);
 WDQuad WDQuadMake(CGPoint a, CGPoint b, CGPoint c, CGPoint d);
 WDQuad WDQuadWithRect(CGRect rect, CGAffineTransform transform);
 BOOL WDQuadEqualToQuad(WDQuad a, WDQuad b);
