@@ -92,7 +92,7 @@ NSString *WDDropboxWasUnlinkedNotification = @"WDDropboxWasUnlinkedNotification"
     return YES;
 }
 
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
 {
 #if 0 // bab: no dropbox
     if ([[DBSession sharedSession] handleOpenURL:url]) {
