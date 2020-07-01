@@ -800,10 +800,10 @@ NSString *WDAlignmentKey = @"WDAlignmentKey";
         CTTextAlignment alignment;
         
         switch (alignment_) {
-            case NSTextAlignmentLeft: alignment = kCTLeftTextAlignment; break;
-            case NSTextAlignmentRight: alignment = kCTRightTextAlignment; break;
-            case NSTextAlignmentCenter: alignment = kCTCenterTextAlignment; break;
-            default: alignment = kCTLeftTextAlignment; break;
+            case NSTextAlignmentLeft: alignment = kCTTextAlignmentLeft; break;
+            case NSTextAlignmentRight: alignment = kCTTextAlignmentRight; break;
+            case NSTextAlignmentCenter: alignment = kCTTextAlignmentCenter; break;
+            default: alignment = kCTTextAlignmentLeft; break;
         }
 		
         CTParagraphStyleSetting settings[] = {
