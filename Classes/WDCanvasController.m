@@ -89,7 +89,7 @@
 #pragma mark -
 #pragma mark Interface Rotation
 
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
     [canvas_.selectionView removeFromSuperview];
     canvas_.selectionView = nil;
@@ -101,21 +101,17 @@
     [canvas_ showRulers:NO animated:NO];
     
     [canvas_ nixMessageLabel];
-}
 
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
-{
-    [canvas_ setVisibleRectCenterFromCached];
-    [canvas_ rotateToInterfaceOrientation];
-    
-    [canvas_ showRulers:self.drawing.rulersVisible animated:NO];
-}
-
-- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
-{
-    [canvas_ ensureToolPaletteIsOnScreen];
-    [balanceController_ bringOnScreenAnimated:YES];
-    [hueController_ bringOnScreenAnimated:YES];
+    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+        [self->canvas_ ensureToolPaletteIsOnScreen];
+        [self->balanceController_ bringOnScreenAnimated:YES];
+        [self->hueController_ bringOnScreenAnimated:YES];
+    } completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+        [self->canvas_ setVisibleRectCenterFromCached];
+        [self->canvas_ rotateToInterfaceOrientation];
+        
+        [self->canvas_ showRulers:self.drawing.rulersVisible animated:NO];
+    }];
 }
 
 #pragma mark -

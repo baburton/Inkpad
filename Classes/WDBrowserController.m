@@ -319,7 +319,7 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     }
 }
 
-- (void) willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
     if (editingThumbnail_) {
         [editingThumbnail_ stopEditing];
