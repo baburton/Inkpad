@@ -233,18 +233,6 @@
         
         [menus addObject:[WDMenuItem separatorItem]];
         
-        if (NSClassFromString(@"SLComposeViewController")) { // if we can facebook
-            item = [WDMenuItem itemWithTitle:NSLocalizedString(@"Post on Facebook", @"Post on Facebook")
-                                      action:@selector(postOnFacebook:) target:self];
-            [menus addObject:item];
-        }
-        
-        item = [WDMenuItem itemWithTitle:NSLocalizedString(@"Tweet", @"Tweet")
-                                  action:@selector(tweetDrawing:) target:self];
-        [menus addObject:item];
-        
-        [menus addObject:[WDMenuItem separatorItem]];
-        
         item = [WDMenuItem itemWithTitle:NSLocalizedString(@"Export as PNG", @"Export as PNG")
                                   action:@selector(exportAsPNG:) target:self];
         [menus addObject:item];
@@ -1421,30 +1409,6 @@
     UIPrintInteractionController *printController = [UIPrintInteractionController sharedPrintController];
     printController.printingItem = [self.drawing PDFRepresentation];
     [printController presentFromBarButtonItem:actionItem_ animated:NO completionHandler:nil];
-}
-
-- (void) postOnFacebook:(id)sender
-{
-    SLComposeViewController *facebookSheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
-    
-    [facebookSheet addImage:self.drawing.image];
-    [facebookSheet setInitialText:NSLocalizedString(@"Check out my Inkpad drawing!", @"Check out my Inkpad drawing!")];
-    
-    [self hidePopovers];
-
-    [self presentViewController:facebookSheet animated:YES completion:nil];
-}
-
-- (void) tweetDrawing:(id)sender
-{
-    SLComposeViewController *tweetSheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
-    
-    [tweetSheet addImage:self.drawing.image];
-    [tweetSheet setInitialText:NSLocalizedString(@"Check out my Inkpad drawing!", @"Check out my Inkpad drawing!")];
-
-    [self hidePopovers];
-    
-    [self presentViewController:tweetSheet animated:YES completion:nil];
 }
 
 - (void) copyDrawing:(id)sender
