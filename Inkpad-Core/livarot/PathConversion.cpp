@@ -36,7 +36,7 @@ void            Path::ConvertWithBackData(float treshhold)
 		path_descr*  curD=descr_data+curP;
 		int          nType=curD->flags&descr_type_mask;
 		bool         nWeight=curD->flags&descr_weighted;
-		float        nextX,nextY,nextW;
+        float        nextX=0.0, nextY=0.0, nextW=0.0;
 		if ( nType == descr_forced ) {
 			if ( weighted ) AddForcedPoint(curX,curY,curW,curP,1.0); else AddForcedPoint(curX,curY,curP,1.0);
 			curP++;
@@ -234,7 +234,7 @@ void            Path::ConvertForOffset(float treshhold,Path* orig,float off_dec)
 		path_descr*  curD=descr_data+curP;
 		int          nType=curD->flags&descr_type_mask;
 		bool         nWeight=curD->flags&descr_weighted;
-		float        nextX,nextY,nextW;
+        float        nextX=0.0, nextY=0.0, nextW=0.0;
 		if ( nType == descr_forced ) {
 			AddForcedPoint(curX,curY,curP,1.0);
 			curP++;
@@ -434,7 +434,7 @@ void            Path::Convert(float treshhold)
 		path_descr*  curD=descr_data+curP;
 		int          nType=curD->flags&descr_type_mask;
 		bool         nWeight=curD->flags&descr_weighted;
-		float        nextX,nextY,nextW;
+        float        nextX=0.0, nextY=0.0, nextW=0.0;
 		if ( nType == descr_forced ) {
 			if ( weighted ) (curD)->associated=AddForcedPoint(curX,curY,curW); else (curD)->associated=AddForcedPoint(curX,curY);
 			curP++;
@@ -698,7 +698,7 @@ void            Path::ConvertEvenLines(float treshhold)
 		path_descr*  curD=descr_data+curP;
 		int          nType=curD->flags&descr_type_mask;
 		bool         nWeight=curD->flags&descr_weighted;
-		float        nextX,nextY,nextW;
+        float        nextX=0.0, nextY=0.0, nextW=0.0;
 		if ( nType == descr_forced ) {
 			if ( weighted ) (curD)->associated=AddForcedPoint(curX,curY,curW); else (curD)->associated=AddForcedPoint(curX,curY);
 			curP++;
