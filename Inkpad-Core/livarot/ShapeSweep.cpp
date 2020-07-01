@@ -1926,6 +1926,12 @@ bool              Shape::TesteIntersection(Shape* ils,Shape* irs,int ilb,int irb
 		return true;
 	}
 
+#if 0 // bab: code is never reached
+    // This code appears to have been pulled from an ancient version of Inkscape.
+    // I've checked, and throughout the visible history of Inkscape this same
+    // block of code remains present but unreachable due to the pre-test above it.
+    // I've commented it out now to silence the compiler warning.
+    
 	// a mettre en double precision pour des resultats exacts
 	vec2d  usvs;
 	usvs.x=irs->pData[rSt].rx-ils->pData[lSt].rx;
@@ -2044,6 +2050,7 @@ bool              Shape::TesteIntersection(Shape* ils,Shape* irs,int ilb,int irb
 	atR=dtR;*/
 	
 	return true;
+#endif
 }
 bool              Shape::TesteAdjacency(Shape* a,int no,float atx,float aty,int nPt,bool push)
 {
