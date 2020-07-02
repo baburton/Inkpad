@@ -7,6 +7,7 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2009-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import <UIKit/UIKit.h>
@@ -69,6 +70,7 @@
 
 - (BOOL) canDeleteAnchors;
 - (void) deleteAnchor:(WDBezierNode *)node;
+- (void) deleteAnchors;
 - (NSArray *) selectedNodes;
 - (BOOL) anyNodesSelected;
 - (BOOL) allNodesSelected;
