@@ -9,6 +9,7 @@
 //  Original implementation by Scott Vachalek
 //
 //  Copyright (c) 2011-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import "WDParseUtil.h"
@@ -176,7 +177,7 @@ BOOL decomposeArcToCubic(CGMutablePathRef path, float angle, float rx, float ry,
         case 'z':
             pathLog(@"Close(Z)");
             CGPathCloseSubpath(path_);
-            lastCurveControl_ = lastQuadCurveControl_ = to;
+            lastCurveControl_ = lastQuadCurveControl_ = CGPathGetCurrentPoint(path_);
             break;
         case 'L':
         case 'l':
