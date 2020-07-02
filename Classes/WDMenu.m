@@ -60,6 +60,7 @@
     
     self.opaque = NO;
     self.backgroundColor = nil;
+    self.translatesAutoresizingMaskIntoConstraints = NO;
     self.items = [items mutableCopy];
     
     return self;

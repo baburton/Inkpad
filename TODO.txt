@@ -9,8 +9,6 @@ FEATURES:
 
 PROBLEMS:
 
-- Menu popovers (WDMenu) visually broken, gets worse on repeat pressings;
-  examples: export menu, long-press tool selection, arrange menu, etc.
 - OpenClipArt downloads seem completely broken
 - Export preview window has greyed-out (but still working) buttons
 - New text is invisible (default colour palette of white-on-white)

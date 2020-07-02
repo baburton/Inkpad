@@ -249,13 +249,7 @@
         [self validateMenuItem:item];
     }
     
-    UIViewController *controller = [[UIViewController alloc] init];
-    controller.view = actionMenu_;
-    controller.preferredContentSize = actionMenu_.frame.size;
-    
-    actionMenu_.popoverPresentationController = [self runPopoverWithController:controller from:sender];
-    
-    visibleMenu_ = actionMenu_;
+    [self runPopoverWithMenu:actionMenu_ from:sender];
 }
 
 - (void) showObjectMenu:(id)sender
@@ -329,13 +323,7 @@
         [self validateMenuItem:item];
     }
     
-    UIViewController *controller = [[UIViewController alloc] init];
-    controller.view = objectMenu_;
-    controller.preferredContentSize = objectMenu_.frame.size;
-    
-    objectMenu_.popoverPresentationController = [self runPopoverWithController:controller from:sender];
-    
-    visibleMenu_ = objectMenu_;
+    [self runPopoverWithMenu:objectMenu_ from:sender];
 }
 
 - (void) showArrangeMenu:(id)sender
@@ -442,13 +430,7 @@
         [self validateMenuItem:item];
     }
     
-    UIViewController *controller = [[UIViewController alloc] init];
-    controller.view = arrangeMenu_;
-    controller.preferredContentSize = arrangeMenu_.frame.size;
-    
-    arrangeMenu_.popoverPresentationController = [self runPopoverWithController:controller from:sender];
-    
-    visibleMenu_ = arrangeMenu_;
+    [self runPopoverWithMenu:arrangeMenu_ from:sender];
 }
 
 - (void) showPathMenu:(id)sender
@@ -538,13 +520,7 @@
         [self validateMenuItem:item];
     }
     
-    UIViewController *controller = [[UIViewController alloc] init];
-    controller.view = pathMenu_;
-    controller.preferredContentSize = pathMenu_.frame.size;
-    
-    pathMenu_.popoverPresentationController = [self runPopoverWithController:controller from:sender];
-    
-    visibleMenu_ = pathMenu_;
+    [self runPopoverWithMenu:pathMenu_ from:sender];
 }
 
 - (void) showColorMenu:(id)sender
@@ -597,13 +573,7 @@
     
     [self validateColorMenu];
     
-    UIViewController *controller = [[UIViewController alloc] init];
-    controller.view = colorMenu_;
-    controller.preferredContentSize = colorMenu_.frame.size;
-    
-    colorMenu_.popoverPresentationController = [self runPopoverWithController:controller from:((WDButton *)sender).barButtonItem];
-    
-    visibleMenu_ = colorMenu_;
+    [self runPopoverWithMenu:colorMenu_ from:((WDButton *)sender).barButtonItem];
 }
 
 - (void) validateMenuItem:(WDMenuItem *)item
@@ -919,6 +889,24 @@
     [self presentViewController:popoverController_ animated:YES completion:nil];
 
     return popoverController_.popoverPresentationController;
+}
+
+- (void) runPopoverWithMenu:(WDMenu *)menu from:(id)sender
+{
+    UIViewController *controller = [[UIViewController alloc] init];
+    [controller.view addSubview:menu];
+
+    [NSLayoutConstraint activateConstraints:@[
+        [menu.topAnchor constraintEqualToAnchor:controller.view.safeAreaLayoutGuide.topAnchor],
+        [menu.bottomAnchor constraintEqualToAnchor:controller.view.safeAreaLayoutGuide.bottomAnchor],
+        [menu.leadingAnchor constraintEqualToAnchor:controller.view.safeAreaLayoutGuide.leadingAnchor],
+        [menu.trailingAnchor constraintEqualToAnchor:controller.view.safeAreaLayoutGuide.trailingAnchor]]];
+
+    controller.preferredContentSize = menu.frame.size;
+
+    menu.popoverPresentationController = [self runPopoverWithController:controller from:sender];
+    
+    visibleMenu_ = menu;
 }
 
 - (void) hidePopovers

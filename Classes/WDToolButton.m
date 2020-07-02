@@ -183,23 +183,29 @@
         WDToolView *subtools = [[WDToolView alloc] initWithTools:tools_];
         subtools.owner = self;
         
-        UIViewController *vc = [[UIViewController alloc] initWithNibName:nil bundle:nil];
-        vc.preferredContentSize = subtools.frame.size;
-        vc.view = subtools;
-        
-        subtoolsPopover_ = vc;
+        UIViewController *subtoolsPopover_ = [[UIViewController alloc] init];
+        [subtoolsPopover_.view addSubview:subtools];
+
+        [NSLayoutConstraint activateConstraints:@[
+            [subtools.topAnchor constraintEqualToAnchor:subtoolsPopover_.view.safeAreaLayoutGuide.topAnchor],
+            [subtools.bottomAnchor constraintEqualToAnchor:subtoolsPopover_.view.safeAreaLayoutGuide.bottomAnchor],
+            [subtools.leadingAnchor constraintEqualToAnchor:subtoolsPopover_.view.safeAreaLayoutGuide.leadingAnchor],
+            [subtools.trailingAnchor constraintEqualToAnchor:subtoolsPopover_.view.safeAreaLayoutGuide.trailingAnchor]]];
+
+        subtoolsPopover_.preferredContentSize = subtools.frame.size;
+
         subtoolsPopover_.modalPresentationStyle = UIModalPresentationPopover;
         subtoolsPopover_.popoverPresentationController.delegate = self;
         subtoolsPopover_.popoverPresentationController.sourceView = self;
         subtoolsPopover_.popoverPresentationController.sourceRect = self.bounds;
         subtoolsPopover_.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
-        
+
         // Setting passThroughViews seems to prevent the delegate from detecting
         // when the popover is dismissed.
         // WDToolView *parent = (WDToolView *)self.superview;
         // subtoolsPopover_.passthroughViews = @[self.superview, parent.canvas];
         
-        // Find the enclosing view controller.
+        // Find the enclosing view controller to present from.
         UIResponder* r = self;
         while (r && ! [r isKindOfClass:UIViewController.class])
             r = r.nextResponder;

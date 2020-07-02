@@ -90,6 +90,7 @@ enum {
 
 - (BOOL) shouldDismissPopoverForClassController:(Class)controllerClass insideNavController:(BOOL)insideNav;
 - (UIPopoverPresentationController *) runPopoverWithController:(UIViewController *)controller from:(id)sender;
+- (void) runPopoverWithMenu:(WDMenu *)menu from:(id)sender;
 
 - (void) validateMenuItem:(WDMenuItem *)item;
 - (void) validateVisibleMenuItems;
