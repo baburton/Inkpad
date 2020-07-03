@@ -13,4 +13,3 @@ PROBLEMS:
 
 - OpenClipArt downloads seem completely broken
 - New text is invisible (default colour palette of white-on-white)
-- Delete drawing -> still shows as 1 item selected

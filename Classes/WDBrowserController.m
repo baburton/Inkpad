@@ -476,6 +476,7 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
                                                                 preferredStyle:UIAlertControllerStyleAlert];
     [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Delete", @"Delete") style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
         [[WDDrawingManager sharedInstance] deleteDrawings:self->selectedDrawings_];
+        [self stopEditing:nil];
     }]];
     [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"Cancel") style:UIAlertActionStyleCancel handler:nil]];
     [self presentViewController:alertView animated:YES completion:nil];
