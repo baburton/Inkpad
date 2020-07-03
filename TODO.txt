@@ -4,6 +4,7 @@ MIGRATIONS:
 - Dropbox API v1 -> v2 (or just remove entirely and use Files instead)
 - Convert all XIBs to autolayout
 - Icons to image assets
+- Openclipart API -> FreeSVG API (which requires a login to use)
 
 FEATURES:
 
@@ -11,5 +12,4 @@ FEATURES:
 
 PROBLEMS:
 
-- OpenClipArt downloads seem completely broken
 - New text is invisible (default colour palette of white-on-white)

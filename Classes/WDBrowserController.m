@@ -13,8 +13,10 @@
 #if 0 // bab: no dropbox
 #import <DropboxSDK/DropboxSDK.h>
 #endif
+#if 0 // bab: no openclipart
 #import "OCAEntry.h"
 #import "OCAViewController.h"
+#endif
 #import "NSData+Additions.h"
 #import "WDActivity.h"
 #import "WDActivityController.h"
@@ -126,11 +128,13 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
         [rightBarButtonItems addObject:cameraItem];
     }
     
+#if 0 // bab: no openclipart
     UIBarButtonItem *openClipArtItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"openclipart.png"]
                                                                         style:UIBarButtonItemStylePlain
                                                                        target:self
                                                                        action:@selector(showOpenClipArt:)];
     [rightBarButtonItems addObject:openClipArtItem];
+#endif
 
     // Create a help button to display in the top left corner.
     UIBarButtonItem *leftItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Help", @"Help")
@@ -193,6 +197,7 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
 
 #pragma mark - OpenClipArt
 
+#if 0 // bab: no openclipart
 - (void) takeDataFromDownloader:(OCADownloader *)downloader
 {
     NSString *title = [downloader.info stringByAppendingPathExtension:@"svg"];
@@ -257,6 +262,7 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     popoverController_.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
     [self presentViewController:popoverController_ animated:NO completion:nil];
 }
+#endif
 
 #pragma mark - Camera
 

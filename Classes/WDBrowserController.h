@@ -12,7 +12,9 @@
 
 #import <UIKit/UIKit.h>
 #import <MessageUI/MFMailComposeViewController.h>
+#if 0 // bab: no openclipart
 #import "OCADownloader.h"
+#endif
 #import "WDHelpController.h"
 #if 0 // bab: no dropbox
 #import "WDImportController.h"
@@ -42,8 +44,10 @@
 #endif
                                                              WDSamplesControllerDelegate,
                                                              UINavigationControllerDelegate,
-                                                             UIImagePickerControllerDelegate,
-                                                             OCADownloaderDelegate>
+#if 0 // bab: no openclipart
+                                                             OCADownloaderDelegate,
+#endif
+                                                             UIImagePickerControllerDelegate>
 {
     NSMutableArray          *toolbarItems_;
     UIBarButtonItem         *emailItem_;
@@ -64,7 +68,9 @@
     WDFontLibraryController *fontLibraryController_;
     WDSamplesController     *samplesController_;
     WDActivityController    *activityController_;
+#if 0 // bab: no openclipart
     OCAViewController       *openClipArtController_;
+#endif
     
     DBRestClient            *restClient_;
     NSMutableSet            *filesBeingUploaded_;

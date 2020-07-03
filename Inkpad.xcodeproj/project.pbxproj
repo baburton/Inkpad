@@ -149,11 +149,6 @@
 		6B8396E2189F2FB0001D5985 /* OpenClipArt.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6B8396E0189F2FB0001D5985 /* OpenClipArt.xib */; };
 		6B8396E5189F3767001D5985 /* openclipart.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B8396E3189F3767001D5985 /* openclipart.png */; };
 		6B8396E6189F3767001D5985 /* openclipart@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B8396E4189F3767001D5985 /* openclipart@2x.png */; };
-		6B83970D18A36253001D5985 /* OCADownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B83970418A36253001D5985 /* OCADownloader.m */; };
-		6B83970E18A36253001D5985 /* OCAEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B83970618A36253001D5985 /* OCAEntry.m */; };
-		6B83970F18A36253001D5985 /* OCAThumbnailCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B83970818A36253001D5985 /* OCAThumbnailCache.m */; };
-		6B83971018A36253001D5985 /* OCAThumbnailCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B83970A18A36253001D5985 /* OCAThumbnailCell.m */; };
-		6B83971118A36253001D5985 /* OCAViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B83970C18A36253001D5985 /* OCAViewController.m */; };
 		6B83972F18A41126001D5985 /* ColorBalance.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6B83972518A41125001D5985 /* ColorBalance.strings */; };
 		6B83973018A41126001D5985 /* HueSaturation.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6B83972718A41125001D5985 /* HueSaturation.strings */; };
 		6B83973118A41126001D5985 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6B83972918A41125001D5985 /* Localizable.strings */; };
@@ -2152,14 +2147,11 @@
 				6B1760F513E15D61007016D9 /* WDFontLibraryController.m in Sources */,
 				5D27FE8F13EC992D00EEEFF7 /* WDSamplesController.m in Sources */,
 				6B87EA3913FB3FD000CC07C3 /* WDCoreTextLabel.m in Sources */,
-				6B83971118A36253001D5985 /* OCAViewController.m in Sources */,
-				6B83970D18A36253001D5985 /* OCADownloader.m in Sources */,
 				6B963452140359060096A349 /* WDUserFont.m in Sources */,
 				6B00DA531405F65F00E45409 /* WDActivity.m in Sources */,
 				6B00DA5A1406022B00E45409 /* WDActivityManager.m in Sources */,
 				6B83974218AC5777001D5985 /* WDDynamicGuideController.m in Sources */,
 				6B83973D18A5BA60001D5985 /* WDDynamicGuide.m in Sources */,
-				6B83971018A36253001D5985 /* OCAThumbnailCell.m in Sources */,
 				6B00DA5D140604CE00E45409 /* WDActivityController.m in Sources */,
 				6B74182B140617F100A00C76 /* WDProgressView.m in Sources */,
 				6BABD96D141ED30100F7E0A9 /* NSArray+Additions.m in Sources */,
@@ -2179,7 +2171,6 @@
 				6BABD9A8141ED30100F7E0A9 /* PathConversion.cpp in Sources */,
 				6BABD9A9141ED30100F7E0A9 /* Shape.cpp in Sources */,
 				6B7A881A180CF73000FA241B /* WDArrowhead.m in Sources */,
-				6B83970E18A36253001D5985 /* OCAEntry.m in Sources */,
 				6BABD9AA141ED30100F7E0A9 /* ShapeMisc.cpp in Sources */,
 				6BABD9AB141ED30100F7E0A9 /* ShapeSweep.cpp in Sources */,
 				6BABD9AC141ED30100F7E0A9 /* ShapeSweepUtils.cpp in Sources */,
@@ -2197,7 +2188,6 @@
 				6BABD9B7141ED30100F7E0A9 /* WDGradientStop.m in Sources */,
 				6BABD9B8141ED30100F7E0A9 /* WDGroup.m in Sources */,
 				6BABD9B9141ED30100F7E0A9 /* WDImage.m in Sources */,
-				6B83970F18A36253001D5985 /* OCAThumbnailCache.m in Sources */,
 				6BABD9BA141ED30100F7E0A9 /* WDImageData.m in Sources */,
 				6BABD9BB141ED30100F7E0A9 /* WDInspectableProperties.m in Sources */,
 				6BABD9BC141ED30100F7E0A9 /* WDLayer.m in Sources */,
