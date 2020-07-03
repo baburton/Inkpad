@@ -151,10 +151,8 @@
     }
     
     WDSettingsController *settings = [[WDSettingsController alloc] initWithNibName:nil bundle:nil];
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:settings];
-    
     settings.drawing = document_.drawing;
-    [self runPopoverWithController:navController from:sender];
+    [self runPopoverInsideNavController:settings showToolbar:NO from:sender];
 }
 
 - (void) showPhotoBrowser:(id)sender
@@ -746,10 +744,9 @@
     }
     
     WDFontController *controller = [[WDFontController alloc] initWithNibName:@"Font" bundle:nil];
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:controller];
     controller.drawingController = self.drawingController;
     
-    [self runPopoverWithController:navController from:sender];
+    [self runPopoverInsideNavController:controller showToolbar:NO from:sender];
 }
 
 
@@ -765,8 +762,7 @@
         shadowController_.drawingController = self.drawingController;
     }
     
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:shadowController_];
-    [self runPopoverWithController:navController from:((WDColorWell *)sender).barButtonItem];
+    [self runPopoverInsideNavController:shadowController_ showToolbar:NO from:((WDColorWell *)sender).barButtonItem];
 }
 
 - (void) showFillStylePanel:(id)sender
@@ -781,8 +777,7 @@
         fillController_.drawingController = self.drawingController;
     }
     
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:fillController_];
-    [self runPopoverWithController:navController from:((WDColorWell *)sender).barButtonItem];
+    [self runPopoverInsideNavController:fillController_ showToolbar:NO from:((WDColorWell *)sender).barButtonItem];
 }
 
 - (void) showStrokeStylePanel:(id)sender
@@ -797,8 +792,7 @@
         strokeController_.drawingController = self.drawingController;
     }
     
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:strokeController_];
-    [self runPopoverWithController:navController from:((WDColorWell *)sender).barButtonItem];
+    [self runPopoverInsideNavController:strokeController_ showToolbar:NO from:((WDColorWell *)sender).barButtonItem];
 }
 
 - (void) showSwatches:(id)sender
@@ -813,10 +807,7 @@
         swatchController_.drawingController = self.drawingController;
     }
     
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:swatchController_];
-    navController.toolbarHidden = NO;
-    
-    [self runPopoverWithController:navController from:((WDButton *)sender).barButtonItem];
+    [self runPopoverInsideNavController:swatchController_ showToolbar:YES from:((WDButton *)sender).barButtonItem];
 }
 
 - (void) showLayers:(id)sender
@@ -831,10 +822,7 @@
         layerController_.drawing = self.drawing;
     }
     
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:layerController_];
-    navController.toolbarHidden = NO;
-    
-    [self runPopoverWithController:navController from:sender];
+    [self runPopoverInsideNavController:layerController_ showToolbar:YES from:sender];
 }
 
 - (void) showHueAndSaturation:(id)sender
@@ -889,6 +877,15 @@
     [self presentViewController:popoverController_ animated:YES completion:nil];
 
     return popoverController_.popoverPresentationController;
+}
+
+- (void) runPopoverInsideNavController:(UIViewController *)content showToolbar:(BOOL)showToolbar from:(id)sender
+{
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:content];
+    if (showToolbar)
+        nav.toolbarHidden = NO;
+    
+    [self runPopoverWithController:nav from:sender];
 }
 
 - (void) runPopoverWithMenu:(WDMenu *)menu from:(id)sender
