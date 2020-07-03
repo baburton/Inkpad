@@ -302,8 +302,6 @@ const float kMaxStrokeWidth = 300.0f;
 {
     [super viewDidLoad];
     
-    self.edgesForExtendedLayout = UIRectEdgeNone;
-
     colorController_ = [[WDColorController alloc] initWithNibName:@"Color" bundle:nil];
     
     [self.view addSubview:colorController_.view];

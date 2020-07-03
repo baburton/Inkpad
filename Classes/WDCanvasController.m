@@ -882,6 +882,7 @@
 - (void) runPopoverInsideNavController:(UIViewController *)content showToolbar:(BOOL)showToolbar from:(id)sender
 {
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:content];
+    nav.navigationBar.translucent = NO; // Ensure that contents start *below* the navigation bar
     if (showToolbar)
         nav.toolbarHidden = NO;
     
@@ -1164,9 +1165,6 @@
     canvas_ = [[WDCanvas alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     canvas_.controller = self;
     self.view = canvas_;
-    
-    // we don't want to go under the nav bar and tool bar
-    self.edgesForExtendedLayout = UIRectEdgeNone;
 }
 
 - (void) didEnterBackground:(NSNotification *)aNotification
