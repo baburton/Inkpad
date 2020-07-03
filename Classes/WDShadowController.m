@@ -236,6 +236,7 @@
 		cell.textLabel.text = NSLocalizedString(@"Blend Mode", @"Blend Mode");
 	}
 	cell.detailTextLabel.text = [blendModeController_ displayNameForBlendMode:blendMode_];
+    cell.backgroundColor = [UIColor clearColor];
 	
 	return cell;
 }
