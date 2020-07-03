@@ -1431,7 +1431,7 @@
     if(exportFileUrl) {
         self.documentInteractionController = [UIDocumentInteractionController interactionControllerWithURL:exportFileUrl];
         [self.documentInteractionController setDelegate:self];
-        [self.documentInteractionController presentPreviewAnimated:YES];
+        [self.documentInteractionController presentOptionsMenuFromBarButtonItem:actionItem_ animated:YES];
     }
 }
 

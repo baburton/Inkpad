@@ -12,6 +12,5 @@ FEATURES:
 PROBLEMS:
 
 - OpenClipArt downloads seem completely broken
-- Export preview window has greyed-out (but still working) buttons
 - New text is invisible (default colour palette of white-on-white)
 - Delete drawing -> still shows as 1 item selected
