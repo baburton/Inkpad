@@ -60,12 +60,11 @@
 - (void) loadView
 {
     table = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320, 428) style:UITableViewStylePlain];
-    self.view = table;
-    
     table.delegate = self;
     table.dataSource = self;
     table.allowsSelection = YES;
-    
+    self.view = table;
+
     self.preferredContentSize = table.frame.size;
 }
 
