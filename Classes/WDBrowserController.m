@@ -247,6 +247,7 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     }
     
     UINavigationController  *navController = [[UINavigationController alloc] initWithRootViewController:openClipArtController_];
+    navController.navigationBar.translucent = NO; // Ensure content starts below the navigation bar
     navController.toolbarHidden = NO;
     
     popoverController_ = navController;

@@ -10,8 +10,6 @@ FEATURES:
 
 PROBLEMS:
 
-- Popover layouts to check:
-  + BROWSER: All
 - OpenClipArt downloads seem completely broken
 - Export preview window has greyed-out (but still working) buttons
 - New text is invisible (default colour palette of white-on-white)
