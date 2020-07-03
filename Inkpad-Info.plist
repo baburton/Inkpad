@@ -98,6 +98,8 @@
 	<true/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Inkpad allows you to import pictures that you take using the camera.</string>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchImages~ipad</key>
