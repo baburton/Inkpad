@@ -9,8 +9,12 @@ FEATURES:
 
 PROBLEMS:
 
+- Popover layouts to check:
+  + CANVAS: (Nav) Settings, Layers, Stroke, Fill, Shadow, Font ; (Other) Swatches, Photos, Text Edit
+  + BROWSER: All
 - OpenClipArt downloads seem completely broken
 - Export preview window has greyed-out (but still working) buttons
 - New text is invisible (default colour palette of white-on-white)
 - Delete drawing -> still shows as 1 item selected
+- Add photo is behaving very strangely (both browser and canvas)
 
