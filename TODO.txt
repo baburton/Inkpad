@@ -18,4 +18,4 @@ PROBLEMS:
 DROPBOX:
 
 - Progress reporting for activities, or else remove the round circles
-- Download dropbox thumbnails
+- Check the minor TODOs in WDImportController.m

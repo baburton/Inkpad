@@ -19,6 +19,9 @@
 #import "WDImportController.h"
 #import "UIBarButtonItem+Additions.h"
 
+DBFILESThumbnailSize* fetchThumbnailSize = nil;
+DBFILESThumbnailFormat* fetchThumbnailFormat = nil;
+
 @interface WDImportController ()
 - (WDImportController *)subdirectoryImportControllerForPath:(NSString *)subdirectoryPath;
 - (NSArray *)toolbarItems;
@@ -81,7 +84,6 @@ static NSString * const WDDropboxSubdirectoryMissingNotification = @"WDDropboxSu
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(failedLoadingMissingSubdirectory:) name:WDDropboxSubdirectoryMissingNotification object:nil];
 	
 	selectedItems_ = [[NSMutableSet<DBFILESFileMetadata*> alloc] init];
-	itemsKeyedByImagePath_ = [[NSMutableDictionary alloc] init];
 	itemsFailedImageLoading_ = [[NSMutableSet alloc] init];
     
     NSFileManager *fm = [NSFileManager defaultManager];
@@ -201,33 +203,51 @@ static NSString * const WDDropboxSubdirectoryMissingNotification = @"WDDropboxSu
 		cell.userInteractionEnabled = supportedFile ? YES : NO;
 		cell.imageView.image = [self iconForPathExtension:dropboxItem.name.pathExtension];
 		
-#if 0 // bab: no thumbnails
-        // The Dropbox API docs say that a thumbnail only exists if:
-        // - the file extension is one of: jpg, jpeg, png, tiff, tif, gif or bmp; and
-        // - the file has size < 20MB.
-		if (dropboxItem.thumbnailExists) {
-            // keep the path extension since multiple files can have the same name (with different extensions)
-			NSString    *flatPath = [dropboxItem.path stringByReplacingOccurrencesOfString:@"/" withString:@"_"];
-			NSString    *cachedImagePath = [imageCacheDirectory_ stringByAppendingString:flatPath];
-			UIImage     *dropboxItemIcon = [UIImage imageWithContentsOfFile:cachedImagePath];
-            BOOL        outOfDate = NO;
-            
-			if (dropboxItemIcon) {
-				cell.imageView.image = dropboxItemIcon;
-                
-                // we have a cached thumbnail, see if it's out of date relative to Dropbox
-                NSFileManager *fm = [NSFileManager defaultManager];
-                NSDictionary *attrs = [fm attributesOfItemAtPath:cachedImagePath error:NULL];
-                NSDate *cachedDate = attrs[NSFileModificationDate];
-                outOfDate = !cachedDate || [cachedDate compare:dropboxItem.lastModifiedDate] == NSOrderedAscending;
-			} 
-            
-            if (!dropboxItemIcon || outOfDate) {
-				itemsKeyedByImagePath_[cachedImagePath] = dropboxItem;
-				[dropboxClient_ loadThumbnail:dropboxItem.path ofSize:kDropboxThumbSizeLarge intoPath:cachedImagePath];
-            }
-		}
-#endif
+        // Load the thumbnail, if dropbox has one.
+        if (! fetchThumbnailSize)
+            fetchThumbnailSize = [[DBFILESThumbnailSize alloc] initWithW64h64];
+        if (! fetchThumbnailFormat)
+            fetchThumbnailFormat = [[DBFILESThumbnailFormat alloc] initWithPng];
+        
+        NSString    *cachedImagePath = [NSString stringWithFormat:@"%@/%@_%ld@2x.png",
+                                        imageCacheDirectory_, dropboxFile.id_, (long)fetchThumbnailSize.tag];
+        NSLog(@"Cached: %@", cachedImagePath);
+        UIImage     *dropboxItemIcon = [UIImage imageWithContentsOfFile:cachedImagePath];
+        BOOL        outOfDate = NO;
+        
+        if (dropboxItemIcon) {
+            // TODO: Smaller thumbnails cause the text labels to be mis-aligned.
+            // Probably the fix for this is to create a custom table cell,
+            // with appropriate constraints on the UIImageView.
+            cell.imageView.image = dropboxItemIcon;
+
+            // we have a cached thumbnail, see if it's out of date relative to Dropbox
+            NSFileManager *fm = [NSFileManager defaultManager];
+            NSDictionary *attrs = [fm attributesOfItemAtPath:cachedImagePath error:NULL];
+            NSDate *cachedDate = attrs[NSFileModificationDate];
+            outOfDate = !cachedDate || [cachedDate compare:dropboxFile.serverModified] == NSOrderedAscending;
+        }
+        
+        if (!dropboxItemIcon || outOfDate) {
+            [[dropboxClient_.filesRoutes getThumbnailUrl:dropboxFile.id_
+                                                  format:nil
+                                                    size:fetchThumbnailSize
+                                                    mode:nil
+                                               overwrite:YES
+                                             destination:[NSURL fileURLWithPath:cachedImagePath]]
+             setResponseBlock:^(DBFILESFileMetadata * _Nullable result, DBFILESThumbnailError * _Nullable routeError, DBRequestError * _Nullable networkError, NSURL * _Nonnull destination) {
+                if (routeError || networkError || ! result) {
+                    // Silently ignore missing or failed thumbnails.
+                } else {
+                    UIImage *image = [UIImage imageWithContentsOfFile:cachedImagePath];
+                    if (image) {
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            [self->contentsTable_ reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+                        });
+                    }
+                }
+            }];
+        }
         
         // always need to update the cell checkmark since they're reused
         [cell setAccessoryType:[selectedItems_ containsObject:dropboxFile] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone];
@@ -267,48 +287,6 @@ static NSString * const WDDropboxSubdirectoryMissingNotification = @"WDDropboxSu
 	[importButton_ setTitle:[self importButtonTitle]];
 	[importButton_ setEnabled:selectedItems_.count > 0 ? YES : NO];
 }
-
-#pragma mark -
-#pragma mark DBRestClientDelegate
-
-#if 0 // bab: no thumbnails
-- (void)restClient:(DBRestClient*)client loadedThumbnail:(NSString*)imagePath
-{	
-	UIImage *image = [UIImage imageWithContentsOfFile:imagePath];
-	CGSize imageViewSize = CGSizeMake(40, 40);
-    
-    UIGraphicsBeginImageContextWithOptions(imageViewSize, NO, 0);
-    [image drawToFillRect:CGRectMake(0, 0, imageViewSize.width, imageViewSize.height)];
-    UIImage *scaledImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-
-	[UIImagePNGRepresentation(scaledImage) writeToFile:imagePath atomically:YES];
-	
-	DBMetadata *item = [itemsKeyedByImagePath_ valueForKey:imagePath];
-	NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[dropboxItems_ indexOfObject:item] inSection:0];
-	
-	[contentsTable_ reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-	[itemsKeyedByImagePath_ removeObjectForKey:imagePath];
-}
-
-- (void)restClient:(DBRestClient*)client loadThumbnailFailedWithError:(NSError*)error
-{
-	NSString *itemRemotePath = [[error userInfo] valueForKey:@"path"];
-	NSString *itemLocalPath = [[error userInfo] valueForKey:@"destinationPath"];
-	
-	DBMetadata *failedItem = [itemsKeyedByImagePath_ valueForKey:itemLocalPath];
-	
-	if ([itemsFailedImageLoading_ containsObject:failedItem]) {
-#if WD_DEBUG
-		NSLog(@"Loading dropbox thumbnail encountered error: %@", error);
-#endif
-		return;
-	} else {
-		[itemsFailedImageLoading_ addObject:failedItem];
-		[dropboxClient_ loadThumbnail:itemRemotePath ofSize:kDropboxThumbSizeLarge intoPath:itemLocalPath];
-	}
-}
-#endif
 
 #pragma mark -
 #pragma mark Notifications

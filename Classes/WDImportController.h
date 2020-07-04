@@ -26,8 +26,7 @@
 	IBOutlet UITableView                *contentsTable_;
 	NSArray<DBFILESMetadata*>           *dropboxItems_;
 	NSMutableSet<DBFILESFileMetadata*>  *selectedItems_;
-	NSMutableDictionary                 *itemsKeyedByImagePath_;
-	NSMutableSet                        *itemsFailedImageLoading_;
+	NSMutableSet<NSString*>             *itemsFailedImageLoading_;
 	BOOL                                isRoot_;
 	NSString                            *imageCacheDirectory_;
 	DBUserClient                        *dropboxClient_;
