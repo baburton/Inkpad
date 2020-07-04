@@ -19,10 +19,9 @@
 #import "WDFontManager.h"
 #import "WDGradient.h"
 #import "WDInspectableProperties.h"
+#import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 
-#if 0 // bab: no dropbox
 NSString *WDDropboxWasUnlinkedNotification = @"WDDropboxWasUnlinkedNotification";
-#endif
 
 @implementation WDAppDelegate
 
@@ -32,23 +31,9 @@ NSString *WDDropboxWasUnlinkedNotification = @"WDDropboxWasUnlinkedNotification"
 #pragma mark -
 #pragma mark Application lifecycle
 
-- (void)applicationDidFinishLaunching:(UIApplication *)application
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary<UIApplicationLaunchOptionsKey,id> *)launchOptions
 {
-#if 0 // bab: no dropbox
-    #if !WD_DEBUG
-    #warning "Set appropriate Dropbox keys before submitting to the app store"
-    #endif
-    
-    NSLog(@"No Dropbox Keys!");
-    
-    NSString *consumerKey = @"xxxx";
-    NSString *consumerSecret = @"xxxx";
-    
-    DBSession *session = [[DBSession alloc] initWithAppKey:consumerKey appSecret:consumerSecret root:kDBRootAppFolder];
-    
-    session.delegate = self; // DBSessionDelegate methods allow you to handle re-authenticating
-    [DBSession setSharedSession:session];
-#endif
+    [DBClientsManager setupWithAppKey:@"xxxx"];
     
     // Load the fonts at startup. Dispatch this call at the end of the main queue;
     // It will then dispatch the real work on another queue after the app launches.
@@ -59,6 +44,16 @@ NSString *WDDropboxWasUnlinkedNotification = @"WDDropboxWasUnlinkedNotification"
     [self clearTempDirectory];
     
     [self setupDefaults];
+    
+    if (launchOptions) {
+        NSURL *url = launchOptions[UIApplicationLaunchOptionsURLKey];
+        
+        if (url) {
+            return [self validFile:url];
+        }
+    }
+    
+    return YES;
 }
 
 - (BOOL) validFile:(NSURL *)url
@@ -77,34 +72,25 @@ NSString *WDDropboxWasUnlinkedNotification = @"WDDropboxWasUnlinkedNotification"
     return (drawing ? YES : NO);
 }
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
-    [self applicationDidFinishLaunching:application];
-    
-    if (launchOptions) {
-        NSURL *url = launchOptions[UIApplicationLaunchOptionsURLKey];
-        
-        if (url) {
-            return [self validFile:url];
-        }
-    }
-    
-    return YES;
-}
-
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
 {
-#if 0 // bab: no dropbox
-    if ([[DBSession sharedSession] handleOpenURL:url]) {
-        if ([[DBSession sharedSession] isLinked]) {
-            if (self.performAfterDropboxLoginBlock) {
-                self.performAfterDropboxLoginBlock();
-                self.performAfterDropboxLoginBlock = nil;
+    DBOAuthResult *authResult = [DBClientsManager handleRedirectURL:url];
+    if (authResult) {
+        if ([authResult isSuccess]) {
+            NSLog(@"Dropbox: Successfully logged in");
+            if ([DBClientsManager authorizedClient]) {
+                if (self.performAfterDropboxLoginBlock) {
+                    self.performAfterDropboxLoginBlock();
+                    self.performAfterDropboxLoginBlock = nil;
+                }
             }
+        } else if ([authResult isCancel]) {
+            NSLog(@"Dropbox: Authorization flow cancelled");
+        } else if ([authResult isError]) {
+            NSLog(@"Dropbox: Error: %@", authResult);
         }
         return YES;
     }
-#endif
     
     [[WDDrawingManager sharedInstance] importDrawingAtURL:url errorBlock:^{
         UIAlertController *alertView = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Broken Drawing", @"Broken Drawing")
@@ -177,10 +163,9 @@ NSString *WDDropboxWasUnlinkedNotification = @"WDDropboxWasUnlinkedNotification"
 #pragma mark -
 #pragma mark Dropbox
 
-#if 0 // bab: no dropbox
 - (void) unlinkDropbox
 {
-    if (![[DBSession sharedSession] isLinked]) {
+    if (! [DBClientsManager authorizedClient]) {
         return;
     }
     
@@ -192,19 +177,11 @@ NSString *WDDropboxWasUnlinkedNotification = @"WDDropboxWasUnlinkedNotification"
                                                                        message:message
                                                                 preferredStyle:UIAlertControllerStyleAlert];
     [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Unlink", @"Unlink") style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
-        if ([[DBSession sharedSession] isLinked]) {
-            [[DBSession sharedSession] unlinkAll];
-        }
-            
+        [DBClientsManager unlinkAndResetClients];
         [[NSNotificationCenter defaultCenter] postNotificationName:WDDropboxWasUnlinkedNotification object:self];
     }]];
     [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"Cancel") style:UIAlertActionStyleCancel handler:nil]];
     [self.window.rootViewController presentViewController:alertView animated:YES completion:nil];
 }
-
-- (void)sessionDidReceiveAuthorizationFailure:(DBSession *)session userId:(NSString *)userId
-{
-}
-#endif
 
 @end

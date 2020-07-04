@@ -10,16 +10,14 @@
 //  Copyright (c) 2020 Ben Burton
 //
 
-#if 0 // bab: no dropbox
-#import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
-#endif
 #import "WDAppDelegate.h"
+#import "WDBrowserController.h"
 #import "WDExportController.h"
 
 @implementation WDExportController
 
 @synthesize mode = mode_;
-@synthesize target = target_;
+@synthesize browser = browser_;
 @synthesize action = action_;
 @synthesize formats = formats_;
 
@@ -37,7 +35,7 @@ NSString *WDDropboxFormatDefault = @"WDDropboxFormatDefault";
 
 - (void) sendAction:(id)obj
 {
-    [[UIApplication sharedApplication] sendAction:action_ to:target_ from:self forEvent:nil];
+    [[UIApplication sharedApplication] sendAction:action_ to:browser_ from:self forEvent:nil];
 }
 
 - (void)loadView
@@ -66,14 +64,6 @@ NSString *WDDropboxFormatDefault = @"WDDropboxFormatDefault";
     [self performSelector:@selector(sendAction:) withObject:nil afterDelay:0];
 }
 
-#if 0 // bab: no dropbox
-- (void) unlinkDropbox:(id)sender
-{
-    WDAppDelegate *appDelegate = (WDAppDelegate *) [UIApplication sharedApplication].delegate;
-    [appDelegate unlinkDropbox];
-}
-#endif
-
 - (void) setMode:(NSUInteger) mode
 {
     mode_ = mode;
@@ -88,16 +78,11 @@ NSString *WDDropboxFormatDefault = @"WDDropboxFormatDefault";
     } else {
         self.title = NSLocalizedString(@"Dropbox", @"Dropbox");
         
-#if 0 // bab: no dropbox
         UIBarButtonItem *rightItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Upload", @"Upload") style:UIBarButtonItemStyleDone target:self action:@selector(doExport:)];
         self.navigationItem.rightBarButtonItem = rightItem;
         
-        UIBarButtonItem *leftItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Unlink", @"Unlink") style:UIBarButtonItemStylePlain target:self action:@selector(unlinkDropbox:)];
+        UIBarButtonItem *leftItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Unlink", @"Unlink") style:UIBarButtonItemStylePlain target:self.browser action:@selector(unlinkDropbox:)];
         self.navigationItem.leftBarButtonItem = leftItem;
-#else
-        self.navigationItem.rightBarButtonItem = nil;
-        self.navigationItem.leftBarButtonItem = nil;
-#endif
     }
 }
 

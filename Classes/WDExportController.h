@@ -7,9 +7,12 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2011-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import <UIKit/UIKit.h>
+
+@class WDBrowserController;
 
 enum {
     kWDExportViaEmailMode,
@@ -29,8 +32,14 @@ typedef enum {
     IBOutlet    UITableView     *formatTable_;
 }
 
+/**
+ * The browser that manages this export controller.
+ *
+ * This must be set before \a mode.
+ */
+@property (nonatomic, weak) WDBrowserController* browser;
+
 @property (nonatomic, assign) NSUInteger mode;
-@property (nonatomic, weak) id target;
 @property (nonatomic, assign) SEL action;
 @property (nonatomic, readonly) NSArray *formats;
 

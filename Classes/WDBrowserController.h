@@ -28,16 +28,13 @@
 @class WDPageSizeController;
 @class WDThumbnailView;
 
-@class DBRestClient;
+@class DBUserClient;
 @class WDActivityController;
 @class WDBlockingView;
 @class WDExportController;
 @class OCAViewController;
 
 @interface WDBrowserController : UICollectionViewController <UIPopoverPresentationControllerDelegate,
-#if 0 // bab: no dropbox
-                                                             DBRestClientDelegate,
-#endif
                                                              MFMailComposeViewControllerDelegate,
 #if 0 // bab: no dropbox
                                                              WDImportControllerDelegate,
@@ -72,7 +69,7 @@
     OCAViewController       *openClipArtController_;
 #endif
     
-    DBRestClient            *restClient_;
+    DBUserClient            *dbClient_;
     NSMutableSet            *filesBeingUploaded_;
     WDActivityManager       *activities_;
 
@@ -85,5 +82,6 @@
 }
 
 - (void) startEditingDrawing:(WDDocument *)drawing;
+- (void) unlinkDropbox:(id)sender;
 
 @end

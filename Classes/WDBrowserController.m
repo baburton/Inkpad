@@ -10,9 +10,7 @@
 //  Copyright (c) 2020 Ben Burton
 //
 
-#if 0 // bab: no dropbox
-#import <DropboxSDK/DropboxSDK.h>
-#endif
+#import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 #if 0 // bab: no openclipart
 #import "OCAEntry.h"
 #import "OCAViewController.h"
@@ -71,12 +69,10 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
                                                  name:WDDrawingsDeleted
                                                object:nil];
     
-#if 0 // bab: no dropbox
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(dropboxUnlinked:)
                                                  name:WDDropboxWasUnlinkedNotification
                                                object:nil];
-#endif
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillShow:)
@@ -556,14 +552,12 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
         [items addObject:fixedItem];
     }
     
-#if 0 // bab: no dropbox
     if (!dropboxExportItem_) {
         dropboxExportItem_ = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Dropbox", @"Dropbox")
                                                               style:UIBarButtonItemStylePlain
                                                              target:self
                                                              action:@selector(showDropboxExportPanel:)];
     }
-#endif
     
     if (!deleteItem_) {
         deleteItem_ = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash
@@ -575,9 +569,7 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
                                                                               target:self
                                                                               action:@selector(stopEditing:)];
     
-#if 0 // bab: no dropbox
     [items addObject:dropboxExportItem_];
-#endif
     [items addObject:flexibleItem];
     [items addObject:deleteItem_];
     [items addObject:fixedItem];
@@ -885,10 +877,9 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     [self dismissPopover];
     
     exportController_ = [[WDExportController alloc] initWithNibName:nil bundle:nil];
-    exportController_.mode = kWDExportViaEmailMode;
-    
+    exportController_.browser = self; // Must come before setting mode
     exportController_.action = @selector(emailDrawings:);
-    exportController_.target = self;
+    exportController_.mode = kWDExportViaEmailMode;
     
     UINavigationController  *navController = [[UINavigationController alloc] initWithRootViewController:exportController_];
     
@@ -902,16 +893,12 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
 
 #pragma mark - Dropbox
 
-#if 0 // bab: no dropbox
 - (void) uploadDrawings:(id)sender
 {
     [self dismissPopover];
     
-    if (!restClient_) {
-        restClient_ = [[DBRestClient alloc] initWithSession:[DBSession sharedSession]];
-        restClient_.delegate = self;
-        
-        [restClient_ loadMetadata:@"/"];
+    if (!dbClient_) {
+        dbClient_ = [DBClientsManager authorizedClient];
     }
     
     NSString *format = [[NSUserDefaults standardUserDefaults] objectForKey:WDDropboxFormatDefault];
@@ -939,11 +926,41 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
                     path = [[path stringByDeletingPathExtension] stringByAppendingPathExtension:[format lowercaseString]];
                     [data writeToFile:path atomically:YES];
                     
+                    NSString* dropboxPath = [NSString stringWithFormat:@"/%@", path.lastPathComponent];
                     
-                    [restClient_ uploadFile:[path lastPathComponent] toPath:[self appFolderPath]
-                              withParentRev:nil fromPath:path];
-                    [activities_ addActivity:[WDActivity activityWithFilePath:path type:WDActivityTypeUpload]];
-                    [filesBeingUploaded_ addObject:path];
+                    // TODO: If/when we reintroduce progress tracking, we need to periodically call
+                    // [activities_ updateProgressForFilepath:srcPath progress:progress].
+                    [[self->dbClient_.filesRoutes uploadUrl:dropboxPath inputUrl:path] setResponseBlock:^(DBFILESFileMetadata * _Nullable result, DBFILESUploadError * _Nullable routeError, DBRequestError * _Nullable networkError) {
+                        if (routeError || networkError || ! result) {
+                            // This is asynchronous, and so the user might have called up a new
+                            // popover since we started the upload.
+                            [self dismissPopover];
+
+                            [self->activities_ removeActivityWithFilepath:path];
+                            [self->filesBeingUploaded_ removeObject:path];
+                            
+                            [[self getThumbnail:path.lastPathComponent] stopActivity];
+                            
+                            [self properlyEnableToolbarItems];
+                            
+                            NSString *format = NSLocalizedString(@"There was a problem uploading “%@”. Check your network connection and try again.",
+                                                                 @"There was a problem uploading “%@”. Check your network connection and try again.");
+                            UIAlertController *alertView = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Upload Problem", @"Upload Problem")
+                                                                                               message:[NSString stringWithFormat:format, path.lastPathComponent]
+                                                                                        preferredStyle:UIAlertControllerStyleAlert];
+                            [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"OK") style:UIAlertActionStyleCancel handler:nil]];
+                            [self presentViewController:alertView animated:YES completion:nil];
+                        } else {
+                            [self->filesBeingUploaded_ removeObject:path];
+                            [self->activities_ removeActivityWithFilepath:path];
+                            
+                            [[self getThumbnail:path.lastPathComponent] stopActivity];
+                            
+                            [self properlyEnableToolbarItems];
+                        }
+                    }];
+                    [self->activities_ addActivity:[WDActivity activityWithFilePath:path type:WDActivityTypeUpload]];
+                    [self->filesBeingUploaded_ addObject:path];
                     
                     [[self getThumbnail:filename] startActivity];
                 }
@@ -964,10 +981,9 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     [self dismissPopover];
     
     exportController_ = [[WDExportController alloc] initWithNibName:nil bundle:nil];
-    exportController_.mode = kWDExportViaDropboxMode;
-    
+    exportController_.browser = self; // Must come before setting mode
     exportController_.action = @selector(uploadDrawings:);
-    exportController_.target = self;
+    exportController_.mode = kWDExportViaDropboxMode;
     
     UINavigationController  *navController = [[UINavigationController alloc] initWithRootViewController:exportController_];
     
@@ -991,6 +1007,7 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
 
 #pragma mark -
 
+#if 0 // bab: no dropbox
 - (void) reallyShowDropboxImportPanel:(id)sender
 {
 	if (importController_) {
@@ -1078,51 +1095,47 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
 
 #pragma mark -
 
-- (NSString*) appFolderPath
+- (void) unlinkDropbox:(id)sender
 {
-    NSString* appFolderPath = @"Inkpad";
-    if (![appFolderPath isAbsolutePath]) {
-        appFolderPath = [@"/" stringByAppendingString:appFolderPath];
-    }
+    // Dismiss popovers, since the unlink process presents its own alert.
+    [self dismissPopoverAnimated:NO];
     
-    return appFolderPath;
+    [(WDAppDelegate*)[UIApplication sharedApplication].delegate unlinkDropbox];
 }
 
-#if 0 // bab: no dropbox
 - (void) dropboxUnlinked:(NSNotification *)aNotification
 {
     [self dismissPopoverAnimated:YES];
+    dbClient_ = nil;
 }
 
 - (BOOL) dropboxIsLinked
 {
-    if ([[DBSession sharedSession] isLinked]) {
+    if ([DBClientsManager authorizedClient].isAuthorized) {
         return YES;
     } else {
         [self dismissPopover];
         
-        [[DBSession sharedSession] linkUserId:nil fromController:self];
+        [DBClientsManager authorizeFromController:[UIApplication sharedApplication]
+                                       controller:self
+                                          openURL:^(NSURL * _Nonnull url) {
+            [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
+                if (! success) {
+                    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Could not link with Dropbox"
+                                                                                   message:@"I was not able to link Inkpad with Dropbox."
+                                                                            preferredStyle:UIAlertControllerStyleAlert];
+                    [alert addAction:[UIAlertAction actionWithTitle:@"Close" style:UIAlertActionStyleCancel handler:nil]];
+                    [self presentViewController:alert animated:YES completion:nil];
+                }
+            }];
+        }];
         return NO;
     }
 }
 
 #pragma mark -
 
-- (void)restClient:(DBRestClient*)client uploadedFile:(NSString*)destPath from:(NSString*)srcPath
-{
-    [filesBeingUploaded_ removeObject:srcPath];
-    [activities_ removeActivityWithFilepath:srcPath];
-    
-    [[self getThumbnail:[srcPath lastPathComponent]] stopActivity];
-    
-    [self properlyEnableToolbarItems];
-}
-
-- (void)restClient:(DBRestClient*)client uploadProgress:(CGFloat)progress forFile:(NSString*)destPath from:(NSString*)srcPath;
-{
-    [activities_ updateProgressForFilepath:srcPath progress:progress];
-}
-
+#if 0 // bab: no dropbox
 - (void)restClient:(DBRestClient*)client loadProgress:(CGFloat)progress forFile:(NSString*)destPath
 {
     [activities_ updateProgressForFilepath:destPath progress:progress];
@@ -1177,29 +1190,9 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
 	[[NSFileManager defaultManager] removeItemAtPath:downloadPath error:NULL];
     
     NSString *format = NSLocalizedString(@"There was a problem downloading “%@”. Check your network connection and try again.",
-                                         @"There was a problem downloading“%@”. Check your network connection and try again.");
+                                         @"There was a problem downloading “%@”. Check your network connection and try again.");
     UIAlertController *alertView = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Download Problem", @"Download Problem")
                                                                        message:[NSString stringWithFormat:format, [downloadPath lastPathComponent]]
-                                                                preferredStyle:UIAlertControllerStyleAlert];
-    [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"OK") style:UIAlertActionStyleCancel handler:nil]];
-    [self presentViewController:alertView animated:YES completion:nil];
-}
-
-- (void)restClient:(DBRestClient*)client uploadFileFailedWithError:(NSError*)error
-{
-    NSString *srcPath = [[error userInfo] valueForKey:@"sourcePath"];
-	
-    [activities_ removeActivityWithFilepath:srcPath];
-    [filesBeingUploaded_ removeObject:srcPath];
-    
-    [[self getThumbnail:[srcPath lastPathComponent]] stopActivity];
-    
-    [self properlyEnableToolbarItems];
-    
-    NSString *format = NSLocalizedString(@"There was a problem uploading “%@”. Check your network connection and try again.",
-                                         @"There was a problem uploading“%@”. Check your network connection and try again.");
-    UIAlertController *alertView = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Upload Problem", @"Upload Problem")
-                                                                       message:[NSString stringWithFormat:format, [srcPath lastPathComponent]]
                                                                 preferredStyle:UIAlertControllerStyleAlert];
     [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"OK") style:UIAlertActionStyleCancel handler:nil]];
     [self presentViewController:alertView animated:YES completion:nil];
