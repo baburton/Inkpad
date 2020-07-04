@@ -16,6 +16,7 @@
 		05A99D1624AB500500B904C7 /* ObjectiveDropboxOfficial.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05A99D1524AB500500B904C7 /* ObjectiveDropboxOfficial.framework */; };
 		05A99D2024AB745900B904C7 /* Launch.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 05A99D1E24AB745800B904C7 /* Launch.storyboard */; };
 		05A99D2224ABF73600B904C7 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05A99D2124ABF73600B904C7 /* CoreServices.framework */; };
+		05A99D2524B062D300B904C7 /* WDImportController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D348D881386FDA200BB0047 /* WDImportController.m */; };
 		1D3623260D0F684500981E51 /* WDAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* WDAppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		29E28F8415115F68007D36DE /* WDEmail.m in Sources */ = {isa = PBXBuildFile; fileRef = 29E28F8315115F68007D36DE /* WDEmail.m */; };
@@ -2210,6 +2211,7 @@
 				6BA45794180F778F00B51D7A /* WDArrowheadCell.m in Sources */,
 				6BABD9D6141ED30100F7E0A9 /* WDPenTool.m in Sources */,
 				6BABD9D7141ED30100F7E0A9 /* WDRotateTool.m in Sources */,
+				05A99D2524B062D300B904C7 /* WDImportController.m in Sources */,
 				6BABD9D8141ED30100F7E0A9 /* WDScaleTool.m in Sources */,
 				6BABD9D9141ED30100F7E0A9 /* WDScissorTool.m in Sources */,
 				6BABD9DA141ED30100F7E0A9 /* WDSelectionTool.m in Sources */,

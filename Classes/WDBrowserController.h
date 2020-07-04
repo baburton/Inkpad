@@ -16,9 +16,7 @@
 #import "OCADownloader.h"
 #endif
 #import "WDHelpController.h"
-#if 0 // bab: no dropbox
 #import "WDImportController.h"
-#endif
 #import "WDSamplesController.h"
 
 @class WDActivityManager;
@@ -36,9 +34,6 @@
 
 @interface WDBrowserController : UICollectionViewController <UIPopoverPresentationControllerDelegate,
                                                              MFMailComposeViewControllerDelegate,
-#if 0 // bab: no dropbox
-                                                             WDImportControllerDelegate,
-#endif
                                                              WDSamplesControllerDelegate,
                                                              UINavigationControllerDelegate,
 #if 0 // bab: no openclipart
@@ -58,9 +53,7 @@
     UIViewController        *popoverController_;
     WDPageSizeController    *pageSizeController_;
     WDExportController      *exportController_;
-#if 0 // bab: no dropbox
 	WDImportController		*importController_;
-#endif
     UIImagePickerController *pickerController_;
     WDFontLibraryController *fontLibraryController_;
     WDSamplesController     *samplesController_;
@@ -82,6 +75,10 @@
 }
 
 - (void) startEditingDrawing:(WDDocument *)drawing;
+- (void) importController:(WDImportController *)controller didSelectDropboxItems:(NSArray<DBFILESFileMetadata*> *)dropboxItems;
+- (void) showDropboxImportPanel:(id)sender;
+- (BOOL) dropboxIsLinked;
 - (void) unlinkDropbox:(id)sender;
+- (void) dismissPopover;
 
 @end

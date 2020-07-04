@@ -14,3 +14,8 @@ PROBLEMS:
 
 - New text is invisible (default colour palette of white-on-white)
 - Open inkpad file from another app
+
+DROPBOX:
+
+- Progress reporting for activities, or else remove the round circles
+- Download dropbox thumbnails

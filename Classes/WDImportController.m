@@ -12,14 +12,14 @@
 //  Copyright (c) 2020 Ben Burton
 //
 
-#import <DropboxSDK/DropboxSDK.h>
+#import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 #import "UIImage+Additions.h"
 #import "WDAppDelegate.h"
+#import "WDBrowserController.h"
 #import "WDImportController.h"
 #import "UIBarButtonItem+Additions.h"
 
 @interface WDImportController ()
-- (WDImportController *)inkpadDirectoryImportController;
 - (WDImportController *)subdirectoryImportControllerForPath:(NSString *)subdirectoryPath;
 - (NSArray *)toolbarItems;
 - (UIImage *) iconForPathExtension:(NSString *)pathExtension;
@@ -34,7 +34,7 @@ static NSString * const WDDropboxSubdirectoryMissingNotification = @"WDDropboxSu
 @implementation WDImportController
 
 @synthesize remotePath = remotePath_;
-@synthesize delegate = delegate_;
+@synthesize browser = browser_;
 
 + (NSSet *) supportedImageFormats
 {
@@ -80,7 +80,7 @@ static NSString * const WDDropboxSubdirectoryMissingNotification = @"WDDropboxSu
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(failedLoadingMissingSubdirectory:) name:WDDropboxSubdirectoryMissingNotification object:nil];
 	
-	selectedItems_ = [[NSMutableSet alloc] init];
+	selectedItems_ = [[NSMutableSet<DBFILESFileMetadata*> alloc] init];
 	itemsKeyedByImagePath_ = [[NSMutableDictionary alloc] init];
 	itemsFailedImageLoading_ = [[NSMutableSet alloc] init];
     
@@ -93,9 +93,7 @@ static NSString * const WDDropboxSubdirectoryMissingNotification = @"WDDropboxSu
 		[fm createDirectoryAtPath:imageCacheDirectory_ withIntermediateDirectories:YES attributes:nil error:NULL];
 	}
 	
-	dropboxClient_ = [[DBRestClient alloc] initWithSession:[DBSession sharedSession]];
-	dropboxClient_.delegate = self;
-    
+    dropboxClient_ = [DBClientsManager authorizedClient];
     
 	importButton_ = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Import", @"Import")
                                                      style:UIBarButtonItemStyleDone target:self
@@ -122,40 +120,40 @@ static NSString * const WDDropboxSubdirectoryMissingNotification = @"WDDropboxSu
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
+    // Regarding paths:
+    // - Dropbox requires the root path to be specified as "" (no slash),
+    //   but all subfolders to be specified in the form "/foo/bar" (with an initial slash).
+    // - What looks like the root path to us is actually the app folder on dropbox.
 
-	NSString *rootPath = @"/";
-	
-	// first pass - push last viewed directory, or default to Inkpad directory, creating if necessary
+	// first pass - push last viewed directory, or default to app directory (which to our client is just the root).
 	if (remotePath_ == nil) {
-		self.remotePath = rootPath;
+		self.remotePath = @"";
 		isRoot_ = YES;
 		
 		NSString *lastPathVisited = [[NSUserDefaults standardUserDefaults] stringForKey:WDDropboxLastPathVisited];
-		if ([lastPathVisited isEqual:rootPath]) {
+        if ((! lastPathVisited) || lastPathVisited.length == 0) {
+            // Use the root folder (which is really the app folder on dropbox).
 			[activityIndicator_ startAnimating];
-			[dropboxClient_	loadMetadata:remotePath_];			
-			
+            [self fetchFolderContents:remotePath_];
 		} else if (lastPathVisited.length > 1) {
-			NSString *currentPath = rootPath;
+            NSString *currentPath = @"/";
 			NSArray *pathComponents = [lastPathVisited componentsSeparatedByString:@"/"];
 			for (NSString *pathComponent in pathComponents) {				
 				if (pathComponent.length == 0) { // first component is an empty string
 					continue;
 				}
 				currentPath = [currentPath stringByAppendingPathComponent:pathComponent];
+                
 				WDImportController *subdirectoryImportController = [self subdirectoryImportControllerForPath:currentPath];
 				[self.navigationController pushViewController:subdirectoryImportController animated:NO];
 			}
-			
-		} else {
-			WDImportController *inkpadDirectoryImportController = [self inkpadDirectoryImportController];
-			[self.navigationController pushViewController:inkpadDirectoryImportController animated:NO];
 		}
 
 	// pushed or popped-to view controller
 	} else {
 		[activityIndicator_ startAnimating];
-		[dropboxClient_	loadMetadata:remotePath_];
+        [self fetchFolderContents:remotePath_];
 	}
 }
 
@@ -178,10 +176,10 @@ static NSString * const WDDropboxSubdirectoryMissingNotification = @"WDDropboxSu
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {	
-	DBMetadata *dropboxItem = dropboxItems_[indexPath.row];
+	DBFILESMetadata *dropboxItem = dropboxItems_[indexPath.row];
 	UITableViewCell *cell = nil;
 	
-	if (dropboxItem.isDirectory) {
+	if ([dropboxItem isKindOfClass:[DBFILESFolderMetadata class]]) {
 		static NSString *kDirectoryCellIdentifier = @"kDirectoryCellIdentifier";
 		cell = [tableView dequeueReusableCellWithIdentifier:kDirectoryCellIdentifier];
 		if (cell == nil) {
@@ -190,17 +188,23 @@ static NSString * const WDDropboxSubdirectoryMissingNotification = @"WDDropboxSu
 			cell.imageView.image = [UIImage imageNamed:@"dropbox_icon_directory.png"];
 		}
 	} else {
+        DBFILESFileMetadata *dropboxFile = (DBFILESFileMetadata*)dropboxItem;
+        
 		static NSString *kItemCellIdentifier = @"kItemCellIdentifier";
 		cell = [contentsTable_ dequeueReusableCellWithIdentifier:kItemCellIdentifier];
 		if (cell == nil) {
 			cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kItemCellIdentifier];
 		}
 		
-		BOOL supportedFile = [WDImportController canImportType:[dropboxItem.path pathExtension]];
+        BOOL supportedFile = [WDImportController canImportType:dropboxItem.name.pathExtension];
 		cell.textLabel.textColor = supportedFile ? [UIColor blackColor] : [UIColor grayColor];
 		cell.userInteractionEnabled = supportedFile ? YES : NO;
-		cell.imageView.image = [self iconForPathExtension:[dropboxItem.path pathExtension]];
+		cell.imageView.image = [self iconForPathExtension:dropboxItem.name.pathExtension];
 		
+#if 0 // bab: no thumbnails
+        // The Dropbox API docs say that a thumbnail only exists if:
+        // - the file extension is one of: jpg, jpeg, png, tiff, tif, gif or bmp; and
+        // - the file has size < 20MB.
 		if (dropboxItem.thumbnailExists) {
             // keep the path extension since multiple files can have the same name (with different extensions)
 			NSString    *flatPath = [dropboxItem.path stringByReplacingOccurrencesOfString:@"/" withString:@"_"];
@@ -223,12 +227,13 @@ static NSString * const WDDropboxSubdirectoryMissingNotification = @"WDDropboxSu
 				[dropboxClient_ loadThumbnail:dropboxItem.path ofSize:kDropboxThumbSizeLarge intoPath:cachedImagePath];
             }
 		}
+#endif
         
         // always need to update the cell checkmark since they're reused
-        [cell setAccessoryType:[selectedItems_ containsObject:dropboxItem] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone];
+        [cell setAccessoryType:[selectedItems_ containsObject:dropboxFile] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone];
 	}
 
-	cell.textLabel.text = [[dropboxItem path] lastPathComponent];
+    cell.textLabel.text = dropboxItem.name;
 	return cell;
 }
 
@@ -237,17 +242,22 @@ static NSString * const WDDropboxSubdirectoryMissingNotification = @"WDDropboxSu
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath 
 {
-	DBMetadata *selectedItem = dropboxItems_[indexPath.row];	
+	DBFILESMetadata *selectedItem = dropboxItems_[indexPath.row];
 
-	if (selectedItem.isDirectory) {		
-		WDImportController *subdirectoryImportController = [self subdirectoryImportControllerForPath:selectedItem.path];
+	if ([selectedItem isKindOfClass:[DBFILESFolderMetadata class]]) {
+        NSString* nextPath = (self.remotePath.length == 0 ? @"/" : self.remotePath);
+        nextPath = [nextPath stringByAppendingPathComponent:selectedItem.name];
+        
+        WDImportController *subdirectoryImportController = [self subdirectoryImportControllerForPath:nextPath];
 		[self.navigationController pushViewController:subdirectoryImportController animated:YES];
-	} else {
-		if (![selectedItems_ containsObject:selectedItem]) {
-			[selectedItems_ addObject:selectedItem];
+	} else if ([selectedItem isKindOfClass:[DBFILESFileMetadata class]]) {
+        DBFILESFileMetadata *selectedFile = (DBFILESFileMetadata*)selectedItem;
+
+        if (![selectedItems_ containsObject:selectedFile]) {
+			[selectedItems_ addObject:selectedFile];
 			[[tableView cellForRowAtIndexPath:indexPath] setAccessoryType:UITableViewCellAccessoryCheckmark];
 		} else {
-			[selectedItems_ removeObject:selectedItem];
+			[selectedItems_ removeObject:selectedFile];
 			[[tableView cellForRowAtIndexPath:indexPath] setAccessoryType:UITableViewCellAccessoryNone];
 		}
 	}
@@ -261,49 +271,7 @@ static NSString * const WDDropboxSubdirectoryMissingNotification = @"WDDropboxSu
 #pragma mark -
 #pragma mark DBRestClientDelegate
 
-- (void)restClient:(DBRestClient*)client loadedMetadata:(DBMetadata*)metadata
-{	
-    if (metadata.isDeleted) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:WDDropboxSubdirectoryMissingNotification object:nil];
-        return;
-    }
-    
-    [activityIndicator_ stopAnimating];
-    NSPredicate *removeSoftDeletedFilesPredicate = [NSPredicate predicateWithFormat:@"self.isDeleted == NO"];
-    dropboxItems_ = [metadata.contents filteredArrayUsingPredicate:removeSoftDeletedFilesPredicate];
-    [contentsTable_ reloadData];
-}
-
-- (void)restClient:(DBRestClient*)client loadMetadataFailedWithError:(NSError*)error
-{
-	NSString *missingRemotePath = [[error userInfo] valueForKey:@"path"];
-	NSString *lastVisitedPath = [[NSUserDefaults standardUserDefaults] valueForKey:WDDropboxLastPathVisited];
-	if ([error code] == 404 && [missingRemotePath isEqualToString:lastVisitedPath]) {
-		[[NSNotificationCenter defaultCenter] postNotificationName:WDDropboxSubdirectoryMissingNotification object:nil];
-	} else if ([error code] == 404 && [[[[error userInfo] valueForKey:@"path"] lastPathComponent] isEqualToString:@"Inkpad"]) {
-		[dropboxClient_ createFolder:@"/Inkpad"];
-	} else {
-		[activityIndicator_ stopAnimating];
-#if WD_DEBUG
-		NSLog(@"Dropbox metadata load encountered error: %@", error);
-#endif
-	}
-}
-
-- (void)restClient:(DBRestClient*)client createdFolder:(DBMetadata*)folder 
-{	
-	[dropboxClient_ loadMetadata:folder.path];
-}
-
-- (void)restClient:(DBRestClient*)client createFolderFailedWithError:(NSError*)error
-{
-	[activityIndicator_ stopAnimating];
-    
-#if WD_DEBUG
-	NSLog(@"Dropbox sub-folder creation encountered error: %@", error);
-#endif
-}
-
+#if 0 // bab: no thumbnails
 - (void)restClient:(DBRestClient*)client loadedThumbnail:(NSString*)imagePath
 {	
 	UIImage *image = [UIImage imageWithContentsOfFile:imagePath];
@@ -340,6 +308,7 @@ static NSString * const WDDropboxSubdirectoryMissingNotification = @"WDDropboxSu
 		[dropboxClient_ loadThumbnail:itemRemotePath ofSize:kDropboxThumbSizeLarge intoPath:itemLocalPath];
 	}
 }
+#endif
 
 #pragma mark -
 #pragma mark Notifications
@@ -355,32 +324,105 @@ static NSString * const WDDropboxSubdirectoryMissingNotification = @"WDDropboxSu
 
 #pragma mark -
 
+- (void) fetchFolderContents:(NSString*)dropboxPath
+{
+    [[dropboxClient_.filesRoutes listFolder:dropboxPath] setResponseBlock:^(DBFILESListFolderResult *response, DBFILESListFolderError *routeError, DBRequestError *networkError) {
+        if (routeError || networkError || ! response) {
+            if (networkError && networkError.tag == DBRequestErrorAuth) {
+                // We have already checked for a valid login.
+                // However: if the user is logged in but the app folder is missing,
+                // we get an authentication error here.
+                NSLog(@"Dropbox authentication error: relinking");
+                
+                UIBarButtonItem* importFrom = self.popoverPresentationController.barButtonItem;
+                [self->browser_ dismissPopover];
+                
+                // Unlink dropbox.
+                // Do this directly through the dropbox API to avoid a confirmation box.
+                [DBClientsManager unlinkAndResetClients];
+                [[NSNotificationCenter defaultCenter] postNotificationName:WDDropboxWasUnlinkedNotification object:self];
+                
+                // Reopen the import panel, which should prompt to relink with dropbox again.
+                [self->browser_ showDropboxImportPanel:importFrom];
+                return;
+            }
+            if (dropboxPath.length > 0 /* not the root */) {
+                NSString *lastVisitedPath = [[NSUserDefaults standardUserDefaults] valueForKey:WDDropboxLastPathVisited];
+                if ([dropboxPath isEqualToString:lastVisitedPath]) {
+                    // We tried to open the subfolder that we were in last time, but something broke.
+                    // Just pop back to the app folder (which to us looks like the root).
+                    [[NSNotificationCenter defaultCenter] postNotificationName:WDDropboxSubdirectoryMissingNotification object:nil];
+                    return;
+                }
+            }
+            // TODO: We should really show some kind of error condition to the user.
+            [self->activityIndicator_ stopAnimating];
+
+            if (routeError)
+                NSLog(@"Dropbox folder load encountered route error: %@", routeError);
+            if (networkError)
+                NSLog(@"Dropbox folder load encountered network error: %@", networkError);
+            if (! (routeError || networkError))
+                NSLog(@"Dropbox folder load returned no response");
+        } else {
+            [self fetchFolderContentsResponse:response];
+        }
+    }];
+}
+
+- (void) fetchFolderContentsResponse:(DBFILESListFolderResult*)response
+{
+    if ([response.hasMore boolValue]) {
+        [[dropboxClient_.filesRoutes listFolderContinue:response.cursor] setResponseBlock:^(DBFILESListFolderResult *response, DBFILESListFolderContinueError *routeError, DBRequestError *networkError) {
+            if (routeError || networkError || ! response) {
+                // TODO: We should really show some kind of error condition to the user.
+                [self->activityIndicator_ stopAnimating];
+
+                if (routeError)
+                    NSLog(@"Dropbox folder load encountered route error: %@", routeError);
+                if (networkError)
+                    NSLog(@"Dropbox folder load encountered network error: %@", networkError);
+                if (! (routeError || networkError))
+                    NSLog(@"Dropbox folder load returned no response");
+            } else {
+                [self fetchFolderContentsResponse:response];
+            }
+        }];
+    } else {
+        [activityIndicator_ stopAnimating];
+        
+        dropboxItems_ = [response.entries sortedArrayUsingComparator:^NSComparisonResult(DBFILESMetadata*  _Nonnull obj1, DBFILESMetadata*  _Nonnull obj2) {
+            if ([obj1 isKindOfClass:DBFILESFolderMetadata.class] && [obj2 isKindOfClass:DBFILESFileMetadata.class])
+                return NSOrderedAscending;
+            if ([obj1 isKindOfClass:DBFILESFileMetadata.class] && [obj2 isKindOfClass:DBFILESFolderMetadata.class])
+                return NSOrderedDescending;
+            return [obj1.name localizedCaseInsensitiveCompare:obj2.name];
+        }];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self->contentsTable_ reloadData];
+        });
+    }
+}
+
 - (void) importSelectedItems:(id)sender
 {
-	if (delegate_ && [(id) delegate_ respondsToSelector:@selector(importController:didSelectDropboxItems:)]) {
-		[delegate_ importController:self didSelectDropboxItems:[selectedItems_ allObjects]];
-	}
+    [browser_ importController:self didSelectDropboxItems:[selectedItems_ allObjects]];
 }
 
 - (void) unlinkDropbox:(id)sender
 {
-    WDAppDelegate *appDelegate = (WDAppDelegate *) [UIApplication sharedApplication].delegate;
-    [appDelegate unlinkDropbox];
+    [browser_ unlinkDropbox:sender];
 }
 
 #pragma mark -
-
-- (WDImportController *)inkpadDirectoryImportController
-{
-	return [self subdirectoryImportControllerForPath:@"/Inkpad"];
-}
 
 - (WDImportController *)subdirectoryImportControllerForPath:(NSString *)subdirectoryPath
 {
 	WDImportController *subdirectoryImportController = [[WDImportController alloc] initWithNibName:@"Import" bundle:nil];
 	subdirectoryImportController.remotePath = subdirectoryPath;
 	subdirectoryImportController.title = [subdirectoryPath lastPathComponent];
-	subdirectoryImportController.delegate = self.delegate;
+	subdirectoryImportController.browser = self.browser;
 
 	return subdirectoryImportController;
 }

@@ -14,36 +14,31 @@
 
 #import <UIKit/UIKit.h>
 
-@protocol WDImportControllerDelegate;
+@class DBFILESMetadata;
+@class DBFILESFileMetadata;
+@class DBUserClient;
+@class WDBrowserController;
 
-@class DBRestClient;
-
-@interface WDImportController : UIViewController <DBRestClientDelegate,
-                UITableViewDataSource, UITableViewDelegate> {
+@interface WDImportController : UIViewController <UITableViewDataSource, UITableViewDelegate> {
 
 	UIBarButtonItem                     *importButton_;
 	IBOutlet UIActivityIndicatorView    *activityIndicator_;
 	IBOutlet UITableView                *contentsTable_;
-	NSArray                             *dropboxItems_;
-	NSMutableSet                        *selectedItems_;
+	NSArray<DBFILESMetadata*>           *dropboxItems_;
+	NSMutableSet<DBFILESFileMetadata*>  *selectedItems_;
 	NSMutableDictionary                 *itemsKeyedByImagePath_;
 	NSMutableSet                        *itemsFailedImageLoading_;
 	BOOL                                isRoot_;
 	NSString                            *imageCacheDirectory_;
-	DBRestClient                        *dropboxClient_;
+	DBUserClient                        *dropboxClient_;
 	NSFileManager                       *fileManager_;
 	
 }
 
 @property (nonatomic, copy) NSString *remotePath;
-@property (nonatomic, weak) id <WDImportControllerDelegate> delegate;
+@property (nonatomic, weak) WDBrowserController* browser;
 
 + (BOOL) isFontType:(NSString *)extension;
 + (BOOL) canImportType:(NSString *)extension;
 
-@end
-
-@protocol WDImportControllerDelegate
-@optional
-- (void) importController:(WDImportController *)controller didSelectDropboxItems:(NSArray *)dropboxItems;
 @end

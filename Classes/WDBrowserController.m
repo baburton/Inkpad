@@ -583,11 +583,9 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     if (!toolbarItems_) {
         toolbarItems_ = [[NSMutableArray alloc] init];
         
-#if 0 // bab: no dropbox
         UIBarButtonItem *importItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Import", @"Import")
                                                                        style:UIBarButtonItemStylePlain target:self
                                                                       action:@selector(showDropboxImportPanel:)];
-#endif
         UIBarButtonItem *samplesItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Samples", @"Samples")
                                                                         style:UIBarButtonItemStylePlain
                                                                        target:self
@@ -612,9 +610,7 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
         UIBarButtonItem *flexibleItem = [UIBarButtonItem flexibleItem];
         UIBarButtonItem *fixedItem = [UIBarButtonItem fixedItemWithWidth:10];
         
-#if 0 // bab: no dropbox
         [toolbarItems_ addObject:importItem];
-#endif
         [toolbarItems_ addObject:fixedItem];
         [toolbarItems_ addObject:samplesItem];
         [toolbarItems_ addObject:fixedItem];
@@ -756,9 +752,7 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     }
     
     exportController_ = nil;
-#if 0 // bab: no dropbox
     importController_ = nil;
-#endif
     pickerController_ = nil;
     fontLibraryController_ = nil;
     samplesController_ = nil;
@@ -779,9 +773,7 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     }
     
     exportController_ = nil;
-#if 0 // bab: no dropbox
     importController_ = nil;
-#endif
     pickerController_ = nil;
     fontLibraryController_ = nil;
     samplesController_ = nil;
@@ -926,6 +918,7 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
                     path = [[path stringByDeletingPathExtension] stringByAppendingPathExtension:[format lowercaseString]];
                     [data writeToFile:path atomically:YES];
                     
+                    // This path actually lives inside the app folder in dropbox.
                     NSString* dropboxPath = [NSString stringWithFormat:@"/%@", path.lastPathComponent];
                     
                     // TODO: If/when we reintroduce progress tracking, we need to periodically call
@@ -1007,7 +1000,6 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
 
 #pragma mark -
 
-#if 0 // bab: no dropbox
 - (void) reallyShowDropboxImportPanel:(id)sender
 {
 	if (importController_) {
@@ -1019,7 +1011,7 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
 	
 	importController_ = [[WDImportController alloc] initWithNibName:@"Import" bundle:nil];
 	importController_.title = @"Dropbox";
-	importController_.delegate = self;
+	importController_.browser = self;
 	
 	UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:importController_];
 	
@@ -1041,13 +1033,12 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     }
 }
 
-- (void) importController:(WDImportController *)controller didSelectDropboxItems:(NSArray *)dropboxItems
+- (void) importController:(WDImportController *)controller didSelectDropboxItems:(NSArray<DBFILESFileMetadata*> *)dropboxItems
 {
-	if (!restClient_) {
-		restClient_ = [[DBRestClient alloc] initWithSession:[DBSession sharedSession]];
-		restClient_.delegate = self;
-	}
-    
+    if (!dbClient_) {
+        dbClient_ = [DBClientsManager authorizedClient];
+    }
+
     NSString    *downloadsDirectory = [NSTemporaryDirectory() stringByAppendingString:@"Downloads/"];
     BOOL        isDirectory = NO;
     
@@ -1055,19 +1046,76 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
         [[NSFileManager defaultManager] createDirectoryAtPath:downloadsDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
     }
     
-	for (DBMetadata *item in dropboxItems) {
-		NSString *downloadPath = [downloadsDirectory stringByAppendingFormat:@"%@", [item.path lastPathComponent]];
+	for (DBFILESFileMetadata *item in dropboxItems) {
+        NSString *downloadPath = [downloadsDirectory stringByAppendingString:item.name];
+        NSURL* downloadURL = [NSURL URLWithString:downloadPath];
         
         // make sure we're not already downloading/importing this file
         if (!activities_.count || ![activities_ activityWithFilepath:downloadPath]) {
-            [restClient_ loadFile:item.path intoPath:downloadPath];
+            // TODO: If/when we reintroduce progress tracking, we need to periodically call
+            // [activities_ updateProgressForFilepath:destPath progress:progress].
+            [[dbClient_.filesRoutes downloadUrl:item.id_ overwrite:YES destination:downloadURL] setResponseBlock:^(DBFILESFileMetadata * _Nullable result, DBFILESDownloadError * _Nullable routeError, DBRequestError * _Nullable networkError, NSURL * _Nonnull destination) {
+                if (routeError || networkError || ! result) {
+                    // This is asynchronous, and so the user might have called up a new
+                    // popover since we started the upload.
+                    [self dismissPopover];
+
+                    [self->activities_ removeActivityWithFilepath:downloadPath];
+                    [[NSFileManager defaultManager] removeItemAtPath:downloadPath error:NULL];
+                    
+                    NSString *format = NSLocalizedString(@"There was a problem downloading “%@”. Check your network connection and try again.",
+                                                         @"There was a problem downloading “%@”. Check your network connection and try again.");
+                    UIAlertController *alertView = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Download Problem", @"Download Problem")
+                                                                                       message:[NSString stringWithFormat:format, [downloadPath lastPathComponent]]
+                                                                                preferredStyle:UIAlertControllerStyleAlert];
+                    [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"OK") style:UIAlertActionStyleCancel handler:nil]];
+                    [self presentViewController:alertView animated:YES completion:nil];
+                } else {
+                    NSString    *extension = [[downloadPath pathExtension] lowercaseString];
+                    NSString    *filename = [downloadPath lastPathComponent];
+                    
+                    // find the associated download activity
+                    WDActivity  *downloadActivity = [self->activities_ activityWithFilepath:downloadPath];
+                    
+                    if ([extension isEqualToString:@"inkpad"] || [extension isEqualToString:@"svg"] || [extension isEqualToString:@"svgz"]) {
+                        WDActivity *importActivity = [WDActivity activityWithFilePath:downloadPath type:WDActivityTypeImport];
+                        [self->activities_ addActivity:importActivity];
+                        
+                        // this is asynchronous
+                        [[WDDrawingManager sharedInstance] importDrawingAtURL:[NSURL fileURLWithPath:downloadPath]
+                                                                   errorBlock:^{ [self showImportErrorMessage:filename]; }
+                                                        withCompletionHandler:^(WDDocument *document) {
+                                                            [[NSFileManager defaultManager] removeItemAtPath:downloadPath error:NULL];
+                                                            [self->activities_ removeActivity:importActivity];
+                                                        }];
+                    } else if ([WDImportController isFontType:extension]) {
+                        BOOL alreadyInstalled;
+                        NSString *importedFontName = [[WDFontManager sharedInstance] installUserFont:[NSURL fileURLWithPath:downloadPath]
+                                                                                    alreadyInstalled:&alreadyInstalled];
+                        if (!importedFontName) {
+                            [self showImportErrorMessage:filename];
+                        }
+                        
+                        [[NSFileManager defaultManager] removeItemAtPath:downloadPath error:NULL];
+                    } else if ([WDImportController canImportType:extension]) {
+                        BOOL success = [[WDDrawingManager sharedInstance] createNewDrawingWithImageAtURL:[NSURL fileURLWithPath:downloadPath]];
+                        if (!success) {
+                            [self showImportErrorMessage:filename];
+                        }
+                        
+                        [[NSFileManager defaultManager] removeItemAtPath:downloadPath error:NULL];
+                    }
+                    
+                    // remove the download activity. do this last so the activity count doesn't drop to 0
+                    [self->activities_ removeActivity:downloadActivity];
+                }
+            }];
             [activities_ addActivity:[WDActivity activityWithFilePath:downloadPath type:WDActivityTypeDownload]];
         }
 	}
 	
 	[self dismissPopover];
 }
-#endif
 
 #pragma mark -
 
@@ -1121,10 +1169,12 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
                                           openURL:^(NSURL * _Nonnull url) {
             [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
                 if (! success) {
-                    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Could not link with Dropbox"
-                                                                                   message:@"I was not able to link Inkpad with Dropbox."
+                    UIAlertController* alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Could not link with Dropbox",
+                                                                                                             @"Could not link with Dropbox")
+                                                                                   message:NSLocalizedString(@"I was not able to link Inkpad with Dropbox.",
+                                                                                                             @"I was not able to link Inkpad with Dropbox.")
                                                                             preferredStyle:UIAlertControllerStyleAlert];
-                    [alert addAction:[UIAlertAction actionWithTitle:@"Close" style:UIAlertActionStyleCancel handler:nil]];
+                    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Close", @"Close") style:UIAlertActionStyleCancel handler:nil]];
                     [self presentViewController:alert animated:YES completion:nil];
                 }
             }];
@@ -1132,72 +1182,6 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
         return NO;
     }
 }
-
-#pragma mark -
-
-#if 0 // bab: no dropbox
-- (void)restClient:(DBRestClient*)client loadProgress:(CGFloat)progress forFile:(NSString*)destPath
-{
-    [activities_ updateProgressForFilepath:destPath progress:progress];
-}
-
-- (void) restClient:(DBRestClient*)client loadedFile:(NSString*)downloadPath
-{
-    NSString    *extension = [[downloadPath pathExtension] lowercaseString];
-    NSString    *filename = [downloadPath lastPathComponent];
-    
-    // find the associated download activity
-    WDActivity  *downloadActivity = [activities_ activityWithFilepath:downloadPath];
-    
-	if ([extension isEqualToString:@"inkpad"] || [extension isEqualToString:@"svg"] || [extension isEqualToString:@"svgz"]) {
-        WDActivity *importActivity = [WDActivity activityWithFilePath:downloadPath type:WDActivityTypeImport];
-        [activities_ addActivity:importActivity];
-        
-        // this is asynchronous
-		[[WDDrawingManager sharedInstance] importDrawingAtURL:[NSURL fileURLWithPath:downloadPath]
-                                                   errorBlock:^{ [self showImportErrorMessage:filename]; }
-                                        withCompletionHandler:^(WDDocument *document) {
-                                            [[NSFileManager defaultManager] removeItemAtPath:downloadPath error:NULL];
-                                            [activities_ removeActivity:importActivity];
-                                        }];
-	} else if ([WDImportController isFontType:extension]) {
-        BOOL alreadyInstalled;
-        NSString *importedFontName = [[WDFontManager sharedInstance] installUserFont:[NSURL fileURLWithPath:downloadPath]
-                                                                    alreadyInstalled:&alreadyInstalled];
-        if (!importedFontName) {
-            [self showImportErrorMessage:filename];
-        }
-        
-        [[NSFileManager defaultManager] removeItemAtPath:downloadPath error:NULL];
-	} else if ([WDImportController canImportType:extension]) {
-        BOOL success = [[WDDrawingManager sharedInstance] createNewDrawingWithImageAtURL:[NSURL fileURLWithPath:downloadPath]];
-        if (!success) {
-            [self showImportErrorMessage:filename];
-        }
-        
-        [[NSFileManager defaultManager] removeItemAtPath:downloadPath error:NULL];
-	}
-    
-    // remove the download activity. do this last so the activity count doesn't drop to 0
-    [activities_ removeActivity:downloadActivity];
-}
-
-- (void) restClient:(DBRestClient*)client loadFileFailedWithError:(NSError*)error
-{
-	NSString *downloadPath = [[error userInfo] valueForKey:@"destinationPath"];
-	
-    [activities_ removeActivityWithFilepath:downloadPath];
-	[[NSFileManager defaultManager] removeItemAtPath:downloadPath error:NULL];
-    
-    NSString *format = NSLocalizedString(@"There was a problem downloading “%@”. Check your network connection and try again.",
-                                         @"There was a problem downloading “%@”. Check your network connection and try again.");
-    UIAlertController *alertView = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Download Problem", @"Download Problem")
-                                                                       message:[NSString stringWithFormat:format, [downloadPath lastPathComponent]]
-                                                                preferredStyle:UIAlertControllerStyleAlert];
-    [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"OK") style:UIAlertActionStyleCancel handler:nil]];
-    [self presentViewController:alertView animated:YES completion:nil];
-}
-#endif
 
 #pragma mark - Storyboard / Collection View
 
