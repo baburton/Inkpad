@@ -84,6 +84,8 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Inkpad allows you to import pictures that you take using the camera.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Inkpad allows you to export your drawings to your photo album.</string>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchImages~ipad</key>
