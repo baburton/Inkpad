@@ -20,6 +20,8 @@ NSString *WDDrawingFileExtension = @"inkpad";
 NSString *WDSVGFileExtension = @"svg";
 NSString *WDDefaultDrawingExtension = @"inkpad";
 
+NSString *WDCreatedSamples = @"WDCreatedSamples";
+
 // notifications
 NSString *WDDrawingsDeleted = @"WDDrawingsDeleted";
 NSString *WDDrawingAdded = @"WDDrawingAdded";
@@ -27,7 +29,6 @@ NSString *WDDrawingRenamed = @"WDDrawingRenamed";
 
 NSString *WDDrawingOldFilenameKey = @"WDDrawingOldFilenameKey";
 NSString *WDDrawingNewFilenameKey = @"WDDrawingNewFilenameKey";
-
 
 @interface NSString (WDAdditions)
 - (NSComparisonResult) compareNumeric:(NSString *)string;
@@ -153,7 +154,8 @@ NSString *WDDrawingNewFilenameKey = @"WDDrawingNewFilenameKey";
 
 + (NSString *) drawingPath
 {
-    return [[self documentDirectory] stringByAppendingPathComponent:@"drawings"];
+    // return [[self documentDirectory] stringByAppendingPathComponent:@"drawings"];
+    return [self documentDirectory];
 }
 
 + (BOOL) drawingExists:(NSString *)drawing
@@ -501,12 +503,15 @@ NSString *WDDrawingNewFilenameKey = @"WDDrawingNewFilenameKey";
 {
     NSFileManager   *fm = [NSFileManager defaultManager];
     BOOL createSamples = NO;
-    
-    if (![fm fileExistsAtPath:[WDDrawingManager drawingPath]]) {
+
+    if (! [[NSUserDefaults standardUserDefaults] boolForKey:WDCreatedSamples]) {
         // assume this is the first time we've been run... copy over the sample drawings
         createSamples = YES;
     }
     
+    // TODO: We can probably remove this line.
+    // The old Inkpad stored drawings inside the drawings/ folder of the documents directory.
+    // We just use the documents directory itself.
     [fm createDirectoryAtPath:[WDDrawingManager drawingPath] withIntermediateDirectories:YES attributes:nil error:NULL];
     
     if (createSamples) {
@@ -519,6 +524,8 @@ NSString *WDDrawingNewFilenameKey = @"WDDrawingNewFilenameKey";
         for (NSString *path in samplePaths) {
             [fm copyItemAtPath:path toPath:[[WDDrawingManager drawingPath] stringByAppendingPathComponent:[path lastPathComponent]] error:NULL];
         }
+        
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:WDCreatedSamples];
     }
 }
 

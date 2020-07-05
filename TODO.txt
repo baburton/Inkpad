@@ -14,3 +14,8 @@ DROPBOX:
 
 - Progress reporting for activities, or else remove the round circles
 - Check the minor TODOs in WDImportController.m
+
+PROBLEMS:
+
+- If a file is added to the app folder through the Files app,
+  the gallery view does not refresh
