@@ -56,6 +56,12 @@ and I encourage you to use the [GitHub issue tracker](https://github.com/baburto
 
 If you're taking on a big change, I'd be happy to discuss design ideas or answer questions before you get too far along.
 
+To build Inkpad, you will need to set up [Carthage](https://github.com/Carthage/Carthage), which Inkpad uses
+to build and embed the Dropbox SDK.
+If you wish to test Dropbox functionality, you will also need to replace "xxxx" with a real Dropbox app key
+in Inkpad-Info.plist and Classes/WDAppDelegate.m. This Dropbox app should be set up with _App folder_ permissions,
+not _Full Dropbox_.
+
 Contributors
 ------------
 
