@@ -9,6 +9,11 @@ FEATURES:
 
 - Support dark mode (and remove UIUserInterfaceStyle=Light from Info.plist)
 - Allow editing external files in-place, instead of copying into the app folder
+- Support long press instead of the current manual select-and-act mechanism
+- Allow subfolders within the gallery
+- Multitasking (split view, slide over, multiple windows)
+- Drag-and-drop
+- Quick Look previews for *.inkpad files
 
 DROPBOX:
 
