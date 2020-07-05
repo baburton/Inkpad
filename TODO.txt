@@ -11,10 +11,6 @@ FEATURES:
 - Support dark mode (and remove UIUserInterfaceStyle=Light from Info.plist)
 - Allow editing external files in-place, instead of copying into the app folder
 
-PROBLEMS:
-
-- New text is invisible (default colour palette of white-on-white)
-
 DROPBOX:
 
 - Progress reporting for activities, or else remove the round circles

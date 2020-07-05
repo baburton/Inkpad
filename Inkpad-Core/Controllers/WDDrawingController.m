@@ -1478,6 +1478,63 @@ NSString *WDSelectionChangedNotification = @"WDSelectionChangedNotification";
 #pragma mark -
 #pragma mark Text
 
++ (BOOL) isFillClear:(nullable id)fill
+{
+    if (! fill)
+        return YES;
+    if (! [fill isKindOfClass:WDColor.class])
+        return NO;
+    
+    WDColor* color = (WDColor*)fill;
+    return (color.alpha == 0.0);
+}
+
++ (BOOL) isFillWhiteOrClear:(nullable id)fill
+{
+    if (! fill)
+        return YES;
+    if (! [fill isKindOfClass:WDColor.class])
+        return NO;
+    
+    WDColor* color = (WDColor*)fill;
+    if (color.alpha == 0.0)
+        return YES;
+    if (color.saturation == 0.0 && color.brightness == 1.0)
+        return YES;
+    return NO;
+}
+
+- (void) ensureTextObject:(WDText*)text isVisibleOverPoint:(CGPoint)point
+{
+    // The default fill style is solid white, which means that by default
+    // a new text object on a blank canvas will be white-on-white; i.e., invisible.
+    //
+    // Here we look at what the text object is being placed upon, and
+    // if it looks like the text will be invisible then we adjust the fill accordingly.
+    //
+    // For now we will only worry about white-on-white or clear-on-anything, and assume
+    // that other problematic cases (e.g., black-on-black) come from the user
+    // explicitly setting colours beforehand (and so we trust that the user knows
+    // what they are doing).
+    
+    if ([WDDrawingController isFillClear:text.fill]) {
+        // The text will be invisible.
+        text.fill = [WDColor blackColor];
+        return;
+    }
+    
+    if ([WDDrawingController isFillWhiteOrClear:text.fill]) {
+        // See what we are about to put the text on top of.
+        WDPickResult* below = [self inspectableUnderPoint:point viewScale:1];
+        if ((! below) || [WDDrawingController isFillWhiteOrClear:[below.element pathPainterAtPoint:point]]) {
+            // It's not clear that there is anything beneath to contrast with white
+            // (though we might have queried a clear object that has a black object
+            // beneath; our test here is not perfect).
+            text.fill = [WDColor blackColor];
+        }
+    }
+}
+
 // this is called by the text tool
 - (WDText *) createTextObjectInRect:(CGRect)rect
 {
@@ -1494,10 +1551,8 @@ NSString *WDSelectionChangedNotification = @"WDSelectionChangedNotification";
     text.opacity = [[propertyManager_ defaultValueForProperty:WDOpacityProperty] floatValue];
     text.shadow = [propertyManager_ activeShadow];
     
-    if (!text.fill) {
-        // make sure the text isn't invisible
-        text.fill = [WDColor blackColor];
-    }
+    CGPoint centre = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
+    [self ensureTextObject:text isVisibleOverPoint:centre];
     
     [drawing_ addObject:text];
     [self selectObject:text];
@@ -1526,10 +1581,8 @@ NSString *WDSelectionChangedNotification = @"WDSelectionChangedNotification";
     // set this after width, so that the gradient will be set up properly
     text.fill = [propertyManager_ activeFillStyle];
     
-    if (!text.fill) {
-        // make sure the text isn't invisible
-        text.fill = [WDColor blackColor];
-    }
+    CGPoint centre = CGPointMake(drawing_.dimensions.width / 2, drawing_.dimensions.height / 2);
+    [self ensureTextObject:text isVisibleOverPoint:centre];
     
     [self selectNone:nil];
     [drawing_ addObject:text];
@@ -1565,10 +1618,9 @@ NSString *WDSelectionChangedNotification = @"WDSelectionChangedNotification";
         typePath.fillTransform = path.fillTransform;
         typePath.shadow = path.shadow;
         typePath.opacity = path.opacity;
-        
-        if (!typePath.fill) {
-            typePath.fill = [WDColor blackColor];
-        }
+
+        CGPoint centre = CGPointMake(CGRectGetMidX(path.bounds), CGRectGetMidY(path.bounds));
+        [self ensureTextObject:typePath isVisibleOverPoint:centre];
         
         *startEditing = YES;
     } else { // path and text object selected
