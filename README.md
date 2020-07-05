@@ -42,6 +42,11 @@ You must also make it clear that the source code is available and provide a link
 
 I will ask Apple to pull any apps that do not comply. Please don't waste your time and mine.
 
+Privacy Policy
+--------------
+
+This app does not collect any personal data.
+
 How to Contribute
 -----------------
 
