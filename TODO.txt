@@ -2,7 +2,6 @@ MIGRATIONS:
 
 - OpenGLES -> Metal
 - Convert all XIBs to autolayout
-- Icons to image assets
 - Openclipart API -> FreeSVG API (which requires a login to use)
 - Allow an iOS Files interface to import/export images and fonts
 
