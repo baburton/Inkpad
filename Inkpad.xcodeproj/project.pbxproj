@@ -203,7 +203,6 @@
 		6BABD980141ED30100F7E0A9 /* eraser.png in Resources */ = {isa = PBXBuildFile; fileRef = 6BABD8B1141ED30100F7E0A9 /* eraser.png */; };
 		6BABD982141ED30100F7E0A9 /* eyedropper.png in Resources */ = {isa = PBXBuildFile; fileRef = 6BABD8B3141ED30100F7E0A9 /* eyedropper.png */; };
 		6BABD984141ED30100F7E0A9 /* groupSelect.png in Resources */ = {isa = PBXBuildFile; fileRef = 6BABD8B5141ED30100F7E0A9 /* groupSelect.png */; };
-		6BABD986141ED30100F7E0A9 /* hand.png in Resources */ = {isa = PBXBuildFile; fileRef = 6BABD8B7141ED30100F7E0A9 /* hand.png */; };
 		6BABD988141ED30100F7E0A9 /* line.png in Resources */ = {isa = PBXBuildFile; fileRef = 6BABD8B9141ED30100F7E0A9 /* line.png */; };
 		6BABD98A141ED30100F7E0A9 /* oval.png in Resources */ = {isa = PBXBuildFile; fileRef = 6BABD8BB141ED30100F7E0A9 /* oval.png */; };
 		6BABD98C141ED30100F7E0A9 /* pen.png in Resources */ = {isa = PBXBuildFile; fileRef = 6BABD8BD141ED30100F7E0A9 /* pen.png */; };
@@ -216,7 +215,6 @@
 		6BABD99B141ED30100F7E0A9 /* spiral.png in Resources */ = {isa = PBXBuildFile; fileRef = 6BABD8CC141ED30100F7E0A9 /* spiral.png */; };
 		6BABD99D141ED30100F7E0A9 /* star.png in Resources */ = {isa = PBXBuildFile; fileRef = 6BABD8CE141ED30100F7E0A9 /* star.png */; };
 		6BABD9A1141ED30100F7E0A9 /* text.png in Resources */ = {isa = PBXBuildFile; fileRef = 6BABD8D2141ED30100F7E0A9 /* text.png */; };
-		6BABD9A3141ED30100F7E0A9 /* zoom.png in Resources */ = {isa = PBXBuildFile; fileRef = 6BABD8D4141ED30100F7E0A9 /* zoom.png */; };
 		6BABD9A5141ED30100F7E0A9 /* AVL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6BABD8D7141ED30100F7E0A9 /* AVL.cpp */; };
 		6BABD9A6141ED30100F7E0A9 /* DblLinked.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6BABD8D9141ED30100F7E0A9 /* DblLinked.cpp */; };
 		6BABD9A7141ED30100F7E0A9 /* Path.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6BABD8DD141ED30100F7E0A9 /* Path.cpp */; };
@@ -255,7 +253,6 @@
 		6BABD9D2141ED30100F7E0A9 /* WDEraserTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BABD936141ED30100F7E0A9 /* WDEraserTool.m */; };
 		6BABD9D3141ED30100F7E0A9 /* WDEyedropperTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BABD938141ED30100F7E0A9 /* WDEyedropperTool.m */; };
 		6BABD9D4141ED30100F7E0A9 /* WDFreehandTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BABD93A141ED30100F7E0A9 /* WDFreehandTool.m */; };
-		6BABD9D5141ED30100F7E0A9 /* WDHandTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BABD93C141ED30100F7E0A9 /* WDHandTool.m */; };
 		6BABD9D6141ED30100F7E0A9 /* WDPenTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BABD93E141ED30100F7E0A9 /* WDPenTool.m */; };
 		6BABD9D7141ED30100F7E0A9 /* WDRotateTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BABD940141ED30100F7E0A9 /* WDRotateTool.m */; };
 		6BABD9D8141ED30100F7E0A9 /* WDScaleTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BABD942141ED30100F7E0A9 /* WDScaleTool.m */; };
@@ -265,7 +262,6 @@
 		6BABD9DC141ED30100F7E0A9 /* WDTextTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BABD94A141ED30100F7E0A9 /* WDTextTool.m */; };
 		6BABD9DD141ED30100F7E0A9 /* WDTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BABD94C141ED30100F7E0A9 /* WDTool.m */; };
 		6BABD9DE141ED30100F7E0A9 /* WDTransformTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BABD94E141ED30100F7E0A9 /* WDTransformTool.m */; };
-		6BABD9DF141ED30100F7E0A9 /* WDZoomTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BABD950141ED30100F7E0A9 /* WDZoomTool.m */; };
 		6BABD9E0141ED30100F7E0A9 /* WDGLUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BABD953141ED30100F7E0A9 /* WDGLUtilities.m */; };
 		6BABD9E1141ED30100F7E0A9 /* WDUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BABD955141ED30100F7E0A9 /* WDUtilities.m */; };
 		6BABD9E4141ED51F00F7E0A9 /* WDDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BABD9E3141ED51F00F7E0A9 /* WDDocument.m */; };
@@ -639,7 +635,6 @@
 		6BABD8B1141ED30100F7E0A9 /* eraser.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = eraser.png; sourceTree = "<group>"; };
 		6BABD8B3141ED30100F7E0A9 /* eyedropper.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = eyedropper.png; sourceTree = "<group>"; };
 		6BABD8B5141ED30100F7E0A9 /* groupSelect.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = groupSelect.png; sourceTree = "<group>"; };
-		6BABD8B7141ED30100F7E0A9 /* hand.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hand.png; sourceTree = "<group>"; };
 		6BABD8B9141ED30100F7E0A9 /* line.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = line.png; sourceTree = "<group>"; };
 		6BABD8BB141ED30100F7E0A9 /* oval.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = oval.png; sourceTree = "<group>"; };
 		6BABD8BD141ED30100F7E0A9 /* pen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pen.png; sourceTree = "<group>"; };
@@ -652,7 +647,6 @@
 		6BABD8CC141ED30100F7E0A9 /* spiral.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spiral.png; sourceTree = "<group>"; };
 		6BABD8CE141ED30100F7E0A9 /* star.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = star.png; sourceTree = "<group>"; };
 		6BABD8D2141ED30100F7E0A9 /* text.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = text.png; sourceTree = "<group>"; };
-		6BABD8D4141ED30100F7E0A9 /* zoom.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = zoom.png; sourceTree = "<group>"; };
 		6BABD8D7141ED30100F7E0A9 /* AVL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AVL.cpp; sourceTree = "<group>"; };
 		6BABD8D8141ED30100F7E0A9 /* AVL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVL.h; sourceTree = "<group>"; };
 		6BABD8D9141ED30100F7E0A9 /* DblLinked.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DblLinked.cpp; sourceTree = "<group>"; };
@@ -730,8 +724,6 @@
 		6BABD938141ED30100F7E0A9 /* WDEyedropperTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WDEyedropperTool.m; sourceTree = "<group>"; };
 		6BABD939141ED30100F7E0A9 /* WDFreehandTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WDFreehandTool.h; sourceTree = "<group>"; };
 		6BABD93A141ED30100F7E0A9 /* WDFreehandTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WDFreehandTool.m; sourceTree = "<group>"; };
-		6BABD93B141ED30100F7E0A9 /* WDHandTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WDHandTool.h; sourceTree = "<group>"; };
-		6BABD93C141ED30100F7E0A9 /* WDHandTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WDHandTool.m; sourceTree = "<group>"; };
 		6BABD93D141ED30100F7E0A9 /* WDPenTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WDPenTool.h; sourceTree = "<group>"; };
 		6BABD93E141ED30100F7E0A9 /* WDPenTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WDPenTool.m; sourceTree = "<group>"; };
 		6BABD93F141ED30100F7E0A9 /* WDRotateTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WDRotateTool.h; sourceTree = "<group>"; };
@@ -750,8 +742,6 @@
 		6BABD94C141ED30100F7E0A9 /* WDTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WDTool.m; sourceTree = "<group>"; };
 		6BABD94D141ED30100F7E0A9 /* WDTransformTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WDTransformTool.h; sourceTree = "<group>"; };
 		6BABD94E141ED30100F7E0A9 /* WDTransformTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WDTransformTool.m; sourceTree = "<group>"; };
-		6BABD94F141ED30100F7E0A9 /* WDZoomTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WDZoomTool.h; sourceTree = "<group>"; };
-		6BABD950141ED30100F7E0A9 /* WDZoomTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WDZoomTool.m; sourceTree = "<group>"; };
 		6BABD952141ED30100F7E0A9 /* WDGLUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WDGLUtilities.h; sourceTree = "<group>"; };
 		6BABD953141ED30100F7E0A9 /* WDGLUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WDGLUtilities.m; sourceTree = "<group>"; };
 		6BABD954141ED30100F7E0A9 /* WDUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WDUtilities.h; sourceTree = "<group>"; };
@@ -1325,7 +1315,6 @@
 				6B219C6D150ED9DE00761F18 /* eyedropper@2x.png */,
 				6BABD8B5141ED30100F7E0A9 /* groupSelect.png */,
 				6B219C9D150EFAE400761F18 /* groupSelect@2x.png */,
-				6BABD8B7141ED30100F7E0A9 /* hand.png */,
 				6BABD8B9141ED30100F7E0A9 /* line.png */,
 				6B219C79150EEB2700761F18 /* line@2x.png */,
 				6BABD8BB141ED30100F7E0A9 /* oval.png */,
@@ -1349,7 +1338,6 @@
 				6B219C7D150EEB2900761F18 /* star@2x.png */,
 				6BABD8D2141ED30100F7E0A9 /* text.png */,
 				6B7D2D021508A291001311B0 /* text@2x.png */,
-				6BABD8D4141ED30100F7E0A9 /* zoom.png */,
 			);
 			path = tools;
 			sourceTree = "<group>";
@@ -1480,8 +1468,6 @@
 				6BABD938141ED30100F7E0A9 /* WDEyedropperTool.m */,
 				6BABD939141ED30100F7E0A9 /* WDFreehandTool.h */,
 				6BABD93A141ED30100F7E0A9 /* WDFreehandTool.m */,
-				6BABD93B141ED30100F7E0A9 /* WDHandTool.h */,
-				6BABD93C141ED30100F7E0A9 /* WDHandTool.m */,
 				6BABD93D141ED30100F7E0A9 /* WDPenTool.h */,
 				6BABD93E141ED30100F7E0A9 /* WDPenTool.m */,
 				6BABD93F141ED30100F7E0A9 /* WDRotateTool.h */,
@@ -1500,8 +1486,6 @@
 				6BABD94C141ED30100F7E0A9 /* WDTool.m */,
 				6BABD94D141ED30100F7E0A9 /* WDTransformTool.h */,
 				6BABD94E141ED30100F7E0A9 /* WDTransformTool.m */,
-				6BABD94F141ED30100F7E0A9 /* WDZoomTool.h */,
-				6BABD950141ED30100F7E0A9 /* WDZoomTool.m */,
 			);
 			path = Tools;
 			sourceTree = "<group>";
@@ -1938,7 +1922,6 @@
 				6BABD982141ED30100F7E0A9 /* eyedropper.png in Resources */,
 				6B9A288918C1087300697BE7 /* ColorBalance.strings in Resources */,
 				6BABD984141ED30100F7E0A9 /* groupSelect.png in Resources */,
-				6BABD986141ED30100F7E0A9 /* hand.png in Resources */,
 				6BABD988141ED30100F7E0A9 /* line.png in Resources */,
 				6BABD98A141ED30100F7E0A9 /* oval.png in Resources */,
 				6BABD98C141ED30100F7E0A9 /* pen.png in Resources */,
@@ -1963,7 +1946,6 @@
 				6BBB7CDB18B32C240018954B /* HueSaturation.strings in Resources */,
 				6B83973118A41126001D5985 /* Localizable.strings in Resources */,
 				F43A1D76183557770032933E /* Localizable.strings in Resources */,
-				6BABD9A3141ED30100F7E0A9 /* zoom.png in Resources */,
 				6BABD9E7141F15AC00F7E0A9 /* SVGColors.plist in Resources */,
 				6BBB7CDC18B32C240018954B /* Localizable.strings in Resources */,
 				6B7D2CF0150898BE001311B0 /* font@2x.png in Resources */,
@@ -2207,7 +2189,6 @@
 				6BABD9D2141ED30100F7E0A9 /* WDEraserTool.m in Sources */,
 				6BABD9D3141ED30100F7E0A9 /* WDEyedropperTool.m in Sources */,
 				6BABD9D4141ED30100F7E0A9 /* WDFreehandTool.m in Sources */,
-				6BABD9D5141ED30100F7E0A9 /* WDHandTool.m in Sources */,
 				6BA45794180F778F00B51D7A /* WDArrowheadCell.m in Sources */,
 				6BABD9D6141ED30100F7E0A9 /* WDPenTool.m in Sources */,
 				6BABD9D7141ED30100F7E0A9 /* WDRotateTool.m in Sources */,
@@ -2219,7 +2200,6 @@
 				6BABD9DC141ED30100F7E0A9 /* WDTextTool.m in Sources */,
 				6BABD9DD141ED30100F7E0A9 /* WDTool.m in Sources */,
 				6BABD9DE141ED30100F7E0A9 /* WDTransformTool.m in Sources */,
-				6BABD9DF141ED30100F7E0A9 /* WDZoomTool.m in Sources */,
 				6BABD9E0141ED30100F7E0A9 /* WDGLUtilities.m in Sources */,
 				6BABD9E1141ED30100F7E0A9 /* WDUtilities.m in Sources */,
 				6BABD9E4141ED51F00F7E0A9 /* WDDocument.m in Sources */,
