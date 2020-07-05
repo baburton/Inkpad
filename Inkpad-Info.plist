@@ -46,25 +46,8 @@
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
-	<key>CFBundleIconFiles</key>
-	<array>
-		<string>Icon.png</string>
-		<string>Icon@2x.png</string>
-		<string>Icon-Settings.png</string>
-		<string>Icon-Settings@2x.png</string>
-		<string>Icon-Spotlight.png</string>
-		<string>Icon-Spotlight@2x.png</string>
-	</array>
-	<key>CFBundleIconFiles~ipad</key>
-	<array>
-		<string>Icon-Spotlight</string>
-		<string>Icon.png</string>
-		<string>Icon@2x.png</string>
-		<string>Icon-Settings.png</string>
-		<string>Icon-Settings@2x.png</string>
-		<string>Icon-Spotlight.png</string>
-		<string>Icon-Spotlight@2x.png</string>
-	</array>
+	<key>CFBundleIcons</key>
+	<dict/>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
