@@ -12,3 +12,6 @@ for j in 130 260; do
   rsvg -w$j -h$j Icon-Rounded.svg Icon-Rounded-$j.png
 done
 
+for j in 64 256; do
+  rsvg -w$j -h$j Icon.svg dropbox-$j.png
+done
