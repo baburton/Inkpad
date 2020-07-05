@@ -27,7 +27,6 @@ extern NSString *WDShadowOffsetProperty;
 extern NSString *WDFillProperty;
 extern NSString *WDFillColorProperty;
 extern NSString *WDFillGradientProperty;
-extern NSString *WDFillRuleProperty;
 
 extern NSString *WDStrokeColorProperty;
 extern NSString *WDStrokeCapProperty;

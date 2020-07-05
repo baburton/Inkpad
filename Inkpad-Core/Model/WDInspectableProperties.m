@@ -26,10 +26,8 @@ NSString *WDShadowAngleProperty = @"WDShadowAngleProperty";
 NSString *WDShadowOffsetProperty = @"WDShadowOffsetProperty";
 
 NSString *WDFillProperty = @"WDFillProperty";
-NSString *WDFillRuleProperty = @"WDFillRuleProperty";
 NSString *WDFillColorProperty = @"WDFillColorProperty";
 NSString *WDFillGradientProperty = @"WDFillGradientProperty";
-NSString *WDFillModeProperty = @"WDFillModeProperty";
 
 NSString *WDStrokeColorProperty = @"WDStrokeColorProperty";
 NSString *WDStrokeCapProperty = @"WDStrokeCapProperty";
