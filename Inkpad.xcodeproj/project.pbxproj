@@ -18,6 +18,7 @@
 		05A99D2224ABF73600B904C7 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05A99D2124ABF73600B904C7 /* CoreServices.framework */; };
 		05A99D2524B062D300B904C7 /* WDImportController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D348D881386FDA200BB0047 /* WDImportController.m */; };
 		05A99D2724B1928600B904C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 05A99D2624B1928600B904C7 /* Images.xcassets */; };
+		05A99D2924B1AF6100B904C7 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05A99D2824B1AF6100B904C7 /* WebKit.framework */; };
 		1D3623260D0F684500981E51 /* WDAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* WDAppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		29E28F8415115F68007D36DE /* WDEmail.m in Sources */ = {isa = PBXBuildFile; fileRef = 29E28F8315115F68007D36DE /* WDEmail.m */; };
@@ -125,7 +126,6 @@
 		6B74B7E6150E829E000A08D4 /* radial@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B74B7E1150E829E000A08D4 /* radial@2x.png */; };
 		6B74B7E9150E82F0000A08D4 /* checkmark@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B74B7E7150E82F0000A08D4 /* checkmark@2x.png */; };
 		6B7A881A180CF73000FA241B /* WDArrowhead.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B7A8819180CF73000FA241B /* WDArrowhead.m */; };
-		6B7D2C3515085403001311B0 /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B7D2C3415085403001311B0 /* Twitter.framework */; };
 		6B7D2CF0150898BE001311B0 /* font@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B7D2CEF150898BE001311B0 /* font@2x.png */; };
 		6B7D2CF415089966001311B0 /* redo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B7D2CF215089965001311B0 /* redo@2x.png */; };
 		6B7D2CF515089966001311B0 /* undo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B7D2CF315089965001311B0 /* undo@2x.png */; };
@@ -282,7 +282,6 @@
 		6BBCDDED1368085100DB910B /* WDToolView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BBCDDEC1368085100DB910B /* WDToolView.m */; };
 		6BBCDDF0136808A900DB910B /* WDToolButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BBCDDEF136808A800DB910B /* WDToolButton.m */; };
 		6BC062AE124F719000451362 /* checkmark.png in Resources */ = {isa = PBXBuildFile; fileRef = 6BC062AD124F719000451362 /* checkmark.png */; };
-		6BC73EF016025A1B0045647B /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BC73EEF16025A1B0045647B /* Social.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		6BC96752183149E300F46191 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6BC9674A183149E300F46191 /* Localizable.strings */; };
 		6BC9675B1834852400F46191 /* album_centered.png in Resources */ = {isa = PBXBuildFile; fileRef = 6BC967591834852400F46191 /* album_centered.png */; };
 		6BC9675C1834852400F46191 /* album_centered@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6BC9675A1834852400F46191 /* album_centered@2x.png */; };
@@ -354,6 +353,7 @@
 		05A99D2124ABF73600B904C7 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		05A99D2324AD478500B904C7 /* TODO.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO.txt; sourceTree = "<group>"; };
 		05A99D2624B1928600B904C7 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		05A99D2824B1AF6100B904C7 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* WDAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WDAppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* WDAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WDAppDelegate.m; sourceTree = "<group>"; };
 		1D6058910D05DD3D006BFB54 /* Inkpad.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inkpad.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -888,8 +888,7 @@
 				6BD7072512AD011F004E07C9 /* QuartzCore.framework in Frameworks */,
 				6BD7072612AD011F004E07C9 /* Security.framework in Frameworks */,
 				6BD7072712AD011F004E07C9 /* UIKit.framework in Frameworks */,
-				6B7D2C3515085403001311B0 /* Twitter.framework in Frameworks */,
-				6BC73EF016025A1B0045647B /* Social.framework in Frameworks */,
+				05A99D2924B1AF6100B904C7 /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -980,6 +979,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				05A99D2824B1AF6100B904C7 /* WebKit.framework */,
 				05A99D2124ABF73600B904C7 /* CoreServices.framework */,
 				05A99D1524AB500500B904C7 /* ObjectiveDropboxOfficial.framework */,
 				29E41AC113F9B229000C3305 /* libz.dylib */,
@@ -2679,7 +2679,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 67JTSH67LZ;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2718,7 +2718,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 67JTSH67LZ;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2799,7 +2799,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 67JTSH67LZ;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2882,7 +2882,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 67JTSH67LZ;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

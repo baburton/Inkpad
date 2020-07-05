@@ -11,6 +11,7 @@
 //
 
 #import "WDHelpController.h"
+#import <WebKit/WebKit.h>
 
 @implementation WDHelpController
 
@@ -49,7 +50,9 @@
 
 - (void)loadView
 {
-    UIWebView *webView = [[UIWebView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    WKWebViewConfiguration* config = [WKWebViewConfiguration new];
+    config.preferences.javaScriptEnabled = NO;
+    WKWebView* webView = [[WKWebView alloc] initWithFrame:[[UIScreen mainScreen] bounds] configuration:config];
     webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.view = webView;
     [webView loadRequest:[NSURLRequest requestWithURL:[self helpURL]]];
