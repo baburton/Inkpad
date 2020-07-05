@@ -1504,7 +1504,7 @@ NSString *WDSelectionChangedNotification = @"WDSelectionChangedNotification";
     return NO;
 }
 
-- (void) ensureTextObject:(WDText*)text isVisibleOverPoint:(CGPoint)point
+- (void) ensureTextObject:(WDStylable*)text isVisibleOverPoint:(CGPoint)point
 {
     // The default fill style is solid white, which means that by default
     // a new text object on a blank canvas will be white-on-white; i.e., invisible.
