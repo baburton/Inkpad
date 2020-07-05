@@ -17,6 +17,7 @@
 		05A99D2024AB745900B904C7 /* Launch.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 05A99D1E24AB745800B904C7 /* Launch.storyboard */; };
 		05A99D2224ABF73600B904C7 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05A99D2124ABF73600B904C7 /* CoreServices.framework */; };
 		05A99D2524B062D300B904C7 /* WDImportController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D348D881386FDA200BB0047 /* WDImportController.m */; };
+		05A99D2724B1928600B904C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 05A99D2624B1928600B904C7 /* Images.xcassets */; };
 		1D3623260D0F684500981E51 /* WDAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* WDAppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		29E28F8415115F68007D36DE /* WDEmail.m in Sources */ = {isa = PBXBuildFile; fileRef = 29E28F8315115F68007D36DE /* WDEmail.m */; };
@@ -114,12 +115,6 @@
 		6B616774137B429200BEC0BA /* Samples in Resources */ = {isa = PBXBuildFile; fileRef = 6B616773137B429200BEC0BA /* Samples */; };
 		6B65D553133AF075004053D5 /* WDRulerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B65D552133AF075004053D5 /* WDRulerView.m */; };
 		6B6749C617F6270000E9A627 /* WDImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B6749C517F6270000E9A627 /* WDImageView.m */; };
-		6B6749D817F9446300E9A627 /* Icon-Settings.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B6749D217F9446300E9A627 /* Icon-Settings.png */; };
-		6B6749D917F9446300E9A627 /* Icon-Settings@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B6749D317F9446300E9A627 /* Icon-Settings@2x.png */; };
-		6B6749DA17F9446300E9A627 /* Icon-Spotlight.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B6749D417F9446300E9A627 /* Icon-Spotlight.png */; };
-		6B6749DB17F9446300E9A627 /* Icon-Spotlight@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B6749D517F9446300E9A627 /* Icon-Spotlight@2x.png */; };
-		6B6749DC17F9446300E9A627 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B6749D617F9446300E9A627 /* Icon.png */; };
-		6B6749DD17F9446300E9A627 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B6749D717F9446300E9A627 /* Icon@2x.png */; };
 		6B6A1C95125DC01000253800 /* Default-Portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B6A1C94125DC01000253800 /* Default-Portrait.png */; };
 		6B6A1C9B125DC10800253800 /* Default-Landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B6A1C9A125DC10800253800 /* Default-Landscape.png */; };
 		6B6A9A7A1349BA4000B00667 /* WDUnitsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B6A9A791349BA4000B00667 /* WDUnitsController.m */; };
@@ -358,6 +353,7 @@
 		05A99D1F24AB745800B904C7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Launch.storyboard; sourceTree = "<group>"; };
 		05A99D2124ABF73600B904C7 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		05A99D2324AD478500B904C7 /* TODO.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO.txt; sourceTree = "<group>"; };
+		05A99D2624B1928600B904C7 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		1D3623240D0F684500981E51 /* WDAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WDAppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* WDAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WDAppDelegate.m; sourceTree = "<group>"; };
 		1D6058910D05DD3D006BFB54 /* Inkpad.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inkpad.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -496,12 +492,6 @@
 		6B65D552133AF075004053D5 /* WDRulerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WDRulerView.m; sourceTree = "<group>"; };
 		6B6749C417F6270000E9A627 /* WDImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WDImageView.h; sourceTree = "<group>"; };
 		6B6749C517F6270000E9A627 /* WDImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WDImageView.m; sourceTree = "<group>"; };
-		6B6749D217F9446300E9A627 /* Icon-Settings.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Settings.png"; sourceTree = "<group>"; };
-		6B6749D317F9446300E9A627 /* Icon-Settings@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Settings@2x.png"; sourceTree = "<group>"; };
-		6B6749D417F9446300E9A627 /* Icon-Spotlight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Spotlight.png"; sourceTree = "<group>"; };
-		6B6749D517F9446300E9A627 /* Icon-Spotlight@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Spotlight@2x.png"; sourceTree = "<group>"; };
-		6B6749D617F9446300E9A627 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
-		6B6749D717F9446300E9A627 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		6B6A1C94125DC01000253800 /* Default-Portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Portrait.png"; path = "Images/Default-Portrait.png"; sourceTree = "<group>"; };
 		6B6A1C9A125DC10800253800 /* Default-Landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Landscape.png"; path = "Images/Default-Landscape.png"; sourceTree = "<group>"; };
 		6B6A9A781349BA4000B00667 /* WDUnitsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WDUnitsController.h; sourceTree = "<group>"; };
@@ -982,6 +972,7 @@
 				6B984AF7131623FA007FB48F /* PLists */,
 				6B616773137B429200BEC0BA /* Samples */,
 				6B984AF4131623F1007FB48F /* XIB */,
+				05A99D2624B1928600B904C7 /* Images.xcassets */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1015,19 +1006,6 @@
 				6B4EF3C31878DB4300E55D19 /* FitCurves.m */,
 			);
 			path = CurveFit;
-			sourceTree = "<group>";
-		};
-		6B6749D117F9446300E9A627 /* Icons */ = {
-			isa = PBXGroup;
-			children = (
-				6B6749D217F9446300E9A627 /* Icon-Settings.png */,
-				6B6749D317F9446300E9A627 /* Icon-Settings@2x.png */,
-				6B6749D417F9446300E9A627 /* Icon-Spotlight.png */,
-				6B6749D517F9446300E9A627 /* Icon-Spotlight@2x.png */,
-				6B6749D617F9446300E9A627 /* Icon.png */,
-				6B6749D717F9446300E9A627 /* Icon@2x.png */,
-			);
-			path = Icons;
 			sourceTree = "<group>";
 		};
 		6B8396ED18A072A4001D5985 /* Openclipart */ = {
@@ -1534,7 +1512,6 @@
 		6BCD52C0123FFFF3002FCB27 /* Images */ = {
 			isa = PBXGroup;
 			children = (
-				6B6749D117F9446300E9A627 /* Icons */,
 				6BDBC633130E1FBF00BC3BCA /* Align */,
 				6BDBC636130E1FD000BC3BCA /* App */,
 				6B87CDFB1313C6640027A482 /* Canvas */,
@@ -1855,7 +1832,6 @@
 				6BCD52BD123FFFED002FCB27 /* undo.png in Resources */,
 				6B197DAC12434CED006C5C3A /* align_bottom.png in Resources */,
 				02B54D3018D59DFF00DE8A9F /* Localizable.strings in Resources */,
-				6B6749D817F9446300E9A627 /* Icon-Settings.png in Resources */,
 				6B197DAD12434CED006C5C3A /* align_center.png in Resources */,
 				6BC9675B1834852400F46191 /* album_centered.png in Resources */,
 				6BC9675C1834852400F46191 /* album_centered@2x.png in Resources */,
@@ -1912,7 +1888,6 @@
 				6B83973218A41126001D5985 /* Shadow.strings in Resources */,
 				05A99D2024AB745900B904C7 /* Launch.storyboard in Resources */,
 				6BDD92E413DE744F0005F55D /* hue_shifter_overlay.png in Resources */,
-				6B6749D917F9446300E9A627 /* Icon-Settings@2x.png in Resources */,
 				6B87EA3513FB2F7300CC07C3 /* dropbox_icon_font.png in Resources */,
 				6B87EA3613FB2F7300CC07C3 /* dropbox_icon_svg.png in Resources */,
 				6BABD97C141ED30100F7E0A9 /* add_anchor.png in Resources */,
@@ -1932,7 +1907,6 @@
 				6B5335451803538D00D46D5B /* MainStoryboard.storyboard in Resources */,
 				6BABD994141ED30100F7E0A9 /* scale.png in Resources */,
 				6BABD996141ED30100F7E0A9 /* scissor.png in Resources */,
-				6B6749DA17F9446300E9A627 /* Icon-Spotlight.png in Resources */,
 				6BABD998141ED30100F7E0A9 /* select.png in Resources */,
 				6BBB7CDD18B32C240018954B /* Shadow.strings in Resources */,
 				6B8C537F182AEB4A00C102F7 /* Localizable.strings in Resources */,
@@ -1970,13 +1944,12 @@
 				6B7D2D1E15097D8B001311B0 /* decrement.png in Resources */,
 				6B7D2D1F15097D8B001311B0 /* decrement@2x.png in Resources */,
 				6B9A288C18C1087300697BE7 /* OpenClipArt.strings in Resources */,
-				6B6749DD17F9446300E9A627 /* Icon@2x.png in Resources */,
+				05A99D2724B1928600B904C7 /* Images.xcassets in Resources */,
 				6B7D2D2015097D8B001311B0 /* increment.png in Resources */,
 				6B9A287B18C1058100697BE7 /* OpenClipArt.strings in Resources */,
 				6B7D2D2115097D8B001311B0 /* increment@2x.png in Resources */,
 				6B7D2D23150AD7A9001311B0 /* Default-Landscape@2x.png in Resources */,
 				6B7D2D25150AD851001311B0 /* Default-Portrait@2x.png in Resources */,
-				6B6749DB17F9446300E9A627 /* Icon-Spotlight@2x.png in Resources */,
 				6B74B7DC150E8213000A08D4 /* color_wheel@2x.png in Resources */,
 				6B2AC3FD17EB11A8008D6391 /* zoom_to_fit@2x.png in Resources */,
 				6B74B7E5150E829E000A08D4 /* linear@2x.png in Resources */,
@@ -2003,7 +1976,6 @@
 				6B8396E5189F3767001D5985 /* openclipart.png in Resources */,
 				6B219C73150EDB3900761F18 /* scale@2x.png in Resources */,
 				6B53351D1803530E00D46D5B /* Defaults.plist in Resources */,
-				6B6749DC17F9446300E9A627 /* Icon.png in Resources */,
 				6B9A288E18C1087300697BE7 /* Stroke.strings in Resources */,
 				6B219C77150EDC1700761F18 /* rotate@2x.png in Resources */,
 				6B219C7F150EEB2900761F18 /* line@2x.png in Resources */,

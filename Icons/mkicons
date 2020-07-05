@@ -1,0 +1,14 @@
+#!/bin/bash
+#
+# Note: on fink this requires librsvg2-bin.
+#
+set -e
+
+for j in 20 29 40 58 76 80 152 167 1024; do
+  rsvg -w$j -h$j Icon.svg Icon-$j.png
+done
+
+for j in 130 260; do
+  rsvg -w$j -h$j Icon-Rounded.svg Icon-Rounded-$j.png
+done
+
