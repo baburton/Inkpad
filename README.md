@@ -1,4 +1,4 @@
-Inkpad [![Build Status](https://travis-ci.org/alistairmcmillan/Inkpad.svg?branch=develop)](https://travis-ci.org/alistairmcmillan/Inkpad)
+Inkpad
 ======
 
 Inkpad is a vector illustration app designed from scratch for the iPad. It supports paths, compound paths, text, images, groups, masks, gradient fills, and an unlimited number of layers.
@@ -25,25 +25,31 @@ Features:
 * Email drawings as SVG, PDF, PNG and JPEG.
 * Send SVG, PDF, PNG, and JPEG directly to your Dropbox.
 
-Inkpad requires iOS 7. It is available on the [App Store](https://itunes.apple.com/app/id400083414).
+Inkpad was originally developed by Steve Sprang, and you can see his original repository at
+[https://github.com/sprang/Inkpad](https://github.com/sprang/Inkpad).
+Ben Burton is currently maintaining it on the App Store under the name *Inkpad Libre*.
 
 License
 -------
 
 Inkpad is Free/Libre Open Source Software. It is distributed under the [Mozilla Public License v2.0](http://mozilla.org/MPL/2.0/).
 
-Please do not submit unmodified (or trivially modified) versions of this application to the App Store. The license grants both rights and responsibilities. If you choose to clone and submit this application to the App Store, you are required to make this source code (and any changes that you've made to it) publicly available. You must also make it clear that the source code is available and provide a link to it.
+Please do not submit unmodified (or trivially modified) versions of this application to the App Store.
+The license grants both rights and responsibilities.
+If you choose to clone and submit this application to the App Store,
+*you are required to make this source code -- and any changes that you've made to it -- publicly available*.
+You must also make it clear that the source code is available and provide a link to it.
 
 I will ask Apple to pull any apps that do not comply. Please don't waste your time and mine.
 
 How to Contribute
 -----------------
 
-One of my motivations for releasing the source code for Inkpad was to make it a community project. To that end, I'd appreciate help with bug fixes, new features, localizations, testing, and ideas for improving/simplifying existing code. Take a look at the list of [issues](https://github.com/sprang/Inkpad/issues) to find enhancements that I've considered implementing. I'm also interested in your feature ideas.
+Following Steve Sprang's original intentions, this is meant to be a community project.
+I'd appreciate help with bug fixes, new features, localizations, testing, and other ideas,
+and I encourage you to use the [GitHub issue tracker](https://github.com/baburton/Inkpad/issues) for this.
 
-If you're taking on a big change, I'd be happy to discuss design ideas or answer questions before you get too far along. Note: I will likely be picky about implementation details and UI changes.
-
-To contribute, please follow the branching model outlined here: [A successful Git branching model](http://nvie.com/posts/a-successful-git-branching-model/).
+If you're taking on a big change, I'd be happy to discuss design ideas or answer questions before you get too far along.
 
 Contributors
 ------------
@@ -54,6 +60,7 @@ Contributors
 * [Sam Green](https://github.com/samgreen)
 * [Alistair McMillan](https://github.com/alistairmcmillan)
 * [Oscar Rysdyk](https://github.com/32Beat)
+* [Ben Burton](https://github.com/baburton)
 
 Localizations:
 
