@@ -50,6 +50,14 @@
         [shadowPath addClip];
     }
     
+    // Fill with a sensible background colour:
+    if (@available(iOS 13, *)) {
+        [[UIColor systemBackgroundColor] set];
+    } else {
+        [[UIColor whiteColor] set];
+    }
+    UIRectFill(self.bounds);
+    
     [super drawRect:rect];
     
     if ([self hadRoundedCorners]) {
