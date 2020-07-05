@@ -1048,7 +1048,7 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     
 	for (DBFILESFileMetadata *item in dropboxItems) {
         NSString *downloadPath = [downloadsDirectory stringByAppendingString:item.name];
-        NSURL* downloadURL = [NSURL URLWithString:downloadPath];
+        NSURL* downloadURL = [NSURL fileURLWithPath:downloadPath];
         
         // make sure we're not already downloading/importing this file
         if (!activities_.count || ![activities_ activityWithFilepath:downloadPath]) {
