@@ -11,7 +11,6 @@
 //
 
 #import "WDAppDelegate.h"
-#import "WDBrowserController.h"
 #import "WDCanvasController.h"
 #import "WDColor.h"
 #import "WDDrawing.h"

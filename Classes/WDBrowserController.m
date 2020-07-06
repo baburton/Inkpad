@@ -26,169 +26,41 @@
 #import "WDDocument.h"
 #import "WDDrawing.h"
 #import "WDDrawingManager.h"
-#import "WDEmail.h"
-#import "WDExportController.h"
 #import "WDFontLibraryController.h"
 #import "WDFontManager.h"
 #import "WDPageSizeController.h"
-#import "WDThumbnailView.h"
 #import "UIBarButtonItem+Additions.h"
 
 #define kEditingHighlightRadius     125
-
-NSString *WDAttachmentNotification = @"WDAttachmentNotification";
 
 @implementation WDBrowserController
 
 #pragma mark -
 
-- (id) initWithCoder:(NSCoder *)aDecoder
+- (void)viewDidLoad
 {
-    self = [super initWithCoder:aDecoder];
-    
-    if (!self) {
-        return nil;
+    [super viewDidLoad];
+    self.delegate = self;
+    self.allowsDocumentCreation = YES;
+    self.allowsPickingMultipleItems = NO;
+    self.browserUserInterfaceStyle = UIDocumentBrowserUserInterfaceStyleLight;
+    if (@available(iOS 13.0, *)) {
+        self.localizedCreateDocumentActionTitle = NSLocalizedString(@"Create Drawing", @"Create Drawing");
+        self.defaultDocumentAspectRatio = 1.0;
     }
     
-    selectedDrawings_ = [[NSMutableSet alloc] init];
-    filesBeingUploaded_ = [[NSMutableSet alloc] init];
-    activities_ = [[WDActivityManager alloc] init];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(drawingChanged:)
-                                                 name:UIDocumentStateChangedNotification
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(drawingAdded:)
-                                                 name:WDDrawingAdded
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(drawingsDeleted:)
-                                                 name:WDDrawingsDeleted
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(dropboxUnlinked:)
-                                                 name:WDDropboxWasUnlinkedNotification
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillShow:)
-                                                 name:UIKeyboardWillShowNotification
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(didEnterBackground:)
-                                                 name:UIApplicationDidEnterBackgroundNotification
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(activityCountChanged:)
-                                                 name:WDActivityAddedNotification
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(activityCountChanged:)
-                                                 name:WDActivityRemovedNotification
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(emailAttached:)
-                                                 name:WDAttachmentNotification
-                                               object:nil];
-    
-    self.navigationItem.title = NSLocalizedString(@"Gallery", @"Gallery");
-    
-    NSMutableArray *rightBarButtonItems = [NSMutableArray array];
-
-    // Create an "add new drawing" button
-    UIBarButtonItem *addItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd
-                                                                             target:self
-                                                                             action:@selector(addDrawing:)];
-    [rightBarButtonItems addObject:addItem];
-    
-    // create an album import button
-    UIBarButtonItem *albumItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"album_centered.png"]
-                                                                  style:UIBarButtonItemStylePlain
-                                                                 target:self
-                                                                 action:@selector(importFromAlbum:)];
-    [rightBarButtonItems addObject:albumItem];
-    
-    // add a camera import item if we have a camera (I think this will always be true from now on)
-    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
-        UIBarButtonItem *cameraItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCamera
-                                                                                    target:self
-                                                                                    action:@selector(importFromCamera:)];
-        [rightBarButtonItems addObject:cameraItem];
-    }
-    
-#if 0 // bab: no openclipart
-    UIBarButtonItem *openClipArtItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"openclipart.png"]
-                                                                        style:UIBarButtonItemStylePlain
-                                                                       target:self
-                                                                       action:@selector(showOpenClipArt:)];
-    [rightBarButtonItems addObject:openClipArtItem];
-#endif
-
-    // Create a help button to display in the top left corner.
-    UIBarButtonItem *leftItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Help", @"Help")
+    // Set up additional buttons in the navigation bar.
+    // These should be for global actions (not specific to any particular files).
+    UIBarButtonItem *helpItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Help", @"Help")
                                                                  style:UIBarButtonItemStylePlain
                                                                 target:self
                                                                 action:@selector(showHelp:)];
-    self.navigationItem.leftBarButtonItem = leftItem;
-    self.navigationItem.rightBarButtonItems = rightBarButtonItems;
-    self.toolbarItems = [self defaultToolbarItems];
-    
-    return self;
+    self.additionalLeadingNavigationBarButtonItems = @[helpItem];
 }
 
 - (void) dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-#pragma mark -
-
-- (void) startEditingDrawing:(WDDocument *)document
-{
-    [self setEditing:NO animated:NO];
-    
-    WDCanvasController *canvasController = [[WDCanvasController alloc] init];
-    [canvasController setDocument:document];
-    
-    [self.navigationController pushViewController:canvasController animated:YES];
-}
-
-- (void) createNewDrawing:(id)sender
-{
-    WDDocument *document = [[WDDrawingManager sharedInstance] createNewDrawingWithSize:pageSizeController_.size
-                                                                              andUnits:pageSizeController_.units];
-
-    [self startEditingDrawing:document];
-    
-    [self dismissPopover];
-}
-
-- (void) addDrawing:(id)sender
-{
-    if (popoverController_) {
-        [self dismissPopover];
-    } else {
-        pageSizeController_ = [[WDPageSizeController alloc] initWithNibName:nil bundle:nil];
-        UINavigationController  *navController = [[UINavigationController alloc] initWithRootViewController:pageSizeController_];
-        
-        pageSizeController_.target = self;
-        pageSizeController_.action = @selector(createNewDrawing:);
-        
-        popoverController_ = navController;
-        popoverController_.modalPresentationStyle = UIModalPresentationPopover;
-        popoverController_.popoverPresentationController.delegate = self;
-        popoverController_.popoverPresentationController.barButtonItem = sender;
-        popoverController_.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
-        [self presentViewController:popoverController_ animated:NO completion:nil];
-    }
 }
 
 #pragma mark - OpenClipArt
@@ -305,278 +177,7 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     popoverController_ = nil;
 }
 
-#pragma mark - View Lifecycle
-
-- (void) viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-
-    if (!everLoaded_) {
-        if ([[WDDrawingManager sharedInstance] numberOfDrawings] > 0) {
-            // scroll to bottom
-            NSUInteger count = [[WDDrawingManager sharedInstance] numberOfDrawings] - 1;
-            [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:count inSection:0]
-                                        atScrollPosition:UICollectionViewScrollPositionTop
-                                                animated:NO];
-        }
-        
-        everLoaded_ = YES;
-    }
-}
-
-- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
-{
-    if (editingThumbnail_) {
-        [editingThumbnail_ stopEditing];
-    }
-}
-
-- (void) keyboardWillShow:(NSNotification *)aNotification
-{
-    if (!editingThumbnail_ || blockingView_) {
-        return;
-    }
-    
-    NSValue     *endFrame = [aNotification userInfo][UIKeyboardFrameEndUserInfoKey];
-    NSNumber    *duration = [aNotification userInfo][UIKeyboardAnimationDurationUserInfoKey];
-    CGRect      frame = [endFrame CGRectValue];
-    float       delta = 0;
-    
-    CGRect thumbFrame = editingThumbnail_.frame;
-    thumbFrame.size.height += 20; // add a little extra margin between the thumb and the keyboard
-    frame = [self.collectionView convertRect:frame fromView:nil];
-    
-    if (CGRectIntersectsRect(thumbFrame, frame)) {
-        delta = CGRectGetMaxY(thumbFrame) - CGRectGetMinY(frame);
-        
-        CGPoint offset = self.collectionView.contentOffset;
-        offset.y += delta;
-        [self.collectionView setContentOffset:offset animated:YES];
-    }
-    
-    blockingView_ = [[WDBlockingView alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    WDAppDelegate *delegate = (WDAppDelegate *) [UIApplication sharedApplication].delegate;
-    
-    blockingView_.passthroughViews = @[editingThumbnail_.titleField];
-    [delegate.window addSubview:blockingView_];
-    
-    blockingView_.target = self;
-    blockingView_.action = @selector(blockingViewTapped:);
-    
-    CGPoint shadowCenter = [self.collectionView convertPoint:editingThumbnail_.center toView:delegate.window];
-    [blockingView_ setShadowCenter:shadowCenter radius:kEditingHighlightRadius];
-    blockingView_.alpha = 0;
-    
-    [UIView animateWithDuration:[duration doubleValue] animations:^{ self->blockingView_.alpha = 1; }];
-}
-
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView
-{
-    if (blockingView_ && editingThumbnail_) {
-        WDAppDelegate *delegate = (WDAppDelegate *) [UIApplication sharedApplication].delegate;
-        CGPoint shadowCenter = [self.collectionView convertPoint:editingThumbnail_.center toView:delegate.window];
-        [blockingView_ setShadowCenter:shadowCenter radius:kEditingHighlightRadius];
-    }
-}
-
-- (void) didEnterBackground:(NSNotification *)aNotification
-{
-    if (!editingThumbnail_) {
-        return;
-    }
-    
-    [editingThumbnail_ stopEditing];
-}
-
-#pragma mark - Thumbnail Editing
-
-- (BOOL) thumbnailShouldBeginEditing:(WDThumbnailView *)thumb
-{
-    if (self.isEditing) {
-        return NO;
-    }
-    
-    // can't start editing if we're already editing another thumbnail
-    return (editingThumbnail_ ? NO : YES);
-}
-
-- (void) blockingViewTapped:(id)sender
-{
-    [editingThumbnail_ stopEditing];
-}
-
-- (void) thumbnailDidBeginEditing:(WDThumbnailView *)thumbView
-{
-    editingThumbnail_ = thumbView;
-}
-
-- (void) thumbnailDidEndEditing:(WDThumbnailView *)thumbView
-{
-    [UIView animateWithDuration:0.2f
-                     animations:^{ self->blockingView_.alpha = 0; }
-                     completion:^(BOOL finished) {
-                         [self->blockingView_ removeFromSuperview];
-                         self->blockingView_ = nil;
-                     }];
-    
-    editingThumbnail_ = nil;
-}
-
-- (WDThumbnailView *) getThumbnail:(NSString *)filename
-{
-    NSString *barefile = [[filename stringByDeletingPathExtension] stringByAppendingPathExtension:@"inkpad"];
-    NSIndexPath *indexPath = [[WDDrawingManager sharedInstance] indexPathForFilename:barefile];
-    
-    return (WDThumbnailView *) [self.collectionView cellForItemAtIndexPath:indexPath];
-}
-
-#pragma mark - Drawing Notifications
-
-- (void) drawingChanged:(NSNotification *)aNotification
-{
-    WDDocument *document = [aNotification object];
-    
-    [[self getThumbnail:document.filename] reload];
-}
-
-- (void) drawingAdded:(NSNotification *)aNotification
-{
-    NSUInteger count = [[WDDrawingManager sharedInstance] numberOfDrawings] - 1;
-    NSArray *indexPaths = @[[NSIndexPath indexPathForItem:count inSection:0]];
-    [self.collectionView insertItemsAtIndexPaths:indexPaths];
-}
-
-- (void) drawingsDeleted:(NSNotification *)aNotification
-{
-    NSArray *indexPaths = aNotification.object;
-    [self.collectionView deleteItemsAtIndexPaths:indexPaths];
-    
-    [selectedDrawings_ removeAllObjects];
-    [self properlyEnableToolbarItems];
-}
-
-#pragma mark - Deleting Drawings
-
-- (void) deleteSelectedDrawings
-{
-    [self dismissPopover];
-    
-    NSString *format = NSLocalizedString(@"Delete %d Drawings", @"Delete %d Drawings");
-    NSString *title = (selectedDrawings_.count) == 1 ? NSLocalizedString(@"Delete Drawing", @"Delete Drawing") :
-    [NSString stringWithFormat:format, selectedDrawings_.count];
-    
-    NSString *message;
-    
-    if (selectedDrawings_.count == 1) {
-        message = NSLocalizedString(@"Once deleted, this drawing cannot be recovered.", @"Alert text when deleting 1 drawing");
-    } else {
-        message = NSLocalizedString(@"Once deleted, these drawings cannot be recovered.", @"Alert text when deleting multiple drawings");
-    }
-    
-    UIAlertController *alertView = [UIAlertController alertControllerWithTitle:title
-                                                                       message:message
-                                                                preferredStyle:UIAlertControllerStyleAlert];
-    [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Delete", @"Delete") style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
-        [[WDDrawingManager sharedInstance] deleteDrawings:self->selectedDrawings_];
-        [self stopEditing:nil];
-    }]];
-    [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"Cancel") style:UIAlertActionStyleCancel handler:nil]];
-    [self presentViewController:alertView animated:YES completion:nil];
-}
-
-#pragma mark - Editing
-
-- (void) startEditing:(id)sender
-{
-    [self setEditing:YES animated:YES];
-}
-
-- (void) stopEditing:(id)sender
-{
-    [self setEditing:NO animated:YES];
-}
-
-- (void) setEditing:(BOOL)editing animated:(BOOL)animated
-{
-    [self dismissPopover];
-    
-    [super setEditing:editing animated:animated];
-    
-    if (editing) {
-        self.title = NSLocalizedString(@"Select Drawings", @"Select Drawings");
-        [self setToolbarItems:[self editingToolbarItems] animated:NO];
-        [self properlyEnableToolbarItems];
-    } else {
-        self.title = NSLocalizedString(@"Gallery", @"Gallery");
-
-        self.collectionView.allowsSelection = NO;
-        self.collectionView.allowsSelection = YES;
-        
-        [selectedDrawings_ removeAllObjects];
-        [self setToolbarItems:[self defaultToolbarItems] animated:NO];
-    }
-    
-    self.collectionView.allowsMultipleSelection = editing;
-}
-
 #pragma mark - Toolbar
-
-- (void) properlyEnableToolbarItems
-{
-    deleteItem_.enabled = [selectedDrawings_ count] == 0 ? NO : YES;
-    emailItem_.enabled = ([selectedDrawings_ count] > 0 && [selectedDrawings_ count] < 6) ? YES : NO;
-    dropboxExportItem_.enabled = [selectedDrawings_ count] == 0 ? NO : (filesBeingUploaded_.count == 0 ? YES : NO);
-    
-    if (filesBeingUploaded_.count) {
-        dropboxExportItem_.title = NSLocalizedString(@"Uploading...", @"Uploading...");
-    } else {
-        dropboxExportItem_.title = NSLocalizedString(@"Dropbox", @"Dropbox");
-    }
-}
-
-- (NSArray *) editingToolbarItems
-{
-    NSMutableArray *items = [NSMutableArray array];
-    
-    UIBarButtonItem *fixedItem = [UIBarButtonItem fixedItemWithWidth:10];
-	UIBarButtonItem *flexibleItem = [UIBarButtonItem flexibleItem];
-    
-    if ([MFMailComposeViewController canSendMail]) {
-        if (!emailItem_) {
-            emailItem_ = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Email", @"Email")
-                                                          style:UIBarButtonItemStylePlain
-                                                         target:self
-                                                         action:@selector(showEmailPanel:)];
-        }
-        [items addObject:emailItem_];
-        [items addObject:fixedItem];
-    }
-    
-    if (!dropboxExportItem_) {
-        dropboxExportItem_ = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Dropbox", @"Dropbox")
-                                                              style:UIBarButtonItemStylePlain
-                                                             target:self
-                                                             action:@selector(showDropboxExportPanel:)];
-    }
-    
-    if (!deleteItem_) {
-        deleteItem_ = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash
-                                                                    target:self
-                                                                    action:@selector(deleteSelectedDrawings)];
-    }
-    
-    UIBarButtonItem *doneItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
-                                                                              target:self
-                                                                              action:@selector(stopEditing:)];
-    
-    [items addObject:dropboxExportItem_];
-    [items addObject:flexibleItem];
-    [items addObject:deleteItem_];
-    [items addObject:fixedItem];
-    [items addObject:doneItem];
-    
-    return items;
-}
 
 - (NSArray *) defaultToolbarItems
 {
@@ -601,12 +202,6 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
                                                          style:UIBarButtonItemStylePlain target:self
                                                         action:@selector(showActivityPanel:)];
         
-        UIBarButtonItem *editItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Select", @"Select")
-                                                                     style:UIBarButtonItemStylePlain
-                                                                    target:self
-                                                                    action:@selector(startEditing:)];
-        editItem.style = UIBarButtonItemStylePlain;
-        
         UIBarButtonItem *flexibleItem = [UIBarButtonItem flexibleItem];
         UIBarButtonItem *fixedItem = [UIBarButtonItem fixedItemWithWidth:10];
         
@@ -620,7 +215,6 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
         [toolbarItems_ addObject:spinnerItem];
         [toolbarItems_ addObject:fixedItem];
         [toolbarItems_ addObject:fixedItem];
-        [toolbarItems_ addObject:editItem];
     }
     
     return toolbarItems_;
@@ -751,7 +345,6 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
         popoverController_ = nil;
     }
     
-    exportController_ = nil;
     importController_ = nil;
     pickerController_ = nil;
     fontLibraryController_ = nil;
@@ -772,7 +365,6 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
         popoverController_ = nil;
     }
     
-    exportController_ = nil;
     importController_ = nil;
     pickerController_ = nil;
     fontLibraryController_ = nil;
@@ -782,220 +374,6 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
 
 - (void)didDismissModalView {
     [self dismissViewControllerAnimated:YES completion:nil];
-}
-
-#pragma mark - Email
-
-- (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error
-{
-	[self.navigationController dismissViewControllerAnimated:YES completion:nil];
-}
-
-- (void) emailDrawings:(id)sender
-{
-    [self dismissPopover];
-    
-    NSString *format = [[NSUserDefaults standardUserDefaults] objectForKey:WDEmailFormatDefault];
-    
-    MFMailComposeViewController *picker = [[MFMailComposeViewController alloc] init];
-    picker.mailComposeDelegate = self;
-    
-    [picker setSubject:NSLocalizedString(@"Inkpad Drawing", @"Inkpad Drawing")];
-    
-    WDEmail *email = [[WDEmail alloc] init];
-    email.completeAttachments = 0;
-    email.expectedAttachments = [selectedDrawings_ count];
-    email.picker = picker;
-    
-    for (NSString *filename in selectedDrawings_) {
-        [[self getThumbnail:filename] startActivity];
-        [[WDDrawingManager sharedInstance] openDocumentWithName:filename withCompletionHandler:^(WDDocument *document) {
-            @autoreleasepool {
-                WDDrawing *drawing = document.drawing;
-                // TODO use document contentForType
-                NSData *data = nil;
-                NSString *extension = nil;
-                NSString *mimeType = nil;
-                if ([format isEqualToString:@"Inkpad"]) {
-                    data = [[WDDrawingManager sharedInstance] dataForFilename:filename];
-                    extension = WDDrawingFileExtension;
-                    mimeType = @"application/x-inkpad";
-                } else if ([format isEqualToString:@"SVG"]) {
-                    data = [drawing SVGRepresentation];
-                    extension = @"svg";
-                    mimeType = @"image/svg+xml";
-                } else if ([format isEqualToString:@"SVGZ"]) {
-                    data = [[drawing SVGRepresentation] compress];
-                    extension = @"svgz";
-                    mimeType = @"image/svg+xml";
-                } else if ([format isEqualToString:@"PNG"]) {
-                    data = UIImagePNGRepresentation([drawing image]);
-                    extension = @"png";
-                    mimeType = @"image/png";
-                } else if ([format isEqualToString:@"JPEG"]) {
-                    data = UIImageJPEGRepresentation([drawing image], 0.9);
-                    extension = @"jpeg";
-                    mimeType = @"image/jpeg";
-                } else if ([format isEqualToString:@"PDF"]) {
-                    data = [drawing PDFRepresentation];
-                    extension = @"pdf";
-                    mimeType = @"image/pdf";
-                }
-                [picker addAttachmentData:data mimeType:mimeType fileName:[[filename stringByDeletingPathExtension] stringByAppendingPathExtension:extension]];
-            }
-            [[NSNotificationCenter defaultCenter] postNotificationName:WDAttachmentNotification object:email userInfo:@{@"path": filename}];
-        }];
-    }
-}
-
-- (void) emailAttached:(NSNotification *)aNotification
-{
-    WDEmail *email = aNotification.object;
-    NSString *path = [aNotification.userInfo valueForKey:@"path"];
-    id thumbnail = [self getThumbnail:path];
-    [thumbnail stopActivity];
-    if (++email.completeAttachments == email.expectedAttachments) {
-        [self.navigationController presentViewController:email.picker animated:YES completion:nil];
-    }
-}
-
-- (void) showEmailPanel:(id)sender
-{
-    if (exportController_ && exportController_.mode == kWDExportViaEmailMode) {
-        [self dismissPopover];
-        return;
-    }
-    
-    [self dismissPopover];
-    
-    exportController_ = [[WDExportController alloc] initWithNibName:nil bundle:nil];
-    exportController_.browser = self; // Must come before setting mode
-    exportController_.action = @selector(emailDrawings:);
-    exportController_.mode = kWDExportViaEmailMode;
-    
-    UINavigationController  *navController = [[UINavigationController alloc] initWithRootViewController:exportController_];
-    
-    popoverController_ = navController;
-    popoverController_.modalPresentationStyle = UIModalPresentationPopover;
-    popoverController_.popoverPresentationController.delegate = self;
-    popoverController_.popoverPresentationController.barButtonItem = sender;
-    popoverController_.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
-    [self presentViewController:popoverController_ animated:NO completion:nil];
-}
-
-#pragma mark - Dropbox
-
-- (void) uploadDrawings:(id)sender
-{
-    [self dismissPopover];
-    
-    if (!dbClient_) {
-        dbClient_ = [DBClientsManager authorizedClient];
-    }
-    
-    NSString *format = [[NSUserDefaults standardUserDefaults] objectForKey:WDDropboxFormatDefault];
-    
-    for (NSString *filename in selectedDrawings_) {
-        [[WDDrawingManager sharedInstance] openDocumentWithName:filename withCompletionHandler:^(WDDocument *document) {
-            @autoreleasepool {
-                NSData      *data = nil;
-                // TODO: use document contentForType
-                if ([format isEqualToString:@"Inkpad"]) {
-                    data = [[WDDrawingManager sharedInstance] dataForFilename:filename];
-                } else if ([format isEqualToString:@"SVG"]) {
-                    data = [document.drawing SVGRepresentation];
-                } else if ([format isEqualToString:@"SVGZ"]) {
-                    data = [[document.drawing SVGRepresentation] compress];
-                } else if ([format isEqualToString:@"PNG"]) {
-                    data = UIImagePNGRepresentation([document.drawing image]);
-                } else if ([format isEqualToString:@"JPEG"]) {
-                    data = UIImageJPEGRepresentation([document.drawing image], 0.9);
-                } else if ([format isEqualToString:@"PDF"]) {
-                    data = [document.drawing PDFRepresentation];
-                }
-                if (data) {
-                    NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:filename];
-                    path = [[path stringByDeletingPathExtension] stringByAppendingPathExtension:[format lowercaseString]];
-                    [data writeToFile:path atomically:YES];
-                    
-                    // This path actually lives inside the app folder in dropbox.
-                    NSString* dropboxPath = [NSString stringWithFormat:@"/%@", path.lastPathComponent];
-                    
-                    // TODO: If/when we reintroduce progress tracking, we need to periodically call
-                    // [activities_ updateProgressForFilepath:srcPath progress:progress].
-                    [[self->dbClient_.filesRoutes uploadUrl:dropboxPath inputUrl:path] setResponseBlock:^(DBFILESFileMetadata * _Nullable result, DBFILESUploadError * _Nullable routeError, DBRequestError * _Nullable networkError) {
-                        if (routeError || networkError || ! result) {
-                            // This is asynchronous, and so the user might have called up a new
-                            // popover since we started the upload.
-                            [self dismissPopover];
-
-                            [self->activities_ removeActivityWithFilepath:path];
-                            [self->filesBeingUploaded_ removeObject:path];
-                            
-                            [[self getThumbnail:path.lastPathComponent] stopActivity];
-                            
-                            [self properlyEnableToolbarItems];
-                            
-                            NSString *format = NSLocalizedString(@"There was a problem uploading “%@”. Check your network connection and try again.",
-                                                                 @"There was a problem uploading “%@”. Check your network connection and try again.");
-                            UIAlertController *alertView = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Upload Problem", @"Upload Problem")
-                                                                                               message:[NSString stringWithFormat:format, path.lastPathComponent]
-                                                                                        preferredStyle:UIAlertControllerStyleAlert];
-                            [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"OK") style:UIAlertActionStyleCancel handler:nil]];
-                            [self presentViewController:alertView animated:YES completion:nil];
-                        } else {
-                            [self->filesBeingUploaded_ removeObject:path];
-                            [self->activities_ removeActivityWithFilepath:path];
-                            
-                            [[self getThumbnail:path.lastPathComponent] stopActivity];
-                            
-                            [self properlyEnableToolbarItems];
-                        }
-                    }];
-                    [self->activities_ addActivity:[WDActivity activityWithFilePath:path type:WDActivityTypeUpload]];
-                    [self->filesBeingUploaded_ addObject:path];
-                    
-                    [[self getThumbnail:filename] startActivity];
-                }
-            }
-        }];
-    }
-    
-    [self properlyEnableToolbarItems];
-}
-
-- (void) reallyShowDropboxExportPanel:(id)sender
-{
-    if (exportController_ && exportController_.mode == kWDExportViaDropboxMode) {
-        [self dismissPopover];
-        return;
-    }
-    
-    [self dismissPopover];
-    
-    exportController_ = [[WDExportController alloc] initWithNibName:nil bundle:nil];
-    exportController_.browser = self; // Must come before setting mode
-    exportController_.action = @selector(uploadDrawings:);
-    exportController_.mode = kWDExportViaDropboxMode;
-    
-    UINavigationController  *navController = [[UINavigationController alloc] initWithRootViewController:exportController_];
-    
-    popoverController_ = navController;
-    popoverController_.modalPresentationStyle = UIModalPresentationPopover;
-    popoverController_.popoverPresentationController.delegate = self;
-    popoverController_.popoverPresentationController.barButtonItem = sender;
-    popoverController_.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
-    [self presentViewController:popoverController_ animated:NO completion:nil];
-}
-
-- (void) showDropboxExportPanel:(id)sender
-{
-	if (![self dropboxIsLinked]) {
-        WDAppDelegate *delegate = (WDAppDelegate *) [UIApplication sharedApplication].delegate;
-        delegate.performAfterDropboxLoginBlock = ^{ [self reallyShowDropboxExportPanel:sender]; };
-	} else {
-        [self reallyShowDropboxExportPanel:sender];
-    }
 }
 
 #pragma mark -
@@ -1183,91 +561,180 @@ NSString *WDAttachmentNotification = @"WDAttachmentNotification";
     }
 }
 
-#pragma mark - Storyboard / Collection View
+#pragma mark - Documents
 
-- (BOOL) shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
+- (void)documentBrowser:(UIDocumentBrowserViewController *)controller didRequestDocumentCreationWithHandler:(void (^)(NSURL * _Nullable, UIDocumentBrowserImportMode))importHandler
 {
-    return !self.isEditing;
+    [self dismissPopover];
+    
+    // TODO: Implement. Create in temporary location, then call importHandler with import mode ImportMode.move; to cancel pass nil, ImportMode.none.
+    
+    pageSizeController_ = [[WDPageSizeController alloc] initWithNibName:nil bundle:nil];
+    UINavigationController  *navController = [[UINavigationController alloc] initWithRootViewController:pageSizeController_];
+    
+    pageSizeController_.target = self;
+    pageSizeController_.action = @selector(createNewDrawing:);
+    
+    popoverController_ = navController;
+    popoverController_.modalPresentationStyle = UIModalPresentationPopover;
+    popoverController_.popoverPresentationController.delegate = self;
+    //popoverController_.popoverPresentationController.barButtonItem = sender;
+    popoverController_.popoverPresentationController.barButtonItem = self.additionalLeadingNavigationBarButtonItems.firstObject;
+    popoverController_.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
+    [self presentViewController:popoverController_ animated:NO completion:nil];
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+// TODO: Delete
+- (void) createNewDrawing:(id)sender
 {
-    if ([[segue identifier] isEqualToString:@"editDrawing"]) {
-        WDCanvasController *canvasController = [segue destinationViewController];
-        NSUInteger index = [[WDDrawingManager sharedInstance] indexPathForFilename:((WDThumbnailView *)sender).filename].item;
-        WDDocument *document = [[WDDrawingManager sharedInstance] openDocumentAtIndex:index withCompletionHandler:nil];
-        [canvasController setDocument:document];
+    [self dismissPopover];
+    
+    WDDocument *document = [[WDDrawingManager sharedInstance] createNewDrawingWithSize:pageSizeController_.size
+                                                                              andUnits:pageSizeController_.units];
+    [document closeWithCompletionHandler:^(BOOL success) {
+        if (success) {
+            
+        } else {
+            // TODO: Present error.
+        }
+    }];
+}
+
+- (void)documentBrowser:(UIDocumentBrowserViewController *)controller didPickDocumentURLs:(NSArray<NSURL *> *)documentURLs
+{
+    // Method for iOS 11.
+    
+    // We do not support picking multiple items.
+    if (documentURLs.count > 0)
+        [self presentDocumentAtURL:documentURLs.firstObject];
+}
+
+- (void)documentBrowser:(UIDocumentBrowserViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)documentURLs
+{
+    // Method for iOS 12 and above.
+    
+    // We do not support picking multiple items.
+    if (documentURLs.count > 0)
+        [self presentDocumentAtURL:documentURLs.firstObject];
+}
+
+- (void)documentBrowser:(UIDocumentBrowserViewController *)controller didImportDocumentAtURL:(NSURL *)sourceURL toDestinationURL:(NSURL *)destinationURL
+{
+    [self presentDocumentAtURL:destinationURL];
+}
+
+- (void)documentBrowser:(UIDocumentBrowserViewController *)controller failedToImportDocumentAtURL:(NSURL *)documentURL error:(NSError *)error
+{
+    // TODO: Present error.
+}
+
+- (void)presentDocumentAtURL:(NSURL *)documentURL
+{
+    if (! [documentURL startAccessingSecurityScopedResource]) {
+        // TODO: Present error.
+        return;
     }
-}
 
-- (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath;
-{
-    WDThumbnailView *thumbnailView = (WDThumbnailView *) [collectionView cellForItemAtIndexPath:indexPath];
-    thumbnailView.shouldShowSelectionIndicator = self.isEditing;
+    UIStoryboard *storyBoard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+    UINavigationController *nav = [storyBoard instantiateViewControllerWithIdentifier:@"document"];
+    WDCanvasController* canvas = (WDCanvasController*)nav.topViewController;
     
-    return YES;
-}
-
-- (void) updateSelectionTitle
-{
-    NSUInteger  count = selectedDrawings_.count;
-    NSString    *format;
+    WDDocument *document = [[WDDocument alloc] initWithFileURL:documentURL];
+    [document openWithCompletionHandler:nil];
+    canvas.document = document;
     
-    if (count == 0) {
-        self.title = NSLocalizedString(@"Select Drawings", @"Select Drawings");
-    } else if (count == 1) {
-        self.title = NSLocalizedString(@"1 Drawing Selected", @"1 Drawing Selected");
-    } else {
-        format = NSLocalizedString(@"%lu Drawings Selected", @"%lu Drawings Selected");
-        self.title = [NSString stringWithFormat:format, count];
-    }
-}
-
-- (void) collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    NSString    *filename = [[WDDrawingManager sharedInstance] fileAtIndex:indexPath.item];
+    [documentURL stopAccessingSecurityScopedResource];
     
-    if (self.isEditing) {
-        [selectedDrawings_ addObject:filename];
-        
-        [self updateSelectionTitle];
-        [self properlyEnableToolbarItems];
-    } else {
-        [self getThumbnail:filename].selected = NO;
-    }
-}
-
-- (void) collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (self.isEditing) {
-        NSString    *filename = [[WDDrawingManager sharedInstance] fileAtIndex:indexPath.item];
-        [selectedDrawings_ removeObject:filename];
-        
-        [self updateSelectionTitle];
-        [self properlyEnableToolbarItems];
-    }
-}
-
-- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section;
-{
-    return [[WDDrawingManager sharedInstance] numberOfDrawings];
-}
-
-- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath;
-{
-    WDThumbnailView *thumbnail = [collectionView dequeueReusableCellWithReuseIdentifier:@"cellID" forIndexPath:indexPath];
-    NSArray         *drawings = [[WDDrawingManager sharedInstance] drawingNames];
-    
-    thumbnail.filename = drawings[indexPath.item];
-    thumbnail.tag = indexPath.item;
-    thumbnail.delegate = self;
-    
-    if (self.isEditing) {
-        thumbnail.shouldShowSelectionIndicator = YES;
-        thumbnail.selected = [selectedDrawings_ containsObject:thumbnail.filename] ? YES : NO;
+    if (! canvas.document) {
+        // TODO: Present error.
+        return;
     }
     
-    return thumbnail;
+    [self presentViewController:nav animated:YES completion:nil];
 }
 
 @end
+
+#if 0
+// Code snippets to bring back:
+
+// ---------------------------
+
+// Further initialisation code:
+activities_ = [[WDActivityManager alloc] init];
+
+[[NSNotificationCenter defaultCenter] addObserver:self
+                                         selector:@selector(dropboxUnlinked:)
+                                             name:WDDropboxWasUnlinkedNotification
+                                           object:nil];
+
+[[NSNotificationCenter defaultCenter] addObserver:self
+                                         selector:@selector(activityCountChanged:)
+                                             name:WDActivityAddedNotification
+                                           object:nil];
+
+[[NSNotificationCenter defaultCenter] addObserver:self
+                                         selector:@selector(activityCountChanged:)
+                                             name:WDActivityRemovedNotification
+                                           object:nil];
+
+NSMutableArray *rightBarButtonItems = [NSMutableArray array];
+
+// create an album import button
+UIBarButtonItem *albumItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"album_centered.png"]
+                                                              style:UIBarButtonItemStylePlain
+                                                             target:self
+                                                             action:@selector(importFromAlbum:)];
+[rightBarButtonItems addObject:albumItem];
+
+// add a camera import item if we have a camera (I think this will always be true from now on)
+if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+    UIBarButtonItem *cameraItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCamera
+                                                                                target:self
+                                                                                action:@selector(importFromCamera:)];
+    [rightBarButtonItems addObject:cameraItem];
+}
+
+self.navigationItem.rightBarButtonItems = rightBarButtonItems;
+self.toolbarItems = [self defaultToolbarItems];
+
+// ---------------------------
+
+// Exporting to different formats:
+formats_ = @[@"JPEG", @"PNG", @"SVG", @"SVGZ", @"PDF", @"Inkpad"];
+
+[[WDDrawingManager sharedInstance] openDocumentWithName:filename withCompletionHandler:^(WDDocument *document) {
+    @autoreleasepool {
+        WDDrawing *drawing = document.drawing;
+        // TODO use document contentForType
+        NSData *data = nil;
+        NSString *extension = nil;
+        NSString *mimeType = nil;
+        if ([format isEqualToString:@"Inkpad"]) {
+            data = [[WDDrawingManager sharedInstance] dataForFilename:filename];
+            extension = WDDrawingFileExtension;
+            mimeType = @"application/x-inkpad";
+        } else if ([format isEqualToString:@"SVG"]) {
+            data = [drawing SVGRepresentation];
+            extension = @"svg";
+            mimeType = @"image/svg+xml";
+        } else if ([format isEqualToString:@"SVGZ"]) {
+            data = [[drawing SVGRepresentation] compress];
+            extension = @"svgz";
+            mimeType = @"image/svg+xml";
+        } else if ([format isEqualToString:@"PNG"]) {
+            data = UIImagePNGRepresentation([drawing image]);
+            extension = @"png";
+            mimeType = @"image/png";
+        } else if ([format isEqualToString:@"JPEG"]) {
+            data = UIImageJPEGRepresentation([drawing image], 0.9);
+            extension = @"jpeg";
+            mimeType = @"image/jpeg";
+        } else if ([format isEqualToString:@"PDF"]) {
+            data = [drawing PDFRepresentation];
+            extension = @"pdf";
+            mimeType = @"image/pdf";
+        }
+    }
+}];
+#endif

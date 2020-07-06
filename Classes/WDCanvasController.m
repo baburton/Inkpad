@@ -1219,6 +1219,10 @@
     // set a good background color for the window so that orientation changes don't look hideous
     [UIApplication sharedApplication].keyWindow.backgroundColor = [UIColor colorWithWhite:0.92 alpha:1];
     
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Drawings", @"Drawings")
+                                                                             style:UIBarButtonItemStylePlain
+                                                                            target:self
+                                                                            action:@selector(close)];
     self.navigationItem.rightBarButtonItems = [self upperRightToolbarItems];
 
     if (self.drawing) {
@@ -1230,6 +1234,12 @@
     }
     
     [self enableDocumentItems];
+}
+
+- (void)close
+{
+    [self hidePopovers];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)dealloc

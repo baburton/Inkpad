@@ -24,35 +24,28 @@
 @class WDDrawing;
 @class WDFontLibraryController;
 @class WDPageSizeController;
-@class WDThumbnailView;
 
 @class DBUserClient;
 @class WDActivityController;
 @class WDBlockingView;
-@class WDExportController;
 @class OCAViewController;
 
-@interface WDBrowserController : UICollectionViewController <UIPopoverPresentationControllerDelegate,
-                                                             MFMailComposeViewControllerDelegate,
-                                                             WDSamplesControllerDelegate,
-                                                             UINavigationControllerDelegate,
+@interface WDBrowserController : UIDocumentBrowserViewController <UIDocumentBrowserViewControllerDelegate,
+                                                                  UIPopoverPresentationControllerDelegate,
+                                                                  MFMailComposeViewControllerDelegate,
+                                                                  WDSamplesControllerDelegate,
+                                                                  UINavigationControllerDelegate,
 #if 0 // bab: no openclipart
-                                                             OCADownloaderDelegate,
+                                                                  OCADownloaderDelegate,
 #endif
-                                                             UIImagePickerControllerDelegate>
+                                                                  UIImagePickerControllerDelegate>
 {
     NSMutableArray          *toolbarItems_;
-    UIBarButtonItem         *emailItem_;
-    UIBarButtonItem         *dropboxExportItem_;
     UIActivityIndicatorView *activityIndicator_;
     UIBarButtonItem         *activityItem_;
-    UIBarButtonItem         *deleteItem_;
-    
-    NSMutableSet            *selectedDrawings_;
     
     UIViewController        *popoverController_;
     WDPageSizeController    *pageSizeController_;
-    WDExportController      *exportController_;
 	WDImportController		*importController_;
     UIImagePickerController *pickerController_;
     WDFontLibraryController *fontLibraryController_;
@@ -60,25 +53,19 @@
     WDActivityController    *activityController_;
 #if 0 // bab: no openclipart
     OCAViewController       *openClipArtController_;
+    NSMutableSet            *downloaders_; // for downloading open clip art
 #endif
     
     DBUserClient            *dbClient_;
-    NSMutableSet            *filesBeingUploaded_;
     WDActivityManager       *activities_;
-
-    WDBlockingView          *blockingView_;
-    WDThumbnailView         *editingThumbnail_;
-    
-    BOOL                    everLoaded_;
-    
-    NSMutableSet            *downloaders_; // for downloading open clip art
 }
 
-- (void) startEditingDrawing:(WDDocument *)drawing;
 - (void) importController:(WDImportController *)controller didSelectDropboxItems:(NSArray<DBFILESFileMetadata*> *)dropboxItems;
 - (void) showDropboxImportPanel:(id)sender;
 - (BOOL) dropboxIsLinked;
 - (void) unlinkDropbox:(id)sender;
 - (void) dismissPopover;
+
+- (void) presentDocumentAtURL:(NSURL*)documentURL;
 
 @end
