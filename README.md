@@ -27,7 +27,7 @@ Features:
 
 Inkpad was originally developed by Steve Sprang, and you can see his original repository at
 [https://github.com/sprang/Inkpad](https://github.com/sprang/Inkpad).
-Ben Burton is currently maintaining it on the App Store under the name *Inkpad Libre*.
+Ben Burton is currently maintaining it [on the App Store](https://apps.apple.com/app/inkpad-libre/id1522113334).
 
 License
 -------
