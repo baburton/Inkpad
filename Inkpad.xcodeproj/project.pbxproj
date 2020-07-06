@@ -2121,7 +2121,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "find . -name '*.[m,mm]' | xargs genstrings -o en.lproj\n";
+			shellScript = "find . -name '*.[m,mm]' -print0 | xargs -0 genstrings -o en.lproj\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
