@@ -16,17 +16,14 @@
 #import "OCADownloader.h"
 #endif
 #import "WDHelpController.h"
-#import "WDImportController.h"
 #import "WDSamplesController.h"
 
-@class WDActivityManager;
 @class WDDocument;
 @class WDDrawing;
 @class WDFontLibraryController;
 @class WDPageSizeController;
 
 @class DBUserClient;
-@class WDActivityController;
 @class WDBlockingView;
 @class OCAViewController;
 
@@ -41,29 +38,20 @@
                                                                   UIImagePickerControllerDelegate>
 {
     NSMutableArray          *toolbarItems_;
-    UIActivityIndicatorView *activityIndicator_;
-    UIBarButtonItem         *activityItem_;
     
     UIViewController        *popoverController_;
     WDPageSizeController    *pageSizeController_;
-	WDImportController		*importController_;
     UIImagePickerController *pickerController_;
     WDFontLibraryController *fontLibraryController_;
     WDSamplesController     *samplesController_;
-    WDActivityController    *activityController_;
 #if 0 // bab: no openclipart
     OCAViewController       *openClipArtController_;
     NSMutableSet            *downloaders_; // for downloading open clip art
 #endif
     
     DBUserClient            *dbClient_;
-    WDActivityManager       *activities_;
 }
 
-- (void) importController:(WDImportController *)controller didSelectDropboxItems:(NSArray<DBFILESFileMetadata*> *)dropboxItems;
-- (void) showDropboxImportPanel:(id)sender;
-- (BOOL) dropboxIsLinked;
-- (void) unlinkDropbox:(id)sender;
 - (void) dismissPopover;
 
 - (void) presentDocumentAtURL:(NSURL*)documentURL;

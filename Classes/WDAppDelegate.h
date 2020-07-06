@@ -15,10 +15,5 @@
 @interface WDAppDelegate : NSObject <UIApplicationDelegate>
 
 @property (nonatomic, retain) UIWindow *window;
-@property (nonatomic, copy) void (^performAfterDropboxLoginBlock)(void);
-
-- (void) unlinkDropbox;
 
 @end
-
-extern NSString *WDDropboxWasUnlinkedNotification;

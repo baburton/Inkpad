@@ -3,24 +3,9 @@ MIGRATIONS:
 - OpenGLES -> Metal
 - Convert all XIBs to autolayout
 - Openclipart API -> FreeSVG API (which requires a login to use)
-- Allow an iOS Files interface to import/export images and fonts
 
 FEATURES:
 
 - Support dark mode (and remove UIUserInterfaceStyle=Light from Info.plist)
-- Allow editing external files in-place, instead of copying into the app folder
-- Support long press instead of the current manual select-and-act mechanism
-- Allow subfolders within the gallery
 - Multitasking (split view, slide over, multiple windows)
-- Drag-and-drop
 - Quick Look previews for *.inkpad files
-
-DROPBOX:
-
-- Progress reporting for activities, or else remove the round circles
-- Check the minor TODOs in WDImportController.m
-
-PROBLEMS:
-
-- If a file is added to the app folder through the Files app,
-  the gallery view does not refresh

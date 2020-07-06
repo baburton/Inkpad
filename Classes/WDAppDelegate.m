@@ -18,22 +18,16 @@
 #import "WDFontManager.h"
 #import "WDGradient.h"
 #import "WDInspectableProperties.h"
-#import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
-
-NSString *WDDropboxWasUnlinkedNotification = @"WDDropboxWasUnlinkedNotification";
 
 @implementation WDAppDelegate
 
 @synthesize window;
-@synthesize performAfterDropboxLoginBlock;
 
 #pragma mark -
 #pragma mark Application lifecycle
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary<UIApplicationLaunchOptionsKey,id> *)launchOptions
 {
-    [DBClientsManager setupWithAppKey:@"xxxx"];
-    
     // Load the fonts at startup. Dispatch this call at the end of the main queue;
     // It will then dispatch the real work on another queue after the app launches.
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -73,24 +67,6 @@ NSString *WDDropboxWasUnlinkedNotification = @"WDDropboxWasUnlinkedNotification"
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
 {
-    DBOAuthResult *authResult = [DBClientsManager handleRedirectURL:url];
-    if (authResult) {
-        if ([authResult isSuccess]) {
-            NSLog(@"Dropbox: Successfully logged in");
-            if ([DBClientsManager authorizedClient]) {
-                if (self.performAfterDropboxLoginBlock) {
-                    self.performAfterDropboxLoginBlock();
-                    self.performAfterDropboxLoginBlock = nil;
-                }
-            }
-        } else if ([authResult isCancel]) {
-            NSLog(@"Dropbox: Authorization flow cancelled");
-        } else if ([authResult isError]) {
-            NSLog(@"Dropbox: Error: %@", authResult);
-        }
-        return YES;
-    }
-    
     [[WDDrawingManager sharedInstance] importDrawingAtURL:url errorBlock:^{
         UIAlertController *alertView = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Broken Drawing", @"Broken Drawing")
                                                                            message:NSLocalizedString(@"Inkpad could not open the requested drawing.",
@@ -157,30 +133,6 @@ NSString *WDDropboxWasUnlinkedNotification = @"WDDropboxWasUnlinkedNotification"
         NSData *value = [NSKeyedArchiver archivedDataWithRootObject:[WDColor colorWithRed:0 green:0 blue:0 alpha:0.333f]];
         [defaults setObject:value forKey:WDShadowColorProperty];
     }
-}
-
-#pragma mark -
-#pragma mark Dropbox
-
-- (void) unlinkDropbox
-{
-    if (! [DBClientsManager authorizedClient]) {
-        return;
-    }
-    
-    NSString *title = NSLocalizedString(@"Unlink Dropbox", @"Unlink Dropbox");
-    NSString *message = NSLocalizedString(@"Are you sure you want to unlink your Dropbox account?",
-                                          @"Are you sure you want to unlink your Dropbox account?");
-    
-    UIAlertController *alertView = [UIAlertController alertControllerWithTitle:title
-                                                                       message:message
-                                                                preferredStyle:UIAlertControllerStyleAlert];
-    [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Unlink", @"Unlink") style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
-        [DBClientsManager unlinkAndResetClients];
-        [[NSNotificationCenter defaultCenter] postNotificationName:WDDropboxWasUnlinkedNotification object:self];
-    }]];
-    [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"Cancel") style:UIAlertActionStyleCancel handler:nil]];
-    [self.window.rootViewController presentViewController:alertView animated:YES completion:nil];
 }
 
 @end
