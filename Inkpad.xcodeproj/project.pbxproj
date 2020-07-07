@@ -2726,7 +2726,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.benburton.inkpad.Inkpad-Thumbnails";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Debug;
 		};
@@ -2764,7 +2764,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.benburton.inkpad.Inkpad-Thumbnails";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -2803,7 +2803,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.benburton.inkpad.Inkpad-Thumbnails";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Distribution;
@@ -2842,7 +2842,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.benburton.inkpad.Inkpad-Thumbnails";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = "Ad Hoc";
