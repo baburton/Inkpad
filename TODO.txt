@@ -9,9 +9,8 @@ DOCUMENT BROWSER:
 - Camera & photo library import buttons
 
 - Open document: visual feedback
-- Should support opening .inkpad, .svg, .svgz (public.svgz-image)
 
-- Action to export
+- Action to export, including export as inkpad
 
 - Transition from on-my-ipad to icloud
 
@@ -27,3 +26,4 @@ MINUTIAE:
 - WDFontLibraryController: do the cell layout in the storyboard, not in code
 - WDSamplesController: top-align the cells; gentler selection highlight
 - WDBrowserController: control where we import samples to?
+- Open one file externally: replace current canvas; import many samples: replace just one
