@@ -52,6 +52,12 @@
                                                                 target:self
                                                                 action:@selector(showHelp:)];
     self.additionalLeadingNavigationBarButtonItems = @[helpItem];
+
+    UIBarButtonItem *fontsItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Fonts", @"Fonts")
+                                                                  style:UIBarButtonItemStylePlain
+                                                                 target:self
+                                                                 action:@selector(showFontLibraryPanel:)];
+    self.additionalTrailingNavigationBarButtonItems = @[fontsItem];
 }
 
 - (void) dealloc
