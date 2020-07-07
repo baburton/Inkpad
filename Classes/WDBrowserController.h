@@ -42,8 +42,6 @@
     UIViewController        *popoverController_;
     WDPageSizeController    *pageSizeController_;
     UIImagePickerController *pickerController_;
-    WDFontLibraryController *fontLibraryController_;
-    WDSamplesController     *samplesController_;
 #if 0 // bab: no openclipart
     OCAViewController       *openClipArtController_;
     NSMutableSet            *downloaders_; // for downloading open clip art

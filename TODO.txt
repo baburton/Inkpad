@@ -29,3 +29,5 @@ FEATURES:
 MINUTIAE:
 
 - WDFontLibraryController: do the cell layout in the storyboard, not in code
+- WDSamplesController: top-align the cells; gentler selection highlight
+- WDBrowserController: control where we import samples to?

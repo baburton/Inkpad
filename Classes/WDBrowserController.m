@@ -57,7 +57,11 @@
                                                                   style:UIBarButtonItemStylePlain
                                                                  target:self
                                                                  action:@selector(showFontLibraryPanel:)];
-    self.additionalTrailingNavigationBarButtonItems = @[fontsItem];
+    UIBarButtonItem *samplesItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Samples", @"Samples")
+                                                                    style:UIBarButtonItemStylePlain
+                                                                   target:self
+                                                                   action:@selector(showSamplesPanel:)];
+    self.additionalTrailingNavigationBarButtonItems = @[fontsItem, samplesItem];
 }
 
 - (void) dealloc
@@ -215,7 +219,6 @@
     
     UIStoryboard *storyBoard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
     UINavigationController *nav = [storyBoard instantiateViewControllerWithIdentifier:@"fonts"];
-    UITableViewController* tableView = (UITableViewController*)nav.topViewController;
     
     nav.modalPresentationStyle = UIModalPresentationFormSheet;
     [self presentViewController:nav animated:YES completion:nil];
@@ -225,30 +228,26 @@
 {
     [self dismissPopover];
     
-    [[WDDrawingManager sharedInstance] installSamples:sampleURLs];
+    for (NSURL* url in sampleURLs) {
+        [self revealDocumentAtURL:url importIfNeeded:YES completion:^(NSURL * _Nullable revealedDocumentURL, NSError * _Nullable error) {
+            if (error) {
+                // TODO: Present error.
+                NSLog(@"ERROR: Could not import: %@", url);
+            }
+        }];
+    }
 }
 
 - (void) showSamplesPanel:(id)sender
 {
-    if (samplesController_) {
-        [self dismissPopover];
-        return;
-    }
-    
     [self dismissPopover];
     
-    samplesController_ = [[WDSamplesController alloc] initWithNibName:nil bundle:nil];
-    samplesController_.title = NSLocalizedString(@"Samples", @"Samples");
-    samplesController_.delegate = self;
+    UIStoryboard *storyBoard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+    UINavigationController *nav = [storyBoard instantiateViewControllerWithIdentifier:@"samples"];
+    ((WDSamplesController*)nav.topViewController).delegate = self;
     
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:samplesController_];
-    
-    popoverController_ = navController;
-    popoverController_.modalPresentationStyle = UIModalPresentationPopover;
-    popoverController_.popoverPresentationController.delegate = self;
-    popoverController_.popoverPresentationController.barButtonItem = sender;
-    popoverController_.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
-    [self presentViewController:popoverController_ animated:NO completion:nil];
+    nav.modalPresentationStyle = UIModalPresentationFormSheet;
+    [self presentViewController:nav animated:YES completion:nil];
 }
 
 - (void) showHelp:(id)sender
@@ -273,8 +272,6 @@
     }
     
     pickerController_ = nil;
-    fontLibraryController_ = nil;
-    samplesController_ = nil;
 }
 
 - (void) dismissPopover
@@ -291,8 +288,6 @@
     }
     
     pickerController_ = nil;
-    fontLibraryController_ = nil;
-    samplesController_ = nil;
 }
 
 - (void)didDismissModalView {
@@ -382,7 +377,10 @@
 
 - (void)documentBrowser:(UIDocumentBrowserViewController *)controller didImportDocumentAtURL:(NSURL *)sourceURL toDestinationURL:(NSURL *)destinationURL
 {
-    [self presentDocumentAtURL:destinationURL];
+    // Open the imported document immediately, but only if we are not already
+    // editing another drawing.
+    if (! self.presentedViewController)
+        [self presentDocumentAtURL:destinationURL];
 }
 
 - (void)documentBrowser:(UIDocumentBrowserViewController *)controller failedToImportDocumentAtURL:(NSURL *)documentURL error:(NSError *)error

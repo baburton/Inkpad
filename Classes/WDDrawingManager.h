@@ -33,8 +33,6 @@
 
 - (WDDocument *) duplicateDrawing:(WDDocument *)document;
 
-- (void) installSamples:(NSArray *)urls;
-
 - (NSString *) uniqueFilenameWithPrefix:(NSString *)prefix extension:(NSString *)extension;
 
 @end

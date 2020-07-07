@@ -272,17 +272,4 @@ NSString *WDCreatedSamples = @"WDCreatedSamples";
     }];
 }
 
-- (void) installSamples:(NSArray *)urls
-{
-    NSFileManager *fm = [NSFileManager defaultManager];
-    
-    for (NSURL *url in urls) {
-        NSString *prefix = [[url lastPathComponent] stringByDeletingPathExtension];
-        NSString *unique = [self uniqueFilenameWithPrefix:prefix extension:[[url lastPathComponent] pathExtension]];
-        
-        NSString *dstPath = [[WDDrawingManager drawingPath] stringByAppendingPathComponent:unique];
-        [fm copyItemAtURL:url toURL:[NSURL fileURLWithPath:dstPath] error:NULL];
-    }
-}
-
 @end

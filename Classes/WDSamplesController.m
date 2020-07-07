@@ -7,20 +7,32 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2011-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import "WDSamplesController.h"
 #import "WDDrawing.h"
 
-const NSInteger kThumbnailDimension = 80;
-const NSInteger kThumbnailPadding = 12;
-
 @interface WDSamplesController ()
 @property (nonatomic, copy)     NSArray             *sampleURLs;
 @property (nonatomic, strong)   NSMutableSet        *selectedURLs;
 @property (nonatomic, strong)   NSMutableDictionary *cachedThumbnails;
-@property (nonatomic, weak)   UIBarButtonItem     *importButton;
-- (NSString *)importButtonTitle;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *importButton;
+@end
+
+#pragma mark -
+
+@implementation WDSampleCell
+
+- (void)awakeFromNib
+{
+    [super awakeFromNib];
+    
+    UIView* selectedBackground = [[UIView alloc] initWithFrame:self.bounds];
+    selectedBackground.backgroundColor = [UIColor lightGrayColor];
+    self.selectedBackgroundView = selectedBackground;
+}
+
 @end
 
 #pragma mark -
@@ -28,7 +40,6 @@ const NSInteger kThumbnailPadding = 12;
 @implementation WDSamplesController
 
 @synthesize cachedThumbnails;
-@synthesize contentsTable;
 @synthesize delegate;
 @synthesize importButton;
 @synthesize sampleURLs;
@@ -36,51 +47,79 @@ const NSInteger kThumbnailPadding = 12;
 
 #pragma mark -
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (void)viewDidLoad
 {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (!self) {
-        return nil;
-    }
-    
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Import All", @"Import All")
-                                                                             style:UIBarButtonItemStylePlain
-                                                                            target:self
-                                                                            action:@selector(importAllButtonTapped:)];
-    
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Import", @"Import")
-                                                                              style:UIBarButtonItemStyleDone
-                                                                             target:self
-                                                                             action:@selector(importButtonTapped:)];
-    
+    [super viewDidLoad];
+
     self.importButton = self.navigationItem.rightBarButtonItem;
     self.importButton.enabled = NO;
     
     self.selectedURLs = [NSMutableSet set];
     self.cachedThumbnails = [NSMutableDictionary dictionary];
     self.sampleURLs = [[NSBundle mainBundle] URLsForResourcesWithExtension:@"inkpad" subdirectory:@"Samples"];
-    
-    return self;
-}
 
+    self.collectionView.delegate = self;
+    self.collectionView.dataSource = self;
+    self.collectionView.allowsMultipleSelection = YES;
+}
 
 #pragma mark -
 
-- (void)loadView
+- (__kindof UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    contentsTable = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 380, 5 * 28 + 9 * 44) style:UITableViewStylePlain];
-    contentsTable.delegate = self;
-    contentsTable.dataSource = self;
-    contentsTable.separatorStyle = UITableViewCellSeparatorStyleNone;
-    contentsTable.rowHeight = kThumbnailDimension + kThumbnailPadding;
-    self.view = contentsTable;
+    WDSampleCell* cell = (WDSampleCell*)[collectionView dequeueReusableCellWithReuseIdentifier:@"sample" forIndexPath:indexPath];
+  
+    // add a slight shadow to the image view
+    CALayer *caLayer = cell.image.layer;
+    caLayer.shadowOpacity = 0.25;
+    caLayer.shadowOffset = CGSizeMake(0,1);
+    caLayer.shadowRadius = 2;
     
-    self.preferredContentSize = CGSizeMake(380, contentsTable.rowHeight * 6);
+    NSURL *sampleURL = (self.sampleURLs)[indexPath.row];
+    cell.text.text = sampleURL.lastPathComponent.stringByDeletingPathExtension;
+    cell.image.image = [self thumbnailForURL:sampleURL];
+    
+    return cell;
 }
 
-#pragma mark -
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSURL *sampleURL = (self.sampleURLs)[indexPath.row];
+    if (! [self.selectedURLs containsObject:sampleURL]) {
+        [self.selectedURLs addObject:sampleURL];
+    }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+    [self updateImportButton];
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSURL *sampleURL = (self.sampleURLs)[indexPath.row];
+    if ([self.selectedURLs containsObject:sampleURL]) {
+        [self.selectedURLs removeObject:sampleURL];
+    }
+
+    [self updateImportButton];
+}
+
+- (void)updateImportButton
+{
+    if (self.selectedURLs.count < 1) {
+        self.importButton.title = NSLocalizedString(@"Import", @"Import");
+    } else {
+        NSString *format = NSLocalizedString(@"Import %lu", @"Import %lu");
+        self.importButton.title = [NSString stringWithFormat:format, (unsigned long)self.selectedURLs.count];
+    }
+
+    self.importButton.enabled = self.selectedURLs.count > 0 ? YES : NO;
+}
+
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
+{
+    return 1;
+}
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
     return self.sampleURLs.count;
 }
@@ -96,108 +135,26 @@ const NSInteger kThumbnailPadding = 12;
         
         [unarchiver finishDecoding];
         
-        UIImage *image = [[UIImage alloc] initWithData:thumbData];
-        
-        CGRect  dest = CGRectMake(0, 0, kThumbnailDimension, kThumbnailDimension);
-        CGRect  contentBounds = CGRectMake(0.0, 0.0, image.size.width, image.size.height);
-        float   contentAspect = CGRectGetWidth(contentBounds) / CGRectGetHeight(contentBounds);
-        float   destAspect = CGRectGetWidth(dest)  / CGRectGetHeight(dest);
-        float   scaleFactor = 1.0f;
-        CGPoint offset = CGPointZero;
-        
-        if (contentAspect > destAspect) {
-            scaleFactor = CGRectGetWidth(dest) / CGRectGetWidth(contentBounds);
-            offset.y = CGRectGetHeight(dest) - (scaleFactor * CGRectGetHeight(contentBounds));
-            offset.y /= 2;
-        } else {
-            scaleFactor = CGRectGetHeight(dest) / CGRectGetHeight(contentBounds);
-            offset.x = CGRectGetWidth(dest) - (scaleFactor * CGRectGetWidth(contentBounds));
-            offset.x /= 2;
-        }
-        
-        UIGraphicsBeginImageContextWithOptions(dest.size, NO, 0);
-        CGRect imageRect = CGRectMake(offset.x, offset.y, image.size.width * scaleFactor, image.size.height * scaleFactor);
-        imageRect = CGRectIntegral(imageRect);
-        [image drawInRect:imageRect];
-        thumbnail = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-        
+        thumbnail = [[UIImage alloc] initWithData:thumbData];
         (self.cachedThumbnails)[sampleURL.path] = thumbnail;
     } 
     
     return thumbnail;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    static NSString *kCellIdentifier = @"cellIdentifier";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kCellIdentifier];
-    if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kCellIdentifier];
-        
-        // add a slight shadow to the image view
-        CALayer *caLayer = cell.imageView.layer;
-        caLayer.shadowOpacity = 0.25;
-        caLayer.shadowOffset = CGSizeMake(0,1);
-        caLayer.shadowRadius = 2;
-        
-        // don't want thumbnail image too close to left edge
-        cell.indentationLevel = 1;
-        cell.indentationWidth = 5;
-    }
-    
-    NSURL *sampleURL = (self.sampleURLs)[indexPath.row];
-    cell.textLabel.text = [[sampleURL lastPathComponent] stringByDeletingPathExtension];
-    cell.accessoryType = [self.selectedURLs containsObject:sampleURL] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
-    cell.imageView.image = [self thumbnailForURL:sampleURL];
-    
-    return cell;
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    NSURL *sampleURL = (self.sampleURLs)[indexPath.row];
-    if (![self.selectedURLs containsObject:sampleURL]) {
-        [self.selectedURLs addObject:sampleURL];
-        [tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryCheckmark;
-    } else {
-        [self.selectedURLs removeObject:sampleURL];
-        [tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryNone;
-    }
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
-    self.importButton.title = [self importButtonTitle];
-    self.importButton.enabled = self.selectedURLs.count > 0 ? YES : NO;
-}
-
 #pragma mark -
 
-- (void) importButtonTapped:(id)sender
-{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(samplesController:didSelectURLs:)]) {
+- (IBAction)import:(id)sender {
+    [self dismissViewControllerAnimated:YES completion:^{
         [self.delegate samplesController:self didSelectURLs:[self.selectedURLs allObjects]];
-    }
+    }];
 }
 
-- (void) importAllButtonTapped:(id)sender
+- (IBAction)importAll:(id)sender
 {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(samplesController:didSelectURLs:)]) {
+    [self dismissViewControllerAnimated:YES completion:^{
         [self.delegate samplesController:self didSelectURLs:self.sampleURLs];
-    }
-}
-
-#pragma mark -
-
-- (NSString *)importButtonTitle
-{
-    NSString *title = nil;
-    if (self.selectedURLs.count < 1) {
-        title = NSLocalizedString(@"Import", @"Import");
-    } else {
-        NSString *format = NSLocalizedString(@"Import %lu", @"Import %lu");
-        title = [NSString stringWithFormat:format, (unsigned long)self.selectedURLs.count];
-    }
-    return title;
+    }];
 }
 
 @end

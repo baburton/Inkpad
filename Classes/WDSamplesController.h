@@ -7,16 +7,23 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2011-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import <UIKit/UIKit.h>
 
 @protocol WDSamplesControllerDelegate;
 
-@interface WDSamplesController : UIViewController <UITableViewDelegate, UITableViewDataSource> {}
+@interface WDSampleCell : UICollectionViewCell
+
+@property (weak, nonatomic) IBOutlet UIImageView *image;
+@property (weak, nonatomic) IBOutlet UILabel *text;
+
+@end
+
+@interface WDSamplesController : UICollectionViewController <UICollectionViewDelegate, UICollectionViewDataSource>
 
 @property (nonatomic, weak) id <WDSamplesControllerDelegate> delegate;
-@property (nonatomic, strong) IBOutlet UITableView *contentsTable;
 
 @end
 
