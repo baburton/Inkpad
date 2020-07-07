@@ -54,6 +54,11 @@
     self.importButton = self.navigationItem.rightBarButtonItem;
     self.importButton.enabled = NO;
     
+    self.navigationController.toolbarHidden = NO;
+    self.toolbarItems = @[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil],
+                          [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Close", @"Close") style:UIBarButtonItemStyleDone target:self action:@selector(close)],
+                          [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil]];
+    
     self.selectedURLs = [NSMutableSet set];
     self.cachedThumbnails = [NSMutableDictionary dictionary];
     self.sampleURLs = [[NSBundle mainBundle] URLsForResourcesWithExtension:@"inkpad" subdirectory:@"Samples"];
@@ -61,6 +66,11 @@
     self.collectionView.delegate = self;
     self.collectionView.dataSource = self;
     self.collectionView.allowsMultipleSelection = YES;
+}
+
+- (void) close
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark -

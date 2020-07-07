@@ -7,15 +7,12 @@ MIGRATIONS:
 DOCUMENT BROWSER:
 
 - New create panel, with sizes
-- New samples panel, with option to import
 - Camera & photo library import buttons
 
 - Open document: visual feedback
 - Should support opening .inkpad, .svg, .svgz (public.svgz-image)
 
 - Action to export
-
-- Test that delete / duplicate work
 
 - Transition from on-my-ipad to icloud
 

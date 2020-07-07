@@ -26,15 +26,27 @@
 @synthesize selectedFonts;
 
 - (void)viewDidLoad {
+    [super viewDidLoad];
+
     self.selectedFonts = [NSMutableSet set];
     
     self.navigationItem.leftBarButtonItem = self.editButtonItem;
+    
+    self.navigationController.toolbarHidden = NO;
+    self.toolbarItems = @[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil],
+                          [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Close", @"Close") style:UIBarButtonItemStyleDone target:self action:@selector(close)],
+                          [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil]];
     
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fontAdded:) name:WDFontAddedNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fontDeleted:) name:WDFontDeletedNotification object:nil];
+}
+
+- (void) close
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void) dealloc

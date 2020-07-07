@@ -40,6 +40,9 @@
     self.allowsDocumentCreation = YES;
     self.allowsPickingMultipleItems = NO;
     self.browserUserInterfaceStyle = UIDocumentBrowserUserInterfaceStyleLight;
+    // self.view.tintColor = [UIColor colorWithRed:86.0/255.0 green:156.0/255.0 blue:227.0/255.0 alpha:1.0];
+    self.view.tintColor = [UIColor colorWithRed:77.0/255.0 green:140.0/255.0 blue:204.0/255.0 alpha:1.0];
+    // self.view.tintColor = [UIColor colorWithRed:71.0/255.0 green:130.0/255.0 blue:189.0/255.0 alpha:1.0];
     if (@available(iOS 13.0, *)) {
         self.localizedCreateDocumentActionTitle = NSLocalizedString(@"Create Drawing", @"Create Drawing");
         self.defaultDocumentAspectRatio = 1.0;
