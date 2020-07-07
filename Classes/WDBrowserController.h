@@ -16,12 +16,12 @@
 #import "OCADownloader.h"
 #endif
 #import "WDHelpController.h"
+#import "WDPageSizeController.h"
 #import "WDSamplesController.h"
 
 @class WDDocument;
 @class WDDrawing;
 @class WDFontLibraryController;
-@class WDPageSizeController;
 
 @class DBUserClient;
 @class WDBlockingView;
@@ -31,6 +31,7 @@
                                                                   UIPopoverPresentationControllerDelegate,
                                                                   MFMailComposeViewControllerDelegate,
                                                                   WDSamplesControllerDelegate,
+                                                                  WDPageSizeControllerDelegate,
                                                                   UINavigationControllerDelegate,
 #if 0 // bab: no openclipart
                                                                   OCADownloaderDelegate,
@@ -39,9 +40,6 @@
 {
     NSMutableArray          *toolbarItems_;
     
-    UIViewController        *popoverController_;
-    WDPageSizeController    *pageSizeController_;
-    UIImagePickerController *pickerController_;
 #if 0 // bab: no openclipart
     OCAViewController       *openClipArtController_;
     NSMutableSet            *downloaders_; // for downloading open clip art

@@ -24,10 +24,14 @@
 #import "WDDrawingManager.h"
 #import "WDFontLibraryController.h"
 #import "WDFontManager.h"
-#import "WDPageSizeController.h"
 #import "UIBarButtonItem+Additions.h"
 
 #define kEditingHighlightRadius     125
+
+@interface WDBrowserController () {
+    void (^createImportHandler)(NSURL * _Nullable, UIDocumentBrowserImportMode);
+}
+@end
 
 @implementation WDBrowserController
 
@@ -132,7 +136,7 @@
     navController.navigationBar.translucent = NO; // Ensure content starts below the navigation bar
     navController.toolbarHidden = NO;
     
-    popoverController_ = navController;
+    UIViewController* popoverController_ = navController;
     popoverController_.modalPresentationStyle = UIModalPresentationPopover;
     popoverController_.popoverPresentationController.delegate = self;
     popoverController_.popoverPresentationController.barButtonItem = sender;
@@ -143,6 +147,7 @@
 
 #pragma mark - Camera
 
+#if 0 // bab: No image picker for the moment
 - (void) importFromImagePicker:(id)sender sourceType:(UIImagePickerControllerSourceType)sourceType
 {
     if (pickerController_ && (pickerController_.sourceType == sourceType)) {
@@ -156,7 +161,7 @@
     pickerController_.sourceType = sourceType;
     pickerController_.delegate = self;
     
-    popoverController_ = pickerController_;
+    UIViewController* popoverController_ = pickerController_;
     popoverController_.modalPresentationStyle = UIModalPresentationPopover;
     popoverController_.popoverPresentationController.delegate = self;
     popoverController_.popoverPresentationController.barButtonItem = sender;
@@ -185,6 +190,7 @@
     [popoverController_ dismissViewControllerAnimated:YES completion:nil];
     popoverController_ = nil;
 }
+#endif
 
 #pragma mark - Toolbar
 
@@ -269,28 +275,13 @@
 
 - (void) dismissPopoverAnimated:(BOOL)animated
 {
-    if (popoverController_) {
-        [popoverController_ dismissViewControllerAnimated:animated completion:nil];
-        popoverController_ = nil;
-    }
-    
-    pickerController_ = nil;
+    if (self.presentedViewController)
+        [self dismissViewControllerAnimated:animated completion:nil];
 }
 
 - (void) dismissPopover
 {
     [self dismissPopoverAnimated:NO];
-}
-
-- (void)popoverPresentationControllerDidDismissPopover:(UIPopoverPresentationController *)popoverPresentationController
-{
-    // In iOS 13 this method is deprecated in favour of presentationControllerDidDismiss:.
-    // However, if the latter method is missing, this method will still be called.
-    if (popoverPresentationController.presentedViewController == popoverController_) {
-        popoverController_ = nil;
-    }
-    
-    pickerController_ = nil;
 }
 
 - (void)didDismissModalView {
@@ -323,41 +314,66 @@
 
 #pragma mark - Documents
 
+- (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
+{
+    // This only captures dismissals in iOS 13.
+    // However, for iOS 12 and below, we cannot dismiss a form sheet
+    // without pressing a button.
+    if (createImportHandler) {
+        createImportHandler(nil, UIDocumentBrowserImportModeNone);
+        createImportHandler = nil;
+    }
+}
+
+- (void)pageSizeControllerDidCreate:(WDPageSizeController *)controller
+{
+    if (createImportHandler) {
+        WDDrawing* drawing = [[WDDrawing alloc] initWithSize:controller.size andUnits:controller.units];
+        NSData* data = [drawing inkpadRepresentation];
+        if (! data) {
+            // TODO: Present error
+            createImportHandler(nil, UIDocumentBrowserImportModeNone);
+            createImportHandler = nil;
+            return;
+        }
+        
+        // WARNING: We are using the same temporary filename every time.
+        // However, we should not be doing this operation more than once at a time.
+        NSString* tempFile = [NSTemporaryDirectory() stringByAppendingPathComponent:NSLocalizedString(@"Drawing.inkpad", @"Default drawing name")];
+        if (! [data writeToFile:tempFile atomically:YES]) {
+            // TODO: Present error
+            createImportHandler(nil, UIDocumentBrowserImportModeNone);
+            createImportHandler = nil;
+            return;
+        }
+        
+        createImportHandler([NSURL fileURLWithPath:tempFile], UIDocumentBrowserImportModeMove);
+        createImportHandler = nil;
+    }
+}
+
+- (void)pageSizeControllerDidCancel:(WDPageSizeController *)controller
+{
+    if (createImportHandler) {
+        createImportHandler(nil, UIDocumentBrowserImportModeNone);
+        createImportHandler = nil;
+    }
+}
+
 - (void)documentBrowser:(UIDocumentBrowserViewController *)controller didRequestDocumentCreationWithHandler:(void (^)(NSURL * _Nullable, UIDocumentBrowserImportMode))importHandler
 {
     [self dismissPopover];
     
-    // TODO: Implement. Create in temporary location, then call importHandler with import mode ImportMode.move; to cancel pass nil, ImportMode.none.
+    createImportHandler = importHandler;
     
-    pageSizeController_ = [[WDPageSizeController alloc] initWithNibName:nil bundle:nil];
-    UINavigationController  *navController = [[UINavigationController alloc] initWithRootViewController:pageSizeController_];
+    UIStoryboard *storyBoard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+    UINavigationController *nav = [storyBoard instantiateViewControllerWithIdentifier:@"create"];
+    WDPageSizeController* creator = (WDPageSizeController*)nav.topViewController;
+    creator.delegate = self;
     
-    pageSizeController_.target = self;
-    pageSizeController_.action = @selector(createNewDrawing:);
-    
-    popoverController_ = navController;
-    popoverController_.modalPresentationStyle = UIModalPresentationPopover;
-    popoverController_.popoverPresentationController.delegate = self;
-    //popoverController_.popoverPresentationController.barButtonItem = sender;
-    popoverController_.popoverPresentationController.barButtonItem = self.additionalLeadingNavigationBarButtonItems.firstObject;
-    popoverController_.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
-    [self presentViewController:popoverController_ animated:NO completion:nil];
-}
-
-// TODO: Delete
-- (void) createNewDrawing:(id)sender
-{
-    [self dismissPopover];
-    
-    WDDocument *document = [[WDDrawingManager sharedInstance] createNewDrawingWithSize:pageSizeController_.size
-                                                                              andUnits:pageSizeController_.units];
-    [document closeWithCompletionHandler:^(BOOL success) {
-        if (success) {
-            
-        } else {
-            // TODO: Present error.
-        }
-    }];
+    nav.modalPresentationStyle = UIModalPresentationFormSheet;
+    nav.presentationController.delegate = self;
+    [self presentViewController:nav animated:YES completion:nil];
 }
 
 - (void)documentBrowser:(UIDocumentBrowserViewController *)controller didPickDocumentURLs:(NSArray<NSURL *> *)documentURLs
@@ -443,18 +459,6 @@ if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSource
 
 self.navigationItem.rightBarButtonItems = rightBarButtonItems;
 self.toolbarItems = [self defaultToolbarItems];
-
-// ---------------------------
-
-// Installing fonts:
-BOOL alreadyInstalled;
-NSString *importedFontName = [[WDFontManager sharedInstance] installUserFont:[NSURL fileURLWithPath:downloadPath]
-                                                            alreadyInstalled:&alreadyInstalled];
-if (!importedFontName) {
-    [self showImportErrorMessage:filename];
-}
-
-[[NSFileManager defaultManager] removeItemAtPath:downloadPath error:NULL];
 
 // ---------------------------
 

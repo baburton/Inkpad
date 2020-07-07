@@ -31,36 +31,19 @@ static NSString *orientations_[] = { @"Portrait", @"Landscape" };
 
 @implementation WDPageSizeController
 
-@synthesize target = target_;
-@synthesize action = action_;
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (void)viewDidLoad
 {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    
-    if (!self) {
-        return nil;
-    }
-    
-    self.navigationItem.title = NSLocalizedString(@"New Drawing", @"New Drawing");
-    
     NSString *settingsPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"PageSizes.plist"];
     configuration_ = [NSArray arrayWithContentsOfFile:settingsPath];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(customSizeChanged:) name:WDCustomDrawingSizeChanged object:nil];
-    
-    return self;
-}
 
-- (void) viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-
-    UIBarButtonItem *createItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Create", @"Create new drawing")
-                                                                   style:UIBarButtonItemStyleDone
-                                                                  target:target_
-                                                                  action:action_];
-    self.navigationItem.rightBarButtonItem = createItem;
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
+    self.tableView.sectionHeaderHeight = 0;
+    self.tableView.sectionFooterHeight = 0;
+    //self.tableView.separatorColor = [UIColor lightGrayColor];
+    //self.tableView.separatorInset = UIEdgeInsetsMake(0, 15, 0, 0);
 }
 
 - (void)dealloc
@@ -108,20 +91,16 @@ static NSString *orientations_[] = { @"Portrait", @"Landscape" };
     }
 }
 
-- (void)loadView
-{
-    CGRect frame = CGRectMake(0, 0, [WDUnitsController preferredViewWidth], 13 * 44);
-    
-    table_ = [[UITableView alloc] initWithFrame:frame style:UITableViewStyleGrouped];
-    table_.delegate = self;
-    table_.dataSource = self;
-    table_.sectionHeaderHeight = 0;
-    table_.sectionFooterHeight = 0;
-    table_.separatorColor = [UIColor lightGrayColor];
-    table_.separatorInset = UIEdgeInsetsMake(0, 15, 0, 0);
-    self.view = table_;
-    
-    self.preferredContentSize = self.view.frame.size;
+- (IBAction)create:(id)sender {
+    [self dismissViewControllerAnimated:YES completion:^{
+        [self.delegate pageSizeControllerDidCreate:self];
+    }];
+}
+
+- (IBAction)cancel:(id)sender {
+    [self dismissViewControllerAnimated:YES completion:^{
+        [self.delegate pageSizeControllerDidCancel:self];
+    }];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -158,7 +137,7 @@ static NSString *orientations_[] = { @"Portrait", @"Landscape" };
 {
     WDUnitsController *units = [[WDUnitsController alloc] initWithNibName:nil bundle:nil];
     
-    [self tableView:table_ didSelectRowAtIndexPath:indexPath];
+    [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
     
     [[self navigationController] pushViewController:units animated:YES];
 }

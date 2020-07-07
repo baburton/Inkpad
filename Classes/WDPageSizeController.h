@@ -7,21 +7,27 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2010-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import <UIKit/UIKit.h>
 
-@interface WDPageSizeController : UIViewController <UITableViewDelegate, UITableViewDataSource> {
-    IBOutlet UITableView    *table_;
+@protocol WDPageSizeControllerDelegate;
+
+@interface WDPageSizeController : UITableViewController <UITableViewDelegate, UITableViewDataSource> {
     NSArray                 *configuration_;
     UITableViewCell         *customCell_;
 }
 
-@property (nonatomic, weak) id target;
-@property (nonatomic, assign) SEL action;
 @property (nonatomic, readonly) CGSize size;
 @property (weak, nonatomic, readonly) NSString *units;
+@property (weak, nonatomic) id<WDPageSizeControllerDelegate> delegate;
 
+@end
+
+@protocol WDPageSizeControllerDelegate <NSObject>
+- (void) pageSizeControllerDidCancel:(WDPageSizeController *)controller;
+- (void) pageSizeControllerDidCreate:(WDPageSizeController *)controller;
 @end
 
 extern NSString *WDPageOrientation;

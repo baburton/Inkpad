@@ -7,6 +7,7 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2011-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import "WDDrawing.h"
@@ -40,11 +41,6 @@ NSString *WDCustomDrawingSizeChanged = @"WDCustomDrawingSizeChanged";
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-+ (float) preferredViewWidth
-{
-    return 360;
-}
-
 - (void) setDrawing:(WDDrawing *)drawing
 {
     drawing_ = drawing;
@@ -76,7 +72,13 @@ NSString *WDCustomDrawingSizeChanged = @"WDCustomDrawingSizeChanged";
 
 - (void)loadView
 {
-    CGRect frame = CGRectMake(0, 0, [WDUnitsController preferredViewWidth], 13 * 44);
+    // Calculate the size that we will be given, so that we don't inadvertently resize
+    // an existing navigation controller. Note that the navigation controller might
+    // live within a popover (which is why we subtract origin.y for the navigation bar).
+    // Really we should migrate to layout constraints instead.
+    UINavigationController* nav = (UINavigationController*)self.parentViewController;
+    CGSize parentSize = nav.view.frame.size;
+    CGRect frame = CGRectMake(0, 0, parentSize.width, parentSize.height - nav.navigationBar.frame.size.height - nav.navigationBar.frame.origin.y);
     
     table_ = [[UITableView alloc] initWithFrame:frame style:UITableViewStyleGrouped];
     table_.delegate = self;
