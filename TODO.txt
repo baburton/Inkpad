@@ -6,7 +6,6 @@ MIGRATIONS:
 
 DOCUMENT BROWSER:
 
-- New create panel, with sizes
 - Camera & photo library import buttons
 
 - Open document: visual feedback

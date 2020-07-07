@@ -45,40 +45,6 @@ NSString *WDCreatedSamples = @"WDCreatedSamples";
     return shared;
 }
 
-// we only want Inkpad documents
-- (NSArray *) filterFiles:(NSArray *)files
-{
-    NSMutableArray *filtered = [[NSMutableArray alloc] init];
-    
-    for (NSString *file in files) {
-        if ([[file pathExtension] compare:WDDrawingFileExtension options:NSCaseInsensitiveSearch] == NSOrderedSame) {
-            [filtered addObject:file];
-        } else if ([[file pathExtension] compare:WDSVGFileExtension options:NSCaseInsensitiveSearch] == NSOrderedSame) {
-            [filtered addObject:file];
-        }
-    }
-    
-    return filtered;
-}
-
-- (id) init
-{
-    self = [super init];
-    
-    if (!self) {
-        return nil;
-    }
-    
-    // load the plist containing the drawing order
-    NSFileManager   *fm = [NSFileManager defaultManager];
-    NSArray *files = [fm contentsOfDirectoryAtPath:[WDDrawingManager drawingPath] error:NULL];
-    
-    files = [self filterFiles:files];
-    
-    return self;
-}
-
-
 + (NSString *) drawingPath
 {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -174,12 +140,6 @@ NSString *WDCreatedSamples = @"WDCreatedSamples";
     return document;
 }
 
-- (WDDocument *) createNewDrawingWithSize:(CGSize)size andUnits:(NSString *)units
-{   
-    WDDrawing *drawing = [[WDDrawing alloc] initWithSize:size andUnits:units];
-    return [self installDrawing:drawing withName:[self uniqueFilename] closeAfterSaving:NO];
-}
-
 - (BOOL) createNewDrawingWithImage:(UIImage *)image imageName:(NSString *)imageName drawingName:(NSString *)drawingName
 {
     if (!image) {
@@ -219,12 +179,6 @@ NSString *WDCreatedSamples = @"WDCreatedSamples";
     });
     
     return importQueue;
-}
-
-- (NSData *) dataForFilename:(NSString *)name
-{
-    NSString *archivePath = [[WDDrawingManager drawingPath] stringByAppendingPathComponent:name]; 
-    return [NSData dataWithContentsOfFile:archivePath]; 
 }
 
 - (WDDocument *) duplicateDrawing:(WDDocument *)document

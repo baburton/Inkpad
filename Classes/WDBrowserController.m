@@ -473,7 +473,7 @@ formats_ = @[@"JPEG", @"PNG", @"SVG", @"SVGZ", @"PDF", @"Inkpad"];
         NSString *extension = nil;
         NSString *mimeType = nil;
         if ([format isEqualToString:@"Inkpad"]) {
-            data = [[WDDrawingManager sharedInstance] dataForFilename:filename];
+            data = [NSData dataWithContentsOfFile:fullPath];
             extension = WDDrawingFileExtension;
             mimeType = @"application/x-inkpad";
         } else if ([format isEqualToString:@"SVG"]) {

@@ -22,14 +22,11 @@
 + (NSString *) drawingPath;
 + (BOOL) drawingExists:(NSString *)drawing;
 
-- (WDDocument *) createNewDrawingWithSize:(CGSize)size andUnits:(NSString *)units;
 - (BOOL) createNewDrawingWithImageAtURL:(NSURL *)imageURL;
 - (BOOL) createNewDrawingWithImage:(UIImage *)image;
 
 // these import methods are asynchronous
 - (void) importDrawingAtURL:(NSURL *)url errorBlock:(void (^)(void))errorBlock withCompletionHandler:(void (^)(WDDocument *))completionBlock;
-
-- (NSData *) dataForFilename:(NSString *)name;
 
 - (WDDocument *) duplicateDrawing:(WDDocument *)document;
 

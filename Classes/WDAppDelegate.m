@@ -11,6 +11,7 @@
 //
 
 #import "WDAppDelegate.h"
+#import "WDBrowserController.h"
 #import "WDCanvasController.h"
 #import "WDColor.h"
 #import "WDDrawing.h"
@@ -42,7 +43,13 @@
         NSURL *url = launchOptions[UIApplicationLaunchOptionsURLKey];
         
         if (url) {
-            return [self validFile:url];
+            // So:
+            // - Calling [self validFile:url] is failing, and I don't know why.
+            //   It seems to be breaking at [NSData dataWithContentsOfURL:url].
+            // - However: we shouldn't be reading potentially large files at this point
+            //   in the app lifecycle anyway. So instead just check the file extension for now.
+            // return [self validFile:url];
+            return [url.pathExtension caseInsensitiveCompare:@"inkpad"] == NSOrderedSame;
         }
     }
     
@@ -67,22 +74,19 @@
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
 {
-    [[WDDrawingManager sharedInstance] importDrawingAtURL:url errorBlock:^{
-        UIAlertController *alertView = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Broken Drawing", @"Broken Drawing")
-                                                                           message:NSLocalizedString(@"Inkpad could not open the requested drawing.",
-                                                                                                     @"Inkpad could not open the requested drawing.")
-                                                                    preferredStyle:UIAlertControllerStyleAlert];
-        [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"OK") style:UIAlertActionStyleCancel handler:nil]];
-        [self.window.rootViewController presentViewController:alertView animated:YES completion:nil];
-    } withCompletionHandler:^(WDDocument *document) {
-        UINavigationController *navigationController = (UINavigationController *) self.window.rootViewController;
-        
-        if ([navigationController.topViewController isKindOfClass:[WDCanvasController class]]) {
-            WDCanvasController *canvasController = (WDCanvasController *) navigationController.topViewController;
-            canvasController.document = document;
+    WDBrowserController *browser = (WDBrowserController *)self.window.rootViewController;
+    [browser revealDocumentAtURL:url importIfNeeded:YES completion:^(NSURL * _Nullable revealedDocumentURL, NSError * _Nullable error) {
+        if (error) {
+            UIAlertController *alertView = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Could Not Open", @"Could Not Open")
+                                                                               message:NSLocalizedString(@"Inkpad could not open the requested drawing.",
+                                                                                                         @"Inkpad could not open the requested drawing.")
+                                                                        preferredStyle:UIAlertControllerStyleAlert];
+            [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Close", @"Close") style:UIAlertActionStyleCancel handler:nil]];
+            [self.window.rootViewController presentViewController:alertView animated:YES completion:nil];
+        } else {
+            [browser presentDocumentAtURL:revealedDocumentURL];
         }
     }];
-    
     return YES;
 }
 
