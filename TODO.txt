@@ -8,7 +8,6 @@ DOCUMENT BROWSER:
 
 - New create panel, with sizes
 - New samples panel, with option to import
-- New fonts panel, including import button (ttf, otf)
 - Camera & photo library import buttons
 
 - Open document: visual feedback
@@ -18,8 +17,15 @@ DOCUMENT BROWSER:
 
 - Test that delete / duplicate work
 
+- Transition from on-my-ipad to icloud
+
 FEATURES:
 
 - Support dark mode (and remove UIUserInterfaceStyle=Light from Info.plist)
 - Multitasking (split view, slide over, multiple windows)
 - Quick Look previews for *.inkpad files
+- Drag-and-drop (images, svg/inkpad, font imports)
+
+MINUTIAE:
+
+- WDFontLibraryController: do the cell layout in the storyboard, not in code

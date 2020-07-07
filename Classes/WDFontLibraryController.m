@@ -7,6 +7,7 @@
 //  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 //
 //  Copyright (c) 2010-2013 Steve Sprang
+//  Copyright (c) 2020 Ben Burton
 //
 
 #import "WDCoreTextLabel.h"
@@ -17,34 +18,23 @@
 #define kCoreTextLabelHeight     43
 #define kCoreTextLabelTag        1
 
+@interface WDFontLibraryController () <UIDocumentPickerDelegate>
+@end
+
 @implementation WDFontLibraryController
 
-@synthesize table;
 @synthesize selectedFonts;
 
-- (id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    
-    if (!self) {
-        return nil;
-    }
-    
-    UIBarButtonItem *trashItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash
-                                                                               target:self action:@selector(deleteSelectedFonts:)];
-    self.navigationItem.rightBarButtonItem = trashItem;
-    trashItem.enabled = NO;
-    
-    self.navigationItem.prompt = NSLocalizedString(@"Import your own fonts via Dropbox",
-                                                   @"Import your own fonts via Dropbox");
-    
+- (void)viewDidLoad {
     self.selectedFonts = [NSMutableSet set];
     
+    self.navigationItem.leftBarButtonItem = self.editButtonItem;
+    
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fontAdded:) name:WDFontAddedNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fontDeleted:) name:WDFontDeletedNotification object:nil];
-    
-    self.title = NSLocalizedString(@"Font Library", @"Font Library");
-    return self;
 }
 
 - (void) dealloc
@@ -52,30 +42,14 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void) properlyEnableTrashButton
-{
-    self.navigationItem.rightBarButtonItem.enabled = (selectedFonts.count > 0 ? YES : NO);
-}
-
-- (void) loadView
-{
-    table = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320, 428) style:UITableViewStylePlain];
-    table.delegate = self;
-    table.dataSource = self;
-    table.allowsSelection = YES;
-    self.view = table;
-
-    self.preferredContentSize = table.frame.size;
-}
-
 - (void) fontAdded:(NSNotification *)aNotification
 {
     NSString    *fontName = (aNotification.userInfo)[@"name"];
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[[[WDFontManager sharedInstance] userFonts] indexOfObject:fontName] inSection:0];
     
-    [table beginUpdates];
-    [table insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    [table endUpdates];
+    [self.tableView beginUpdates];
+    [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    [self.tableView endUpdates];
 }
 
 - (void) fontDeleted:(NSNotification *)aNotification
@@ -83,21 +57,42 @@
     NSNumber    *index = (aNotification.userInfo)[@"index"];
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index.integerValue inSection:0];
     
-    [table beginUpdates];
-    [table deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    [table endUpdates];
-    
-    [self properlyEnableTrashButton];
+    [self.tableView beginUpdates];
+    [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    [self.tableView endUpdates];
 }
 
-- (void) deleteSelectedFonts:(id)sender
+- (IBAction)addFont:(id)sender {
+    UIDocumentPickerViewController* picker = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:@[@"public.opentype-font", @"public.truetype-ttf-font"] inMode:UIDocumentPickerModeImport];
+    picker.delegate = self;
+    picker.allowsMultipleSelection = YES;
+    [self presentViewController:picker animated:YES completion:nil];
+}
+
+- (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
 {
-    for (NSString *fontName in selectedFonts) {
-        [[WDFontManager sharedInstance] deleteUserFontWithName:fontName];
-    }
+    NSMutableArray<NSURL*>* error = [NSMutableArray<NSURL*> new];
     
-    [selectedFonts removeAllObjects];
-    [self properlyEnableTrashButton];
+    for (NSURL* url in urls) {
+        BOOL alreadyInstalled = NO;
+        NSString *name = [[WDFontManager sharedInstance] installUserFont:url alreadyInstalled:&alreadyInstalled];
+        if (!name)
+            [error addObject:url];
+    }
+        
+    if (error.count) {
+        UIAlertController *alertView = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Could Not Import", @"Could Not Import")
+                                                                           message:NSLocalizedString(@"I could not import one or more of the selected fonts.",
+                                                                                                     @"I could not import one or more of the selected fonts.")
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+        [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Close", @"Close") style:UIAlertActionStyleCancel handler:nil]];
+        [self presentViewController:alertView animated:YES completion:nil];
+    }
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)table numberOfRowsInSection:(NSInteger)section
@@ -105,39 +100,32 @@
     return [[[WDFontManager sharedInstance] userFonts] count];
 }
 
-- (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *fontName = [[WDFontManager sharedInstance] userFonts][indexPath.row];
-    
-    if ([selectedFonts containsObject:fontName]) {
-        [selectedFonts removeObject:fontName];
-        [[tableView cellForRowAtIndexPath:indexPath] setAccessoryType:UITableViewCellAccessoryNone];
-    } else {
-        [selectedFonts addObject:fontName];
-        [[tableView cellForRowAtIndexPath:indexPath] setAccessoryType:UITableViewCellAccessoryCheckmark];
+    return YES;
+}
+
+- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return NO;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        WDFontManager* fm = [WDFontManager sharedInstance];
+        [fm deleteUserFontWithName:fm.userFonts[indexPath.row]];
     }
-    
-    [self properlyEnableTrashButton];
-    
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString        *cellIdentifier = @"fontIdentifier";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
     
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
-        
-        WDCoreTextLabel *label = [[WDCoreTextLabel alloc] initWithFrame:CGRectMake(10, 0, kCoreTextLabelWidth - 10, kCoreTextLabelHeight)];
-        label.tag = kCoreTextLabelTag;
-        [cell.contentView addSubview:label];
-    }
+    WDCoreTextLabel *label = [[WDCoreTextLabel alloc] initWithFrame:CGRectMake(10, 0, kCoreTextLabelWidth - 10, kCoreTextLabelHeight)];
+    [cell.contentView addSubview:label];
     
     NSString *fontName = [[WDFontManager sharedInstance] userFonts][indexPath.row];
-    
-    WDCoreTextLabel *label = (WDCoreTextLabel *) [cell viewWithTag:kCoreTextLabelTag];
     
     CTFontRef fontRef = [[WDFontManager sharedInstance] newFontRefForFont:fontName withSize:22];
     [label setFontRef:fontRef];

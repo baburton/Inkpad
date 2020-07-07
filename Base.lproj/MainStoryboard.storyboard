@@ -45,6 +45,41 @@
             </objects>
             <point key="canvasLocation" x="-560" y="554"/>
         </scene>
+        <!--Font Library-->
+        <scene sceneID="qhA-BL-COt">
+            <objects>
+                <tableViewController id="DnD-ap-gdC" customClass="WDFontLibraryController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="Lr1-oT-RdI">
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="Jld-B2-3b0">
+                                <rect key="frame" x="0.0" y="28" width="768" height="43.5"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Jld-B2-3b0" id="lIn-B3-b51">
+                                    <rect key="frame" x="0.0" y="0.0" width="768" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="DnD-ap-gdC" id="f1C-dA-ueV"/>
+                            <outlet property="delegate" destination="DnD-ap-gdC" id="IEb-iv-Bya"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Font Library" id="HeN-r2-PSr">
+                        <barButtonItem key="rightBarButtonItem" title="Import" id="aPH-y8-mzS">
+                            <connections>
+                                <action selector="addFont:" destination="DnD-ap-gdC" id="zxt-B4-Bh5"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Tpc-Uk-ham" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-560" y="1278"/>
+        </scene>
         <!--Canvas Controller-->
         <scene sceneID="ELB-uy-eAP">
             <objects>
@@ -63,6 +98,24 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ryu-0f-g2P" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="170" y="554"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="B2e-wo-xP9">
+            <objects>
+                <navigationController storyboardIdentifier="fonts" automaticallyAdjustsScrollViewInsets="NO" id="v9c-Wt-BVU" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="uzh-Fp-Fut">
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="50"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="DnD-ap-gdC" kind="relationship" relationship="rootViewController" id="bwD-k1-BbH"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Gao-Je-4b9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1310" y="1278"/>
         </scene>
     </scenes>
 </document>

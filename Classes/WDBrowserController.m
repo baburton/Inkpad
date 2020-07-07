@@ -211,23 +211,14 @@
 
 - (void) showFontLibraryPanel:(id)sender
 {
-    if (fontLibraryController_) {
-        [self dismissPopover];
-        return;
-    }
-    
     [self dismissPopover];
     
-    fontLibraryController_ = [[WDFontLibraryController alloc] initWithNibName:nil bundle:nil];
-
-    UINavigationController  *navController = [[UINavigationController alloc] initWithRootViewController:fontLibraryController_];
+    UIStoryboard *storyBoard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+    UINavigationController *nav = [storyBoard instantiateViewControllerWithIdentifier:@"fonts"];
+    UITableViewController* tableView = (UITableViewController*)nav.topViewController;
     
-    popoverController_ = navController;
-    popoverController_.modalPresentationStyle = UIModalPresentationPopover;
-    popoverController_.popoverPresentationController.delegate = self;
-    popoverController_.popoverPresentationController.barButtonItem = sender;
-    popoverController_.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
-    [self presentViewController:popoverController_ animated:NO completion:nil];
+    nav.modalPresentationStyle = UIModalPresentationFormSheet;
+    [self presentViewController:nav animated:YES completion:nil];
 }
 
 - (void) samplesController:(WDSamplesController *)controller didSelectURLs:(NSArray *)sampleURLs
