@@ -70,6 +70,18 @@
 	<string>Inkpad allows you to import pictures that you take using the camera.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Inkpad allows you to export your drawings to your photo album.</string>
+	<key>NSUbiquitousContainers</key>
+	<dict>
+		<key>iCloud.org.benburton.inkpad</key>
+		<dict>
+			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
+			<true/>
+			<key>NSUbiquitousContainerName</key>
+			<string>Inkpad Libre</string>
+			<key>NSUbiquitousContainerSupportedFolderLevels</key>
+			<string>Any</string>
+		</dict>
+	</dict>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchImages~ipad</key>
