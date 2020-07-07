@@ -25,12 +25,11 @@
 - (BOOL) createNewDrawingWithImageAtURL:(NSURL *)imageURL;
 - (BOOL) createNewDrawingWithImage:(UIImage *)image;
 
-// these import methods are asynchronous
-- (void) importDrawingAtURL:(NSURL *)url errorBlock:(void (^)(void))errorBlock withCompletionHandler:(void (^)(WDDocument *))completionBlock;
-
 - (WDDocument *) duplicateDrawing:(WDDocument *)document;
 
 - (NSString *) uniqueFilenameWithPrefix:(NSString *)prefix extension:(NSString *)extension;
+
++ (BOOL)canOpen:(NSURL*)url;
 
 @end
 

@@ -44,12 +44,12 @@
         
         if (url) {
             // So:
-            // - Calling [self validFile:url] is failing, and I don't know why.
-            //   It seems to be breaking at [NSData dataWithContentsOfURL:url].
+            // - Calling [self validFile:url] is failing. I expect this is because we
+            //   need to treat url as a security-scoped URL (and currently we do not).
             // - However: we shouldn't be reading potentially large files at this point
-            //   in the app lifecycle anyway. So instead just check the file extension for now.
+            //   in the app lifecycle anyway. So instead just check the file type for now.
             // return [self validFile:url];
-            return [url.pathExtension caseInsensitiveCompare:@"inkpad"] == NSOrderedSame;
+            return [WDDrawingManager canOpen:url];
         }
     }
     

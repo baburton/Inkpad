@@ -191,39 +191,32 @@ NSString *WDCreatedSamples = @"WDCreatedSamples";
     return [self installDrawing:document.drawing withName:unique closeAfterSaving:NO];
 }
 
-- (void) importDrawingAtURL:(NSURL *)url errorBlock:(void (^)(void))errorBlock withCompletionHandler:(void (^)(WDDocument *document))completionBlock
++ (BOOL)canOpen:(NSURL *)url
 {
-    WDDocument *doc = [[WDDocument alloc] initWithFileURL:url];
-    [doc openWithCompletionHandler:^(BOOL success) {
-        dispatch_async([self importQueue], ^{
-            if (success) {
-                doc.fileTypeOverride = @"com.taptrix.inkpad";
-                NSString *svgName = [[url lastPathComponent] stringByDeletingPathExtension];
-                NSString *drawingName = [self uniqueFilenameWithPrefix:svgName extension:WDDefaultDrawingExtension];
-                NSString *path = [[WDDrawingManager drawingPath] stringByAppendingPathComponent:drawingName]; 
-                NSURL *newUrl = [NSURL fileURLWithPath:path];
-                [doc saveToURL:newUrl forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
-                    dispatch_sync(dispatch_get_main_queue(), ^{
-                        if (completionBlock) {
-                           completionBlock(doc);
-                        }
-                        
-                        [doc closeWithCompletionHandler:nil];
-                    });
-                }];
-            } else {
-                dispatch_sync(dispatch_get_main_queue(), ^{
-                    if (errorBlock) {
-                        errorBlock();
-                    }
-                    
-                    if (completionBlock) {
-                        completionBlock(nil);
-                    }
-                });
-            }
-        });
-    }];
+    // The original implementation (below) used UTIs.
+    // However, [NSURL getResourceValue:] is only good for file URLs,
+    // and I think it also bumps into issues with security-scoped URLs.
+    // We want this to be lightweight, so just check the extension instead.
+    NSString* ext = url.pathExtension.lowercaseString;
+    return ([ext isEqualToString:@"inkpad"] ||
+            [ext isEqualToString:@"svg"] ||
+            [ext isEqualToString:@"svgz"]);
+    
+    /*
+    NSString* type;
+    if ([url getResourceValue:&type forKey:NSURLTypeIdentifierKey error:nil] && type) {
+        if ([type isEqualToString:@"com.taptrix.inkpad"])
+            return YES;
+        if ([type isEqualToString:@"public.svg-image"])
+            return YES;
+        if ([type isEqualToString:@"public.svgz-image"])
+            return YES;
+        return NO;
+    } else {
+        // We could not determine the file type.
+        return NO;
+    }
+    */
 }
 
 @end
