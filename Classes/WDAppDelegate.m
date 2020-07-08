@@ -19,12 +19,21 @@
 #import "WDGradient.h"
 #import "WDInspectableProperties.h"
 
+NSString* keyCreatedICloudFolder = @"CreatedICloudFolder";
+
 @implementation WDAppDelegate
 
 @synthesize window;
 
 #pragma mark -
 #pragma mark Application lifecycle
+
+- (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(NSDictionary<UIApplicationLaunchOptionsKey,id> *)launchOptions
+{
+    [self setupDocuments];
+    
+    return YES;
+}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary<UIApplicationLaunchOptionsKey,id> *)launchOptions
 {
@@ -135,6 +144,45 @@
     if (![defaults objectForKey:WDShadowColorProperty]) {
         NSData *value = [NSKeyedArchiver archivedDataWithRootObject:[WDColor colorWithRed:0 green:0 blue:0 alpha:0.333f]];
         [defaults setObject:value forKey:WDShadowColorProperty];
+    }
+}
+
+- (void) setupDocuments
+{
+    // Create the iCloud folder if we can, and (even if it was already present) fill it with samples if it's empty.
+    // This is because it seems that the Files app won't show the app folder at all until it has something in it.
+    //
+    // Only do this once: if the user then deletes or empties the iCloud folder, we won't try to put it back.
+    if (! [[NSUserDefaults standardUserDefaults] boolForKey:keyCreatedICloudFolder]) {
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:keyCreatedICloudFolder];
+
+        NSFileManager* fm = [NSFileManager defaultManager];
+        NSURL* iCloudDocs = [[fm URLForUbiquityContainerIdentifier:nil] URLByAppendingPathComponent:@"Documents"];
+        if (iCloudDocs) {
+            if (! [fm fileExistsAtPath:iCloudDocs.path]) {
+                [fm createDirectoryAtURL:iCloudDocs withIntermediateDirectories:YES attributes:nil error:nil];
+            }
+            
+            if ([fm fileExistsAtPath:iCloudDocs.path]) {
+                __block BOOL hasError = NO;
+                NSDirectoryEnumerator* e = [fm enumeratorAtURL:iCloudDocs includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles errorHandler:^BOOL(NSURL * _Nonnull url, NSError * _Nonnull error) {
+                    hasError = YES;
+                    return NO; // Stop enumeration
+                }];
+                if (e) {
+                    id first = e.nextObject;
+                    if ((! hasError) && (! first)) {
+                        // The folder is empty (possibly except for hidden files).
+                        // Fill it with the sample drawings.
+                        NSArray<NSURL*>* samples = [[NSBundle mainBundle] URLsForResourcesWithExtension:@"inkpad" subdirectory:@"Samples"];
+                        for (NSURL* url in samples) {
+                            // This method will not overwrite an existing file.
+                            [fm copyItemAtURL:url toURL:[iCloudDocs URLByAppendingPathComponent:url.lastPathComponent] error:nil];
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
