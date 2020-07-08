@@ -11,45 +11,18 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <MessageUI/MFMailComposeViewController.h>
-#if 0 // bab: no openclipart
-#import "OCADownloader.h"
-#endif
-#import "WDHelpController.h"
 #import "WDPageSizeController.h"
 #import "WDSamplesController.h"
 
-@class WDDocument;
-@class WDDrawing;
-@class WDFontLibraryController;
-
-@class DBUserClient;
-@class WDBlockingView;
-@class OCAViewController;
-
 @interface WDBrowserController : UIDocumentBrowserViewController <UIDocumentBrowserViewControllerDelegate,
                                                                   UIPopoverPresentationControllerDelegate,
-                                                                  MFMailComposeViewControllerDelegate,
-                                                                  WDSamplesControllerDelegate,
                                                                   WDPageSizeControllerDelegate,
+                                                                  WDSamplesControllerDelegate,
                                                                   UINavigationControllerDelegate,
-#if 0 // bab: no openclipart
-                                                                  OCADownloaderDelegate,
-#endif
                                                                   UIImagePickerControllerDelegate>
-{
-    NSMutableArray          *toolbarItems_;
-    
-#if 0 // bab: no openclipart
-    OCAViewController       *openClipArtController_;
-    NSMutableSet            *downloaders_; // for downloading open clip art
-#endif
-    
-    DBUserClient            *dbClient_;
-}
-
-- (void) dismissPopover;
 
 - (void) presentDocumentAtURL:(NSURL*)documentURL;
+
++ (BOOL)canOpen:(NSURL*)url;
 
 @end

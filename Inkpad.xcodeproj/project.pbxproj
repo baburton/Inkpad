@@ -295,7 +295,6 @@
 		6BCD533612400017002FCB27 /* WDColorIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BCD52E112400017002FCB27 /* WDColorIndicator.m */; };
 		6BCD533712400017002FCB27 /* WDColorSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BCD52E312400017002FCB27 /* WDColorSlider.m */; };
 		6BCD533812400017002FCB27 /* WDColorWell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BCD52E512400017002FCB27 /* WDColorWell.m */; };
-		6BCD533A12400017002FCB27 /* WDDrawingManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BCD52E912400017002FCB27 /* WDDrawingManager.m */; };
 		6BCD533C12400017002FCB27 /* WDEventForwardingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BCD52ED12400017002FCB27 /* WDEventForwardingView.m */; };
 		6BCD534412400017002FCB27 /* WDLineAttributePicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BCD52FD12400017002FCB27 /* WDLineAttributePicker.m */; };
 		6BCD534512400017002FCB27 /* WDMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BCD52FF12400017002FCB27 /* WDMenu.m */; };
@@ -806,8 +805,6 @@
 		6BCD52E312400017002FCB27 /* WDColorSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WDColorSlider.m; sourceTree = "<group>"; };
 		6BCD52E412400017002FCB27 /* WDColorWell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WDColorWell.h; sourceTree = "<group>"; };
 		6BCD52E512400017002FCB27 /* WDColorWell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WDColorWell.m; sourceTree = "<group>"; };
-		6BCD52E812400017002FCB27 /* WDDrawingManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WDDrawingManager.h; sourceTree = "<group>"; };
-		6BCD52E912400017002FCB27 /* WDDrawingManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WDDrawingManager.m; sourceTree = "<group>"; };
 		6BCD52EC12400017002FCB27 /* WDEventForwardingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WDEventForwardingView.h; sourceTree = "<group>"; };
 		6BCD52ED12400017002FCB27 /* WDEventForwardingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WDEventForwardingView.m; sourceTree = "<group>"; };
 		6BCD52FC12400017002FCB27 /* WDLineAttributePicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WDLineAttributePicker.h; sourceTree = "<group>"; };
@@ -1565,8 +1562,6 @@
 				6BABD9E2141ED51F00F7E0A9 /* WDDocument.h */,
 				6BABD9E3141ED51F00F7E0A9 /* WDDocument.m */,
 				29735E8C14215801006CF698 /* WDDocumentProtocol.h */,
-				6BCD52E812400017002FCB27 /* WDDrawingManager.h */,
-				6BCD52E912400017002FCB27 /* WDDrawingManager.m */,
 				6B0D8CD413E01C4300DDFDC7 /* WDFontManager.h */,
 				6B0D8CD513E01C4400DDFDC7 /* WDFontManager.m */,
 				6B963450140359060096A349 /* WDUserFont.h */,
@@ -2078,7 +2073,6 @@
 				6BCD533612400017002FCB27 /* WDColorIndicator.m in Sources */,
 				6BCD533712400017002FCB27 /* WDColorSlider.m in Sources */,
 				6BCD533812400017002FCB27 /* WDColorWell.m in Sources */,
-				6BCD533A12400017002FCB27 /* WDDrawingManager.m in Sources */,
 				6BCD533C12400017002FCB27 /* WDEventForwardingView.m in Sources */,
 				6BCD534412400017002FCB27 /* WDLineAttributePicker.m in Sources */,
 				6BCD534512400017002FCB27 /* WDMenu.m in Sources */,

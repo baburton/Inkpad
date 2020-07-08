@@ -15,7 +15,6 @@
 #import "WDCanvasController.h"
 #import "WDColor.h"
 #import "WDDrawing.h"
-#import "WDDrawingManager.h"
 #import "WDFontManager.h"
 #import "WDGradient.h"
 #import "WDInspectableProperties.h"
@@ -49,7 +48,7 @@
             // - However: we shouldn't be reading potentially large files at this point
             //   in the app lifecycle anyway. So instead just check the file type for now.
             // return [self validFile:url];
-            return [WDDrawingManager canOpen:url];
+            return [WDBrowserController canOpen:url];
         }
     }
     

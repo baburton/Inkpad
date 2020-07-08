@@ -22,7 +22,6 @@
 #import "WDEraserPreviewView.h"
 #import "WDDocument.h"
 #import "WDDrawingController.h"
-#import "WDDrawingManager.h"
 #import "WDFillController.h"
 #import "WDFontController.h"
 #import "WDHueSaturationController.h"

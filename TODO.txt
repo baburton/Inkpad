@@ -6,7 +6,6 @@ MIGRATIONS:
 
 DOCUMENT BROWSER:
 
-- Camera & photo library import buttons
 - Transition from on-my-ipad to icloud
 
 FEATURES:

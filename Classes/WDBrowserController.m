@@ -10,22 +10,16 @@
 //  Copyright (c) 2020 Ben Burton
 //
 
-#if 0 // bab: no openclipart
-#import "OCAEntry.h"
-#import "OCAViewController.h"
-#endif
 #import "WDAppDelegate.h"
-#import "WDBlockingView.h"
 #import "WDBrowserController.h"
 #import "WDCanvasController.h"
 #import "WDDocument.h"
 #import "WDDrawing.h"
-#import "WDDrawingManager.h"
 #import "WDFontLibraryController.h"
 #import "WDFontManager.h"
+#import "WDHelpController.h"
 #import "UIBarButtonItem+Additions.h"
-
-#define kEditingHighlightRadius     125
+#import "UIImage+Additions.h"
 
 @interface WDBrowserController () {
     void (^createImportHandler)(NSURL * _Nullable, UIDocumentBrowserImportMode);
@@ -67,7 +61,20 @@
                                                                     style:UIBarButtonItemStylePlain
                                                                    target:self
                                                                    action:@selector(showSamplesPanel:)];
-    self.additionalTrailingNavigationBarButtonItems = @[fontsItem, samplesItem];
+    UIBarButtonItem *albumItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"album_centered.png"]
+                                                                  style:UIBarButtonItemStylePlain
+                                                                 target:self
+                                                                 action:@selector(importFromAlbum:)];
+    /*
+    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+        UIBarButtonItem *cameraItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCamera
+                                                                                    target:self
+                                                                                    action:@selector(importFromCamera:)];
+        [rightBarButtonItems addObject:cameraItem];
+    }
+    */
+
+    self.additionalTrailingNavigationBarButtonItems = @[fontsItem, samplesItem, albumItem];
 }
 
 - (void) dealloc
@@ -146,26 +153,15 @@
 
 #pragma mark - Camera
 
-#if 0 // bab: No image picker for the moment
 - (void) importFromImagePicker:(id)sender sourceType:(UIImagePickerControllerSourceType)sourceType
 {
-    if (pickerController_ && (pickerController_.sourceType == sourceType)) {
-        [self dismissPopover];
-        return;
-    }
-    
     [self dismissPopover];
     
-    pickerController_ = [[UIImagePickerController alloc] init];
+    UIImagePickerController* pickerController_ = [[UIImagePickerController alloc] init];
     pickerController_.sourceType = sourceType;
     pickerController_.delegate = self;
-    
-    UIViewController* popoverController_ = pickerController_;
-    popoverController_.modalPresentationStyle = UIModalPresentationPopover;
-    popoverController_.popoverPresentationController.delegate = self;
-    popoverController_.popoverPresentationController.barButtonItem = sender;
-    popoverController_.popoverPresentationController.permittedArrowDirections = UIPopoverArrowDirectionAny;
-    [self presentViewController:popoverController_ animated:NO completion:nil];
+    pickerController_.modalPresentationStyle = UIModalPresentationFormSheet;
+    [self presentViewController:pickerController_ animated:YES completion:nil];
 }
 
 - (void) importFromAlbum:(id)sender
@@ -180,43 +176,41 @@
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
-    [self imagePickerControllerDidCancel:picker];
-    [[WDDrawingManager sharedInstance] createNewDrawingWithImage:info[UIImagePickerControllerOriginalImage]];
+    [picker dismissViewControllerAnimated:YES completion:^{
+        UIImage* image = info[UIImagePickerControllerOriginalImage];
+        if (! image)
+            return;
+                
+        image = [image downsampleWithMaxArea:4096*4096];
+        
+        WDDrawing *drawing = [[WDDrawing alloc] initWithImage:image imageName:NSLocalizedString(@"Photo", @"Photo")];
+        
+        NSData* data = [drawing inkpadRepresentation];
+        if (! data) {
+            // TODO: Present error
+            return;
+        }
+        
+        // WARNING: We are using the same temporary filename every time.
+        // However, we should not be doing this operation more than once at a time.
+        NSString* tempFile = [NSTemporaryDirectory() stringByAppendingPathComponent:NSLocalizedString(@"Photo.inkpad", @"Default imported photo drawing name")];
+        if (! [data writeToFile:tempFile atomically:YES]) {
+            // TODO: Present error
+            return;
+        }
+        
+        [self revealDocumentAtURL:[NSURL fileURLWithPath:tempFile] importIfNeeded:YES completion:^(NSURL * _Nullable revealedDocumentURL, NSError * _Nullable error) {
+            if (error) {
+                // TODO: Present error.
+                NSLog(@"ERROR: Could not import: %@", tempFile);
+            }
+        }];
+    }];
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
-    [popoverController_ dismissViewControllerAnimated:YES completion:nil];
-    popoverController_ = nil;
-}
-#endif
-
-#pragma mark - Toolbar
-
-- (NSArray *) defaultToolbarItems
-{
-    if (!toolbarItems_) {
-        toolbarItems_ = [[NSMutableArray alloc] init];
-        
-        UIBarButtonItem *samplesItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Samples", @"Samples")
-                                                                        style:UIBarButtonItemStylePlain
-                                                                       target:self
-                                                                       action:@selector(showSamplesPanel:)];
-        
-        UIBarButtonItem *fontItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Fonts", @"Fonts")
-                                                                     style:UIBarButtonItemStylePlain target:self
-                                                                    action:@selector(showFontLibraryPanel:)];
-        
-        UIBarButtonItem *flexibleItem = [UIBarButtonItem flexibleItem];
-        UIBarButtonItem *fixedItem = [UIBarButtonItem fixedItemWithWidth:10];
-        
-        [toolbarItems_ addObject:samplesItem];
-        [toolbarItems_ addObject:fixedItem];
-        [toolbarItems_ addObject:fontItem];
-        [toolbarItems_ addObject:flexibleItem];
-    }
-    
-    return toolbarItems_;
+    [picker dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - Panels
@@ -285,30 +279,6 @@
 
 - (void)didDismissModalView {
     [self dismissViewControllerAnimated:YES completion:nil];
-}
-
-#pragma mark -
-
-- (void) showImportErrorMessage:(NSString *)filename
-{
-    NSString *format = NSLocalizedString(@"Inkpad could not import “%@”. It may be corrupt or in a format that's not supported.",
-                                         @"Inkpad could not import “%@”. It may be corrupt or in a format that's not supported.");
-    UIAlertController *alertView = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Import Problem", @"Import Problem")
-                                                                       message:[NSString stringWithFormat:format, filename]
-                                                                preferredStyle:UIAlertControllerStyleAlert];
-    [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"OK") style:UIAlertActionStyleCancel handler:nil]];
-    [self presentViewController:alertView animated:YES completion:nil];
-}
-
-- (void) showImportMemoryWarningMessage:(NSString *)filename
-{
-    NSString *format = NSLocalizedString(@"Inkpad could not import “%@”. There is not enough available memory.",
-                                         @"Inkpad could not import “%@”. There is not enough available memory.");
-    UIAlertController *alertView = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Import Problem", @"Import Problem")
-                                                                       message:[NSString stringWithFormat:format, filename]
-                                                                preferredStyle:UIAlertControllerStyleAlert];
-    [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"OK") style:UIAlertActionStyleCancel handler:nil]];
-    [self presentViewController:alertView animated:YES completion:nil];
 }
 
 #pragma mark - Documents
@@ -431,32 +401,32 @@
     [self presentViewController:nav animated:YES completion:nil];
 }
 
-@end
-
-#if 0
-// Code snippets to bring back:
-
-// ---------------------------
-
-// Further initialisation code:
-NSMutableArray *rightBarButtonItems = [NSMutableArray array];
-
-// create an album import button
-UIBarButtonItem *albumItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"album_centered.png"]
-                                                              style:UIBarButtonItemStylePlain
-                                                             target:self
-                                                             action:@selector(importFromAlbum:)];
-[rightBarButtonItems addObject:albumItem];
-
-// add a camera import item if we have a camera (I think this will always be true from now on)
-if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
-    UIBarButtonItem *cameraItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCamera
-                                                                                target:self
-                                                                                action:@selector(importFromCamera:)];
-    [rightBarButtonItems addObject:cameraItem];
++ (BOOL)canOpen:(NSURL *)url
+{
+    // The original implementation (below) used UTIs.
+    // However, [NSURL getResourceValue:] is only good for file URLs,
+    // and I think it also bumps into issues with security-scoped URLs.
+    // We want this to be lightweight, so just check the extension instead.
+    NSString* ext = url.pathExtension.lowercaseString;
+    return ([ext isEqualToString:@"inkpad"] ||
+            [ext isEqualToString:@"svg"] ||
+            [ext isEqualToString:@"svgz"]);
+    
+    /*
+    NSString* type;
+    if ([url getResourceValue:&type forKey:NSURLTypeIdentifierKey error:nil] && type) {
+        if ([type isEqualToString:@"com.taptrix.inkpad"])
+            return YES;
+        if ([type isEqualToString:@"public.svg-image"])
+            return YES;
+        if ([type isEqualToString:@"public.svgz-image"])
+            return YES;
+        return NO;
+    } else {
+        // We could not determine the file type.
+        return NO;
+    }
+    */
 }
 
-self.navigationItem.rightBarButtonItems = rightBarButtonItems;
-self.toolbarItems = [self defaultToolbarItems];
-
-#endif
+@end
