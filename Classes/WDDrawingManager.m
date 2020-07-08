@@ -181,16 +181,6 @@ NSString *WDCreatedSamples = @"WDCreatedSamples";
     return importQueue;
 }
 
-- (WDDocument *) duplicateDrawing:(WDDocument *)document
-{ 
-    NSString *unique = [self uniqueFilenameWithPrefix:[document.filename stringByDeletingPathExtension]
-                                            extension:[document.filename pathExtension]];
-    
-    // the original drawing will save when it's freed
-    
-    return [self installDrawing:document.drawing withName:unique closeAfterSaving:NO];
-}
-
 + (BOOL)canOpen:(NSURL *)url
 {
     // The original implementation (below) used UTIs.

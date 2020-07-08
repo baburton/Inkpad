@@ -12,6 +12,7 @@
 
 #import <Twitter/Twitter.h>
 #import <MessageUI/MessageUI.h>
+#import "NSData+Additions.h"
 #import "WDButton.h"
 #import "WDCanvas.h"
 #import "WDCanvasController.h"
@@ -210,33 +211,37 @@
         NSMutableArray  *menus = [NSMutableArray array];
         WDMenuItem      *item;
         
-        item = [WDMenuItem itemWithTitle:NSLocalizedString(@"Add to Photo Album", @"Add to Photo Album")
-                                  action:@selector(addToPhotoAlbum:) target:self];
-        [menus addObject:item];
-        
-        item = [WDMenuItem itemWithTitle:NSLocalizedString(@"Copy Drawing", @"Copy Drawing")
-                                  action:@selector(copyDrawing:) target:self];
-        [menus addObject:item];
-        
-        item = [WDMenuItem itemWithTitle:NSLocalizedString(@"Duplicate Drawing", @"Duplicate Drawing")
-                                  action:@selector(duplicateDrawing:) target:self];
-        [menus addObject:item];
-        
-        item = [WDMenuItem itemWithTitle:NSLocalizedString(@"Print Drawing", @"Print Drawing") action:@selector(printDrawing:) target:self];
-        [menus addObject:item];
-        
-        [menus addObject:[WDMenuItem separatorItem]];
-        
-        item = [WDMenuItem itemWithTitle:NSLocalizedString(@"Export as PNG", @"Export as PNG")
-                                  action:@selector(exportAsPNG:) target:self];
-        [menus addObject:item];
-
-        item = [WDMenuItem itemWithTitle:NSLocalizedString(@"Export as PDF", @"Export as PDF")
-                                  action:@selector(exportAsPDF:) target:self];
+        item = [WDMenuItem itemWithTitle:NSLocalizedString(@"Export as Inkpad", @"Export as Inkpad")
+                                  action:@selector(exportAsInkpad:) target:self];
         [menus addObject:item];
 
         item = [WDMenuItem itemWithTitle:NSLocalizedString(@"Export as SVG", @"Export as SVG")
                                   action:@selector(exportAsSVG:) target:self];
+        [menus addObject:item];
+        
+        item = [WDMenuItem itemWithTitle:NSLocalizedString(@"Export as SVGZ", @"Export as SVGZ")
+                                  action:@selector(exportAsSVGZ:) target:self];
+        [menus addObject:item];
+        
+        item = [WDMenuItem itemWithTitle:NSLocalizedString(@"Export as PDF", @"Export as PDF")
+                                  action:@selector(exportAsPDF:) target:self];
+        [menus addObject:item];
+
+        item = [WDMenuItem itemWithTitle:NSLocalizedString(@"Export as PNG", @"Export as PNG")
+                                  action:@selector(exportAsPNG:) target:self];
+        [menus addObject:item];
+
+        item = [WDMenuItem itemWithTitle:NSLocalizedString(@"Export as JPEG", @"Export as JPEG")
+                                  action:@selector(exportAsJPEG:) target:self];
+        [menus addObject:item];
+
+        [menus addObject:[WDMenuItem separatorItem]];
+        
+        item = [WDMenuItem itemWithTitle:NSLocalizedString(@"Save to Photos", @"Save to Photos")
+                                  action:@selector(addToPhotoAlbum:) target:self];
+        [menus addObject:item];
+
+        item = [WDMenuItem itemWithTitle:NSLocalizedString(@"Print", @"Print") action:@selector(printDrawing:) target:self];
         [menus addObject:item];
         
         actionMenu_ = [[WDMenu alloc] initWithItems:menus];
@@ -1402,38 +1407,30 @@
     [printController presentFromBarButtonItem:actionItem_ animated:NO completionHandler:nil];
 }
 
-- (void) copyDrawing:(id)sender
+- (void) export:(NSData*)data extension:(NSString *)extension
 {
-    [UIPasteboard generalPasteboard].image = [canvas_.drawing image];
-}
-
-- (void) duplicateDrawing:(id)sender
-{
-    [self setDocument:[[WDDrawingManager sharedInstance] duplicateDrawing:self.document]];
-    
-    [UIView beginAnimations:nil context:NULL];
-    [UIView setAnimationDuration:1.0f];
-    [UIView setAnimationTransition:UIViewAnimationTransitionCurlUp forView:canvas_ cache:YES];
-    [UIView commitAnimations];
-}
-
-- (void) export:(id)sender format:(NSString *)format
-{
-    NSString *baseFilename = [self.document.filename stringByDeletingPathExtension];
-    NSString *filename = nil;
-    
     [self hidePopovers];
+    
+    if (! data) {
+        UIAlertController *alertView = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Could Not Export", @"Could Not Export")
+                                                                           message:NSLocalizedString(@"I could not export this drawing to the requested format.",
+                                                                                                     @"I could not export this drawing to the requested format.")
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+        [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Close", @"Close") style:UIAlertActionStyleCancel handler:nil]];
+        [self presentViewController:alertView animated:YES completion:nil];
+        return;
+    }
 
-    // Generates export file in requested format
-    if ([format isEqualToString:@"PDF"]) {
-        filename = [NSTemporaryDirectory() stringByAppendingPathComponent:[baseFilename stringByAppendingPathExtension:@"pdf"]];
-        [[self.drawing PDFRepresentation] writeToFile:filename atomically:YES];
-    } else if ([format isEqualToString:@"PNG"]) {
-        filename = [NSTemporaryDirectory() stringByAppendingPathComponent:[baseFilename stringByAppendingPathExtension:@"png"]];
-        [UIImagePNGRepresentation([canvas_.drawing image]) writeToFile:filename atomically:YES];
-    } else if ([format isEqualToString:@"SVG"]) {
-        filename = [NSTemporaryDirectory() stringByAppendingPathComponent:[baseFilename stringByAppendingPathExtension:@"svg"]];
-        [[self.drawing SVGRepresentation] writeToFile:filename atomically:YES];
+    NSString *baseFilename = [self.document.filename stringByDeletingPathExtension];
+    NSString *filename = [NSTemporaryDirectory() stringByAppendingPathComponent:[baseFilename stringByAppendingPathExtension:extension]];
+    if (! [data writeToFile:filename atomically:YES]) {
+        UIAlertController *alertView = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Could Not Export", @"Could Not Export")
+                                                                           message:NSLocalizedString(@"I could not save this drawing in the requested format.",
+                                                                                                     @"I could not save this drawing in the requested format.")
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+        [alertView addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Close", @"Close") style:UIAlertActionStyleCancel handler:nil]];
+        [self presentViewController:alertView animated:YES completion:nil];
+        return;
     }
 
     // Passes exported file to UIDocumentInteractionController
@@ -1445,19 +1442,34 @@
     }
 }
 
+- (void) exportAsInkpad:(id)sender
+{
+    [self export:[self.drawing inkpadRepresentation] extension:@"inkpad"];
+}
+
 - (void) exportAsPNG:(id)sender
 {
-    [self export:sender format:@"PNG"];
+    [self export:UIImagePNGRepresentation(canvas_.drawing.image) extension:@"png"];
+}
+
+- (void) exportAsJPEG:(id)sender
+{
+    [self export:UIImageJPEGRepresentation(canvas_.drawing.image, 0.9) extension:@"jpeg"];
 }
 
 - (void) exportAsPDF:(id)sender
 {
-    [self export:sender format:@"PDF"];
+    [self export:[self.drawing PDFRepresentation] extension:@"pdf"];
 }
 
 - (void) exportAsSVG:(id)sender
 {
-    [self export:sender format:@"SVG"];
+    [self export:[self.drawing SVGRepresentation] extension:@"svg"];
+}
+
+- (void) exportAsSVGZ:(id)sender
+{
+    [self export:[[self.drawing SVGRepresentation] compress] extension:@"svgz"];
 }
 
 #pragma mark - UIDocumentInteractionController

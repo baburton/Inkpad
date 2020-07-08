@@ -14,7 +14,6 @@
 #import "OCAEntry.h"
 #import "OCAViewController.h"
 #endif
-#import "NSData+Additions.h"
 #import "WDAppDelegate.h"
 #import "WDBlockingView.h"
 #import "WDBrowserController.h"
@@ -460,43 +459,4 @@ if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSource
 self.navigationItem.rightBarButtonItems = rightBarButtonItems;
 self.toolbarItems = [self defaultToolbarItems];
 
-// ---------------------------
-
-// Exporting to different formats:
-formats_ = @[@"JPEG", @"PNG", @"SVG", @"SVGZ", @"PDF", @"Inkpad"];
-
-[[WDDrawingManager sharedInstance] openDocumentWithName:filename withCompletionHandler:^(WDDocument *document) {
-    @autoreleasepool {
-        WDDrawing *drawing = document.drawing;
-        // TODO use document contentForType
-        NSData *data = nil;
-        NSString *extension = nil;
-        NSString *mimeType = nil;
-        if ([format isEqualToString:@"Inkpad"]) {
-            data = [NSData dataWithContentsOfFile:fullPath];
-            extension = WDDrawingFileExtension;
-            mimeType = @"application/x-inkpad";
-        } else if ([format isEqualToString:@"SVG"]) {
-            data = [drawing SVGRepresentation];
-            extension = @"svg";
-            mimeType = @"image/svg+xml";
-        } else if ([format isEqualToString:@"SVGZ"]) {
-            data = [[drawing SVGRepresentation] compress];
-            extension = @"svgz";
-            mimeType = @"image/svg+xml";
-        } else if ([format isEqualToString:@"PNG"]) {
-            data = UIImagePNGRepresentation([drawing image]);
-            extension = @"png";
-            mimeType = @"image/png";
-        } else if ([format isEqualToString:@"JPEG"]) {
-            data = UIImageJPEGRepresentation([drawing image], 0.9);
-            extension = @"jpeg";
-            mimeType = @"image/jpeg";
-        } else if ([format isEqualToString:@"PDF"]) {
-            data = [drawing PDFRepresentation];
-            extension = @"pdf";
-            mimeType = @"image/pdf";
-        }
-    }
-}];
 #endif

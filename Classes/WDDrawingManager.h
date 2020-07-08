@@ -25,8 +25,6 @@
 - (BOOL) createNewDrawingWithImageAtURL:(NSURL *)imageURL;
 - (BOOL) createNewDrawingWithImage:(UIImage *)image;
 
-- (WDDocument *) duplicateDrawing:(WDDocument *)document;
-
 - (NSString *) uniqueFilenameWithPrefix:(NSString *)prefix extension:(NSString *)extension;
 
 + (BOOL)canOpen:(NSURL*)url;

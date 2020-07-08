@@ -29,14 +29,6 @@
 @class WDShadowWell;
 @class WDText;
 
-enum {
-    kAddToPhotos = 0,
-    kCopyDrawing,
-    kDuplicateDrawing,
-    kPrintDrawing,
-    kEmailDrawing
-};
-
 @interface WDCanvasController : UIViewController <UINavigationControllerDelegate, UIImagePickerControllerDelegate,
                                                     UIPopoverPresentationControllerDelegate, UIDocumentInteractionControllerDelegate>
 {
