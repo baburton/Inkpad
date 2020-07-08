@@ -210,6 +210,15 @@
         NSMutableArray  *menus = [NSMutableArray array];
         WDMenuItem      *item;
         
+        item = [WDMenuItem itemWithTitle:NSLocalizedString(@"Save to Photos", @"Save to Photos")
+                                  action:@selector(addToPhotoAlbum:) target:self];
+        [menus addObject:item];
+
+        item = [WDMenuItem itemWithTitle:NSLocalizedString(@"Print", @"Print") action:@selector(printDrawing:) target:self];
+        [menus addObject:item];
+        
+        [menus addObject:[WDMenuItem separatorItem]];
+        
         item = [WDMenuItem itemWithTitle:NSLocalizedString(@"Export as Inkpad", @"Export as Inkpad")
                                   action:@selector(exportAsInkpad:) target:self];
         [menus addObject:item];
@@ -234,15 +243,6 @@
                                   action:@selector(exportAsJPEG:) target:self];
         [menus addObject:item];
 
-        [menus addObject:[WDMenuItem separatorItem]];
-        
-        item = [WDMenuItem itemWithTitle:NSLocalizedString(@"Save to Photos", @"Save to Photos")
-                                  action:@selector(addToPhotoAlbum:) target:self];
-        [menus addObject:item];
-
-        item = [WDMenuItem itemWithTitle:NSLocalizedString(@"Print", @"Print") action:@selector(printDrawing:) target:self];
-        [menus addObject:item];
-        
         actionMenu_ = [[WDMenu alloc] initWithItems:menus];
         actionMenu_.delegate = self;
     }
