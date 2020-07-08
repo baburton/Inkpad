@@ -4,10 +4,6 @@ MIGRATIONS:
 - Convert all XIBs to autolayout
 - Openclipart API -> FreeSVG API (which requires a login to use)
 
-DOCUMENT BROWSER:
-
-- Transition from on-my-ipad to icloud
-
 FEATURES:
 
 - Support dark mode (and remove UIUserInterfaceStyle=Light from Info.plist)
