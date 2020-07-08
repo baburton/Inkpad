@@ -3,7 +3,7 @@ Inkpad
 
 Inkpad is a vector illustration app designed from scratch for the iPad. It supports paths, compound paths, text, images, groups, masks, gradient fills, and an unlimited number of layers.
 
-Inkpad was designed with performance in mind – it can easily handle drawings with hundreds to thousands of shapes without bogging down. Export your finished illustrations directly to your Dropbox as SVG or PDF.
+Inkpad was designed with performance in mind – it can easily handle drawings with hundreds to thousands of shapes without bogging down. Export your finished illustrations in a variety of formats, such as SVG or PDF.
 
 Features:
 
@@ -23,7 +23,7 @@ Features:
 * Snap to grid, points, and path edges.
 * Isolate the active layer for easy editing.
 * Email drawings as SVG, PDF, PNG and JPEG.
-* Send SVG, PDF, PNG, and JPEG directly to your Dropbox.
+* Export as SVG, PDF, PNG, or JPEG.
 
 Inkpad was originally developed by Steve Sprang, and you can see his original repository at
 [https://github.com/sprang/Inkpad](https://github.com/sprang/Inkpad).
@@ -55,12 +55,6 @@ I'd appreciate help with bug fixes, new features, localizations, testing, and ot
 and I encourage you to use the [GitHub issue tracker](https://github.com/baburton/Inkpad/issues) for this.
 
 If you're taking on a big change, I'd be happy to discuss design ideas or answer questions before you get too far along.
-
-To build Inkpad, you will need to set up [Carthage](https://github.com/Carthage/Carthage), which Inkpad uses
-to build and embed the Dropbox SDK.
-If you wish to test Dropbox functionality, you will also need to replace "xxxx" with a real Dropbox app key
-in Inkpad-Info.plist and Classes/WDAppDelegate.m. This Dropbox app should be set up with _App folder_ permissions,
-not _Full Dropbox_.
 
 Contributors
 ------------
